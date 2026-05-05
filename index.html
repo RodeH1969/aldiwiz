@@ -12,7 +12,6 @@
       --gold:#ffd978;
       --red:#d61e24;
       --slotBorder:rgba(255,255,255,.18);
-      --green:#2fcb74;
     }
     * { box-sizing:border-box; }
     body {
@@ -36,9 +35,7 @@
     .game-meta { width:100%; text-align:center; line-height:1.15; }
     .game-no { font-size:13px; font-weight:800; color:rgba(255,255,255,.88); }
     .game-date { font-size:13px; font-weight:700; color:rgba(255,255,255,.74); margin-top:3px; }
-    .hud {
-      width:100%; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:900;
-    }
+    .hud { width:100%; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:900; }
     .target-label { font-size:22px; }
     .chip {
       width:82px; height:82px; border-radius:50%; background:var(--red); padding:7px; display:grid; place-items:center;
@@ -59,7 +56,14 @@
       background:rgba(4,17,41,.6); position:relative; overflow:visible;
     }
     .flip-slot.filled { border-color:transparent; background:transparent; }
-    .deck-zone { width:100%; display:flex; align-items:center; justify-content:center; min-height:126px; position:relative; }
+    .deal-zone {
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      min-height:126px;
+    }
     .deck-stack { width:92px; aspect-ratio:2.5/3.7; position:relative; filter:drop-shadow(0 10px 16px rgba(0,0,0,.28)); }
     .deck-shadow,.deck-shadow-2,.deck-shadow-3 {
       position:absolute; inset:0; border-radius:14px; background:rgba(255,255,255,.12); border:2px solid rgba(255,255,255,.18);
@@ -70,15 +74,23 @@
     .deck-top {
       position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff; z-index:4;
     }
-    .deck-top img { width:100%; height:100%; object-fit:cover; display:block; }
+    .deck-top img, .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+    .preview-row {
+      display:grid;
+      grid-template-columns:repeat(2, 92px);
+      gap:10px;
+      justify-content:center;
+      align-items:center;
+      min-height:136px;
+    }
+    .preview-slot {
+      width:92px; aspect-ratio:2.5/3.7; border-radius:14px; border:1px dashed rgba(255,255,255,.25); background:rgba(4,17,41,.45);
+      position:relative;
+    }
+    .preview-slot.filled { border-color:transparent; background:transparent; }
     .card-wrap { width:100%; height:100%; position:relative; }
-    .card {
-      width:100%; height:100%; position:relative; box-shadow:0 9px 10px rgba(0,0,0,.28); border-radius:14px;
-    }
-    .card-face {
-      position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff;
-    }
-    .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+    .card { width:100%; height:100%; position:relative; box-shadow:0 9px 10px rgba(0,0,0,.28); border-radius:14px; }
+    .card-face { position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff; }
     .price-badge {
       position:absolute; left:50%; bottom:8px; transform:translateX(-50%); min-width:56px; padding:6px 8px; border-radius:999px;
       background:rgba(0,0,0,.84); color:#fff; text-align:center; font-weight:900; font-size:14px; z-index:8; opacity:0;
@@ -86,11 +98,10 @@
     }
     .revealed .price-badge { opacity:1; transform:translateX(-50%) translateY(-1px); }
     .delete-btn {
-      position:absolute; top:-7px; right:-7px; width:28px; height:28px; border-radius:50%; border:2px solid #fff;
-      background:#cc1420; color:#fff; font-size:18px; font-weight:900; line-height:1; display:grid; place-items:center;
-      cursor:pointer; z-index:20; box-shadow:0 6px 10px rgba(0,0,0,.35);
+      position:absolute; top:-7px; right:-7px; width:28px; height:28px; border-radius:50%; border:2px solid #fff; background:#cc1420;
+      color:#fff; font-size:18px; font-weight:900; line-height:1; display:grid; place-items:center; cursor:pointer; z-index:20;
+      box-shadow:0 6px 10px rgba(0,0,0,.35);
     }
-    .delete-btn.hidden { display:none; }
     .controls { display:flex; gap:10px; justify-content:center; width:100%; flex-wrap:wrap; }
     .btn {
       border:0; border-radius:999px; padding:11px 18px; font-weight:900; font-size:16px; box-shadow:0 8px 22px rgba(0,0,0,.28); cursor:pointer;
@@ -104,9 +115,7 @@
       gap:10px; width:100%; padding:10px 14px; border-radius:20px; box-shadow:0 10px 24px rgba(0,0,0,.32); font-weight:900;
       font-size:17px; text-align:left; margin-top:2px; border:0; cursor:pointer;
     }
-    .btn-saloon img {
-      width:52px; height:52px; object-fit:cover; border-radius:12px; border:2px solid rgba(79,44,20,.25); background:#fff; flex:0 0 auto;
-    }
+    .btn-saloon img { width:52px; height:52px; object-fit:cover; border-radius:12px; border:2px solid rgba(79,44,20,.25); background:#fff; flex:0 0 auto; }
     .btn-saloon .saloon-text { display:flex; flex-direction:column; line-height:1.05; }
     .btn-saloon .saloon-main { font-size:18px; font-weight:900; }
     .btn-saloon .saloon-sub { font-size:12px; font-weight:700; opacity:.9; margin-top:4px; }
@@ -157,7 +166,9 @@
       .wrap { padding-left:8px; padding-right:8px; }
       .flip-row { gap:8px; }
       .flip-slot { max-width:84px; }
-      .deck-stack { width:84px; }
+      .deal-zone { gap:10px; }
+      .deck-stack, .preview-slot { width:84px; }
+      .preview-row { grid-template-columns:repeat(2, 84px); }
       .target-label { font-size:20px; }
       .chip { width:76px; height:76px; }
       .chip-inner { font-size:25px; }
@@ -182,7 +193,7 @@
 
     <section class="round-panel active" id="round1Panel">
       <div class="round-title">Round 1</div>
-      <div class="round-sub">Deal 2 cards at a time. Keep both or delete 1. Locknload any time.</div>
+      <div class="round-sub">Deal 2 cards on the right, cross out 0, 1 or 2, then Deal again or Locknload.</div>
 
       <section class="arena">
         <div class="flip-row">
@@ -192,14 +203,18 @@
           <div class="flip-slot" data-slot="3"></div>
         </div>
 
-        <div class="deck-zone">
+        <div class="deal-zone">
           <div class="deck-stack">
             <div class="deck-shadow-3"></div>
             <div class="deck-shadow-2"></div>
             <div class="deck-shadow"></div>
             <div class="deck-top">
-              <img src="facecard.jpg" alt="Super21 face card">
+              <img src="./facecard.jpg" alt="Super21 face card" onerror="this.onerror=null;this.src='facecard.jpg';">
             </div>
+          </div>
+          <div class="preview-row" id="previewRow1">
+            <div class="preview-slot" data-preview="0"></div>
+            <div class="preview-slot" data-preview="1"></div>
           </div>
         </div>
 
@@ -219,7 +234,7 @@
 
     <section class="round-panel" id="round2Panel">
       <div class="round-title">Last Chance Saloon</div>
-      <div class="round-sub">Same deal. 2 cards at a time. Delete 1 if you want.</div>
+      <div class="round-sub">Same deal. Two preview cards on the right. Cross out 0, 1 or 2.</div>
 
       <section class="arena">
         <div class="flip-row">
@@ -229,14 +244,18 @@
           <div class="flip-slot" data-slot="3"></div>
         </div>
 
-        <div class="deck-zone">
+        <div class="deal-zone">
           <div class="deck-stack">
             <div class="deck-shadow-3"></div>
             <div class="deck-shadow-2"></div>
             <div class="deck-shadow"></div>
             <div class="deck-top">
-              <img src="facecard.jpg" alt="Super21 face card">
+              <img src="./facecard.jpg" alt="Super21 face card" onerror="this.onerror=null;this.src='facecard.jpg';">
             </div>
+          </div>
+          <div class="preview-row" id="previewRow2">
+            <div class="preview-slot" data-preview="0"></div>
+            <div class="preview-slot" data-preview="1"></div>
           </div>
         </div>
 
@@ -255,10 +274,10 @@
     </section>
 
     <section class="scoreboard" aria-live="polite">
-      <div class="line1" id="statusText">Press Deal to reveal 2 cards. You can delete 1 from the new pair.</div>
+      <div class="line1" id="statusText">Press Deal to show 2 cards on the right. Cross out any you do not want.</div>
       <div class="line2" id="totalText">Round 1 total: $0.00</div>
       <div class="line3" id="scoreText">Distance from $21: $21.00</div>
-      <div class="line4" id="hintText">Get as close to $21 as you can without going over.</div>
+      <div class="line4" id="hintText">When you press Deal again, any preview cards without a cross are moved into the next free spots.</div>
     </section>
 
     <button class="btn-saloon" id="saloonBtn" type="button">
@@ -330,7 +349,6 @@
     const round1Panel = document.getElementById('round1Panel');
     const round2Panel = document.getElementById('round2Panel');
     const targetChip = document.getElementById('targetChip');
-
     targetChip.textContent = `$${target}`;
 
     let round1Result = null;
@@ -342,7 +360,7 @@
       bustOverlay.classList.add('show');
     }
 
-    function makeCardMarkup(cardData, canDelete, onDelete) {
+    function makeCardMarkup(cardData, onDelete, previewMode = false) {
       const wrap = document.createElement('div');
       wrap.className = 'card-wrap';
       wrap.innerHTML = `
@@ -353,145 +371,142 @@
           <div class="price-badge">$${cardData.price.toFixed(2)}</div>
         </div>
       `;
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.type = 'button';
-      deleteBtn.className = 'delete-btn' + (canDelete ? '' : ' hidden');
-      deleteBtn.textContent = '×';
-      deleteBtn.addEventListener('click', onDelete);
-      wrap.appendChild(deleteBtn);
+      if (previewMode) {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = '×';
+        deleteBtn.addEventListener('click', onDelete);
+        wrap.appendChild(deleteBtn);
+      }
       return wrap;
     }
 
-    function updateLiveRoundText(roundName, keptTotal, keptCount, pendingDelete, locked) {
-      totalText.textContent = `${roundName} total: $${keptTotal.toFixed(2)}`;
-
-      if (keptTotal > target) {
-        scoreText.textContent = `Distance from $21: BUST`;
-      } else {
-        const away = +(target - keptTotal).toFixed(2);
-        scoreText.textContent = `Distance from $21: $${away.toFixed(2)}`;
-      }
-
-      if (locked) return;
-
-      if (pendingDelete) {
-        statusText.textContent = `${roundName}: choose whether to keep both cards or delete 1 from the new pair.`;
-        hintText.textContent = 'Tap the red cross on one of the new cards, or Deal again to keep both.';
-      } else if (keptCount === 0) {
-        statusText.textContent = 'Press Deal to reveal 2 cards. You can delete 1 from the new pair.';
-        hintText.textContent = 'Get as close to $21 as you can without going over.';
-      } else {
-        statusText.textContent = `${roundName}: ${keptCount} card${keptCount === 1 ? '' : 's'} currently kept.`;
-        hintText.textContent = 'Deal again for 2 more cards, or Locknload now.';
-      }
-    }
-
     function setupRound(options) {
-      const { panelId, dealBtnId, lockBtnId, cardsData, roundName, onFinish } = options;
+      const { panelId, previewRowId, dealBtnId, lockBtnId, cardsData, roundName, onFinish } = options;
       const panel = document.getElementById(panelId);
+      const previewRow = document.getElementById(previewRowId);
+      const previewSlots = [...previewRow.querySelectorAll('.preview-slot')];
+      const boardSlots = [...panel.querySelectorAll('.flip-slot')];
       const dealBtn = document.getElementById(dealBtnId);
       const lockBtn = document.getElementById(lockBtnId);
-      const slots = [...panel.querySelectorAll('.flip-slot')];
 
-      let slotIndex = 0;
       let deckIndex = 0;
+      let boardIndex = 0;
       let locked = false;
-      let pendingPair = [];
+      let previewCards = [];
       const keptCards = [];
 
       function keptTotal() {
-        return +keptCards.reduce((sum, card) => sum + card.price, 0).toFixed(2);
+        return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
       }
 
-      function clearDeleteButtons() {
-        panel.querySelectorAll('.delete-btn').forEach(btn => btn.classList.add('hidden'));
+      function refreshTexts(customStatus, customHint) {
+        const total = keptTotal();
+        totalText.textContent = `${roundName} total: $${total.toFixed(2)}`;
+        if (total > target) {
+          scoreText.textContent = `Distance from $21: BUST by $${(total - target).toFixed(2)}`;
+        } else {
+          scoreText.textContent = `Distance from $21: $${(target - total).toFixed(2)}`;
+        }
+        statusText.textContent = customStatus;
+        hintText.textContent = customHint;
       }
 
-      function finalizePendingPairKeepBoth() {
-        pendingPair = [];
-        clearDeleteButtons();
-      }
-
-      function deleteOne(cardRef) {
-        if (locked || pendingPair.length === 0) return;
-        if (!pendingPair.includes(cardRef)) return;
-
-        keptCards.splice(keptCards.indexOf(cardRef), 1);
-        cardRef.slot.innerHTML = '';
-        cardRef.slot.classList.remove('filled');
-        pendingPair.forEach(item => {
-          const btn = item.slot.querySelector('.delete-btn');
-          if (btn) btn.classList.add('hidden');
+      function clearPreviewUI() {
+        previewSlots.forEach(slot => {
+          slot.innerHTML = '';
+          slot.classList.remove('filled');
         });
-        pendingPair = [];
-        updateLiveRoundText(roundName, keptTotal(), keptCards.length, false, false);
+      }
+
+      function commitPreviewToBoard() {
+        if (!previewCards.length) return;
+        const survivors = previewCards.filter(card => !card.deleted);
+        survivors.forEach(card => {
+          if (boardIndex >= maxSlots) return;
+          const slot = boardSlots[boardIndex++];
+          slot.classList.add('filled');
+          slot.innerHTML = '';
+          slot.appendChild(makeCardMarkup(card, null, false));
+          keptCards.push(card);
+        });
+        previewCards = [];
+        clearPreviewUI();
+      }
+
+      function renderPreview() {
+        clearPreviewUI();
+        previewCards.forEach((card, i) => {
+          if (card.deleted) return;
+          const slot = previewSlots[i];
+          slot.classList.add('filled');
+          slot.appendChild(makeCardMarkup(card, () => {
+            card.deleted = true;
+            renderPreview();
+            const left = previewCards.filter(c => !c.deleted).length;
+            refreshTexts(
+              `${roundName}: ${left} preview card${left === 1 ? '' : 's'} still in the deal window.`,
+              'Press Deal to bank the remaining preview cards into the next free spots, or Locknload now.'
+            );
+          }, true));
+        });
       }
 
       dealBtn.addEventListener('click', () => {
         if (locked) return;
-        if (slotIndex >= maxSlots) return;
 
-        if (pendingPair.length) {
-          finalizePendingPairKeepBoth();
-        }
+        commitPreviewToBoard();
 
-        const cardsThisDeal = [];
-        for (let i = 0; i < dealSize && slotIndex < maxSlots && deckIndex < cardsData.length; i++) {
-          const cardData = cardsData[deckIndex++];
-          const slot = slots[slotIndex++];
-          slot.classList.add('filled');
-
-          const cardRef = { ...cardData, slot };
-          keptCards.push(cardRef);
-          cardsThisDeal.push(cardRef);
-        }
-
-        cardsThisDeal.forEach(cardRef => {
-          const el = makeCardMarkup(cardRef, cardsThisDeal.length > 1, () => deleteOne(cardRef));
-          cardRef.slot.innerHTML = '';
-          cardRef.slot.appendChild(el);
-        });
-
-        pendingPair = cardsThisDeal.length === 2 ? cardsThisDeal : [];
-        updateLiveRoundText(roundName, keptTotal(), keptCards.length, pendingPair.length > 0, false);
-
-        if (slotIndex >= maxSlots || deckIndex >= cardsData.length) {
+        if (boardIndex >= maxSlots || deckIndex >= cardsData.length) {
           dealBtn.disabled = true;
-          hintText.textContent = pendingPair.length ? 'Delete 1 from the new pair, or Locknload now.' : 'That is all 8 cards. Locknload any time.';
+          refreshTexts(
+            `${roundName}: no more room to deal.`,
+            'Locknload whenever you are ready.'
+          );
+          return;
+        }
+
+        previewCards = [];
+        for (let i = 0; i < dealSize && deckIndex < cardsData.length; i++) {
+          previewCards.push({ ...cardsData[deckIndex++], deleted: false });
+        }
+        renderPreview();
+
+        const live = previewCards.filter(c => !c.deleted).length;
+        refreshTexts(
+          `${roundName}: 2 cards dealt to the right of the deck. Cross out 0, 1 or 2.`,
+          'Press Deal again to move the remaining preview cards into the next free spots.'
+        );
+
+        if (boardIndex >= maxSlots) {
+          dealBtn.disabled = true;
         }
       });
 
       lockBtn.addEventListener('click', () => {
-        if (locked || keptCards.length === 0) return;
+        if (locked) return;
+        commitPreviewToBoard();
+        if (!keptCards.length) return;
+
         locked = true;
-        finalizePendingPairKeepBoth();
         dealBtn.disabled = true;
         lockBtn.disabled = true;
 
-        panel.querySelectorAll('.card-wrap').forEach(cardEl => {
-          cardEl.classList.add('revealed');
-        });
+        panel.querySelectorAll('.card-wrap').forEach(cardEl => cardEl.classList.add('revealed'));
 
         const total = keptTotal();
         const bust = total > target;
         const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+        if (bust) triggerBust();
 
-        if (bust) {
-          triggerBust();
-        }
-
-        onFinish({
-          total,
-          keptCount: keptCards.length,
-          bust,
-          away
-        });
+        onFinish({ total, keptCount: keptCards.length, bust, away });
       });
     }
 
     setupRound({
       panelId: 'round1Panel',
+      previewRowId: 'previewRow1',
       dealBtnId: 'dealBtn1',
       lockBtnId: 'lockBtn1',
       cardsData: round1Cards,
@@ -510,6 +525,7 @@
 
     setupRound({
       panelId: 'round2Panel',
+      previewRowId: 'previewRow2',
       dealBtnId: 'dealBtn2',
       lockBtnId: 'lockBtn2',
       cardsData: round2Cards,
@@ -518,7 +534,6 @@
         round2Result = result;
         const combinedTotal = +((round1Result?.total || 0) + result.total).toFixed(2);
         const combinedAway = +((round1Result?.away || 0) + result.away).toFixed(2);
-
         totalText.textContent = `Round 2 total: $${result.total.toFixed(2)}`;
         scoreText.textContent = result.bust ? `Distance from $21: BUST by $${result.away.toFixed(2)}` : `Distance from $21: $${result.away.toFixed(2)}`;
         statusText.textContent = result.bust
@@ -536,19 +551,18 @@
       saloonBtn.style.display = 'none';
       round1Panel.classList.remove('active');
       round2Panel.classList.add('active');
-      statusText.textContent = 'Welcome to Last Chance Saloon. Press Deal to start Round 2.';
+      statusText.textContent = 'Welcome to Last Chance Saloon. Press Deal to show 2 cards on the right.';
       totalText.textContent = `Round 1 total: $${(round1Result?.total || 0).toFixed(2)}`;
       scoreText.textContent = round1Result?.bust
         ? `Distance from $21: BUST by $${(round1Result?.away || 0).toFixed(2)}`
         : `Distance from $21: $${(round1Result?.away || target).toFixed(2)}`;
-      hintText.textContent = 'Deal 2 cards at a time, delete 1 if you want, or Locknload.';
+      hintText.textContent = 'Cross out 0, 1 or 2 preview cards. Deal again to bank the rest.';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     function buildShareText() {
       const combinedTotal = +((round1Result?.total || 0) + (round2Result?.total || 0)).toFixed(2);
       const combinedAway = +((round1Result?.away || 0) + (round2Result?.away || 0)).toFixed(2);
-
       return [
         `Super21 Game #${gameNumber}`,
         `${gameDate}`,
@@ -565,20 +579,14 @@
       const text = buildShareText();
       if (navigator.share) {
         try {
-          await navigator.share({
-            title: `Super21 Game #${gameNumber}`,
-            text,
-            url: shareUrl
-          });
+          await navigator.share({ title: `Super21 Game #${gameNumber}`, text, url: shareUrl });
           return;
         } catch (e) {}
       }
       try {
         await navigator.clipboard.writeText(text);
         shareBtn.textContent = 'Copied!';
-        setTimeout(() => {
-          shareBtn.textContent = 'Share';
-        }, 1400);
+        setTimeout(() => { shareBtn.textContent = 'Share'; }, 1400);
       } catch (e) {
         alert(text);
       }
