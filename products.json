@@ -178,5 +178,95 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\quilton-card.png"
+  },
+  {
+    "image": "products\\emporiumgranapadanocheese250g.jpeg",
+    "name": "Emporium",
+    "line": "GRANA PADANO CHEESE",
+    "size": "250g",
+    "price": "",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\emporiumgranapadano-card.png"
+  },
+  {
+    "image": "products\\emporiumselectionbluecheese200g.jpeg",
+    "name": "Emporium",
+    "line": "SELECTION BLUE CHEESE",
+    "size": "200g",
+    "price": "$5.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\emporiumblue-card.png"
+  },
+  {
+    "image": "products\\farmdalefullcreammilk2l.jpeg",
+    "name": "Farmdale",
+    "line": "FULL CREAM MILK",
+    "size": "2L",
+    "price": "$3.55",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\farmdalemilk-card.png"
+  },
+  {
+    "image": "products\\ironbarkporkmince500g.jpeg",
+    "name": "Ironbark",
+    "line": "PORK MINCE",
+    "size": "500g",
+    "price": "$4.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\ironbarkporkmince-card.png"
+  },
+  {
+    "image": "products\\knoppersmilkwafers200g.jpeg",
+    "name": "Knoppers",
+    "line": "MILK WAFERS",
+    "size": "200g",
+    "price": "$4.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\knoppers-card.png"
+  },
+  {
+    "image": "products\\powerforcegarbagebag20pack.jpeg",
+    "name": "Powerforce",
+    "line": "GARBAGE BAGS",
+    "size": "20 pack",
+    "price": "$3.59",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcegarbagebag-card.png"
+  },
+  {
+    "image": "products\\shapesoriginalsbarbecue250g.jpeg",
+    "name": "Arnott's",
+    "line": "SHAPES BARBECUE",
+    "size": "250g",
+    "price": "$3.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\shapesbarbecue-card.png"
+  },
+  {
+    "image": "products\\tricareantibacterialsoap250ml.jpeg",
+    "name": "Tricare",
+    "line": "ANTIBACTERIAL SOAP",
+    "size": "250ml",
+    "price": "$2.00",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\tricaresoap-card.png"
+  },
+  {
+    "image": "products\\wisdomtoothbrush2pack.jpeg",
+    "name": "Wisdom",
+    "line": "TOOTHBRUSH",
+    "size": "2 pack",
+    "price": "$1.89",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\wisdomtoothbrush-card.png"
   }
 ]
