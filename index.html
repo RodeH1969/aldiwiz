@@ -283,13 +283,12 @@
       line-height:1.35;
     }
     .summary-box {
-      width:100%; display:none; background:rgba(255,248,234,.12); border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:14px;
-      text-align:center; gap:6px;
+      width:100%; display:none; background:rgba(255,248,234,.12); border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:16px 14px;
+      text-align:center; gap:8px;
     }
     .summary-box.show { display:grid; }
-    .summary-title { font-size:15px; font-weight:800; color:rgba(255,255,255,.82); }
-    .summary-total { font-size:30px; font-weight:900; color:#fff; }
-    .summary-away { font-size:20px; font-weight:900; color:#ffe08f; }
+    .summary-title { font-size:16px; font-weight:900; color:#fff; }
+    .summary-total { font-size:18px; font-weight:900; color:#fff; line-height:1.35; }
     .bust-overlay {
       position:fixed; inset:0; display:grid; place-items:center; pointer-events:none; opacity:0; z-index:2147483647; isolation:isolate;
     }
@@ -398,8 +397,7 @@
 
     <section class="summary-box" id="summaryBox">
       <div class="summary-title">Final result</div>
-      <div class="summary-total" id="finalTotalText">$0.00</div>
-      <div class="summary-away" id="finalAwayText">$21.00 away</div>
+      <div class="summary-total" id="finalTotalText">Basket total: $0.00, just $21.00 off perfection!</div>
     </section>
 
     <div class="controls">
@@ -484,8 +482,7 @@
     const hintText = document.getElementById('hintText');
     const summaryBox = document.getElementById('summaryBox');
     const finalTotalText = document.getElementById('finalTotalText');
-    const finalAwayText = document.getElementById('finalAwayText');
-    const shareBtn = document.getElementById('shareBtn');
+        const shareBtn = document.getElementById('shareBtn');
     const bustOverlay = document.getElementById('bustOverlay');
     const rulesBtn = document.getElementById('rulesBtn');
     const rulesModal = document.getElementById('rulesModal');
@@ -673,8 +670,9 @@
       hintText.textContent = 'Final result ready to share.';
       updateTexts();
       summaryBox.classList.add('show');
-      finalTotalText.textContent = `$${total.toFixed(2)}`;
-      finalAwayText.textContent = bust ? `BUST by $${away.toFixed(2)}` : `$${away.toFixed(2)} away`;
+      finalTotalText.textContent = bust
+        ? `Basket total: $${total.toFixed(2)}, bust by $${away.toFixed(2)}.`
+        : `Basket total: $${total.toFixed(2)}, just $${away.toFixed(2)} off perfection!`;
       shareBtn.style.display = 'inline-block';
     }
 
@@ -682,12 +680,11 @@
       const total = keptTotal();
       const bust = total > target;
       const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+      const emoji = away <= 2 ? '🏆' : (away <= 4 ? '👍' : '');
       return [
-        `Super21 Game #${gameNumber}`,
-        `${gameDate}`,
-        `Target: $${target}`,
-        `Basket total: $${total.toFixed(2)}`,
-        bust ? `BUST by $${away.toFixed(2)}` : `$${away.toFixed(2)} away`,
+        `${emoji} ${keptCards.length} products selected`.trim(),
+        `Total $${total.toFixed(2)} selected`,
+        `$${away.toFixed(2)} distance from $21`,
         `${shareUrl}`
       ].join('\n');
     }
