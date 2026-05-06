@@ -12,6 +12,9 @@
       --gold:#ffd978;
       --red:#d61e24;
       --slotBorder:rgba(255,255,255,.18);
+      --panel:rgba(255,255,255,.10);
+      --panelBorder:rgba(255,255,255,.18);
+      --darkChip:#091a38;
     }
     * { box-sizing:border-box; }
     body {
@@ -32,39 +35,108 @@
       align-items:center;
       gap:14px;
     }
-    .game-meta { width:100%; text-align:center; line-height:1.15; }
-    .game-no { font-size:13px; font-weight:800; color:rgba(255,255,255,.88); }
+    .topbar {
+      width:100%;
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      gap:8px;
+    }
+    .game-meta {
+      justify-self:start;
+      line-height:1.15;
+    }
+    .game-no { font-size:13px; font-weight:800; color:rgba(255,255,255,.92); }
     .game-date { font-size:13px; font-weight:700; color:rgba(255,255,255,.74); margin-top:3px; }
-    .hud { width:100%; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:900; }
-    .target-label { font-size:22px; }
+    .target-wrap {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-weight:900;
+    }
+    .target-label { font-size:18px; white-space:nowrap; }
     .chip {
-      width:82px; height:82px; border-radius:50%; background:var(--red); padding:7px; display:grid; place-items:center;
+      width:66px; height:66px; border-radius:50%; background:var(--red); padding:6px; display:grid; place-items:center;
       box-shadow:0 10px 24px rgba(0,0,0,.35);
     }
     .chip-inner {
       width:100%; height:100%; border-radius:50%; background:#fff; color:#111; display:grid; place-items:center;
-      font-weight:900; font-size:28px; border:3px solid rgba(0,0,0,.08);
+      font-weight:900; font-size:24px; border:3px solid rgba(0,0,0,.08);
     }
-    .round-title { font-size:18px; font-weight:900; text-align:center; margin-top:4px; }
-    .round-sub { font-size:12px; text-align:center; color:rgba(255,255,255,.75); margin-top:-8px; }
-    .round-panel { width:100%; display:none; flex-direction:column; gap:12px; }
-    .round-panel.active { display:flex; }
-    .arena { width:100%; display:grid; gap:12px; justify-items:center; padding:8px 0 10px; }
-    .flip-row { width:100%; display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; justify-items:center; }
-    .flip-slot {
-      width:100%; max-width:92px; aspect-ratio:2.5/3.7; border-radius:14px; border:1px dashed var(--slotBorder);
-      background:rgba(4,17,41,.6); position:relative; overflow:visible;
+    .rules-btn {
+      justify-self:end;
+      border:0;
+      border-radius:999px;
+      padding:10px 16px;
+      font-weight:900;
+      font-size:15px;
+      background:#fff;
+      color:#041a3c;
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+      cursor:pointer;
     }
-    .flip-slot.filled { border-color:transparent; background:transparent; }
-    .deal-zone {
+    .basket-label {
+      width:100%;
+      text-align:center;
+      font-size:13px;
+      font-weight:800;
+      color:rgba(255,255,255,.78);
+      margin-top:2px;
+    }
+    .basket-row {
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(5, 1fr);
+      gap:8px;
+      justify-items:center;
+    }
+    .basket-slot {
+      width:100%;
+      max-width:72px;
+      aspect-ratio:2.5/3.7;
+      border-radius:14px;
+      border:1px dashed var(--slotBorder);
+      background:rgba(4,17,41,.58);
+      position:relative;
+      overflow:visible;
+    }
+    .basket-slot.filled {
+      border-color:transparent;
+      background:transparent;
+    }
+    .deal-stage {
       width:100%;
       display:flex;
       align-items:center;
       justify-content:center;
       gap:14px;
-      min-height:126px;
+      padding:6px 0 2px;
     }
-    .deck-stack { width:92px; aspect-ratio:2.5/3.7; position:relative; filter:drop-shadow(0 10px 16px rgba(0,0,0,.28)); }
+    .deck-column {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      min-width:88px;
+    }
+    .deck-count {
+      min-width:58px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.72);
+      color:#fff;
+      font-size:14px;
+      font-weight:900;
+      text-align:center;
+      border:2px solid rgba(255,255,255,.9);
+    }
+    .deck-stack {
+      width:88px;
+      aspect-ratio:2.5/3.7;
+      position:relative;
+      filter:drop-shadow(0 10px 16px rgba(0,0,0,.28));
+    }
     .deck-shadow,.deck-shadow-2,.deck-shadow-3 {
       position:absolute; inset:0; border-radius:14px; background:rgba(255,255,255,.12); border:2px solid rgba(255,255,255,.18);
     }
@@ -74,35 +146,80 @@
     .deck-top {
       position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff; z-index:4;
     }
-    .deck-top img, .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
-    .preview-row {
-      display:grid;
-      grid-template-columns:repeat(2, 92px);
-      gap:10px;
-      justify-content:center;
+    .deck-top img,
+    .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+    .flop-column {
+      display:flex;
+      flex-direction:column;
       align-items:center;
-      min-height:136px;
+      gap:8px;
+      flex:1;
     }
-    .preview-slot {
-      width:92px; aspect-ratio:2.5/3.7; border-radius:14px; border:1px dashed rgba(255,255,255,.25); background:rgba(4,17,41,.45);
+    .flop-label {
+      font-size:13px;
+      font-weight:800;
+      color:rgba(255,255,255,.78);
+      text-align:center;
+    }
+    .flop-row {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+      width:100%;
+      justify-items:center;
+    }
+    .flop-slot {
+      width:100%;
+      max-width:88px;
+      aspect-ratio:2.5/3.7;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.24);
+      background:rgba(4,17,41,.42);
       position:relative;
+      overflow:visible;
     }
-    .preview-slot.filled { border-color:transparent; background:transparent; }
+    .flop-slot.filled {
+      border-color:transparent;
+      background:transparent;
+    }
     .card-wrap { width:100%; height:100%; position:relative; }
-    .card { width:100%; height:100%; position:relative; box-shadow:0 9px 10px rgba(0,0,0,.28); border-radius:14px; }
-    .card-face { position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff; }
+    .card {
+      width:100%; height:100%; position:relative; box-shadow:0 9px 10px rgba(0,0,0,.28); border-radius:14px;
+    }
+    .card-face {
+      position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff;
+    }
     .price-badge {
       position:absolute; left:50%; bottom:8px; transform:translateX(-50%); min-width:56px; padding:6px 8px; border-radius:999px;
       background:rgba(0,0,0,.84); color:#fff; text-align:center; font-weight:900; font-size:14px; z-index:8; opacity:0;
       transition:opacity .35s ease, transform .35s ease; border:2px solid rgba(255,255,255,.88); line-height:1;
     }
     .revealed .price-badge { opacity:1; transform:translateX(-50%) translateY(-1px); }
-    .delete-btn {
-      position:absolute; top:-7px; right:-7px; width:28px; height:28px; border-radius:50%; border:2px solid #fff; background:#cc1420;
-      color:#fff; font-size:18px; font-weight:900; line-height:1; display:grid; place-items:center; cursor:pointer; z-index:20;
-      box-shadow:0 6px 10px rgba(0,0,0,.35);
+    .keep-btn {
+      position:absolute;
+      left:50%;
+      bottom:-12px;
+      transform:translateX(-50%);
+      border:0;
+      border-radius:999px;
+      padding:7px 12px;
+      background:var(--gold);
+      color:#15233e;
+      font-size:12px;
+      font-weight:900;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+      cursor:pointer;
+      z-index:20;
+      white-space:nowrap;
     }
-    .controls { display:flex; gap:10px; justify-content:center; width:100%; flex-wrap:wrap; }
+    .controls {
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      width:100%;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
     .btn {
       border:0; border-radius:999px; padding:11px 18px; font-weight:900; font-size:16px; box-shadow:0 8px 22px rgba(0,0,0,.28); cursor:pointer;
     }
@@ -110,23 +227,53 @@
     .btn-primary { background:var(--gold); color:#172033; }
     .btn-secondary { background:#fff; color:#041a3c; }
     .btn-share { background:#e9f3ff; color:#062a54; display:none; }
-    .btn-saloon {
-      background:linear-gradient(180deg, #f0d2a0 0%, #d39b53 100%); color:#2d1808; display:none; align-items:center; justify-content:center;
-      gap:10px; width:100%; padding:10px 14px; border-radius:20px; box-shadow:0 10px 24px rgba(0,0,0,.32); font-weight:900;
-      font-size:17px; text-align:left; margin-top:2px; border:0; cursor:pointer;
-    }
-    .btn-saloon img { width:52px; height:52px; object-fit:cover; border-radius:12px; border:2px solid rgba(79,44,20,.25); background:#fff; flex:0 0 auto; }
-    .btn-saloon .saloon-text { display:flex; flex-direction:column; line-height:1.05; }
-    .btn-saloon .saloon-main { font-size:18px; font-weight:900; }
-    .btn-saloon .saloon-sub { font-size:12px; font-weight:700; opacity:.9; margin-top:4px; }
     .scoreboard {
-      width:100%; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); border-radius:18px; padding:14px 14px;
+      width:100%; background:var(--panel); border:1px solid var(--panelBorder); border-radius:18px; padding:14px 14px;
       display:grid; gap:6px; text-align:center;
     }
     .scoreboard .line1 { font-size:16px; font-weight:800; }
     .scoreboard .line2 { font-size:24px; font-weight:900; }
     .scoreboard .line3 { font-size:19px; font-weight:900; color:#ffe08f; }
     .scoreboard .line4 { font-size:13px; color:rgba(255,255,255,.8); }
+    .rules-modal {
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.56);
+      z-index:9999;
+      padding:18px;
+    }
+    .rules-modal.show { display:flex; }
+    .rules-card {
+      width:min(100%, 380px);
+      background:#fff8ea;
+      color:#18233d;
+      border-radius:20px;
+      padding:18px 16px 16px;
+      box-shadow:0 22px 60px rgba(0,0,0,.36);
+    }
+    .rules-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .rules-title { font-size:24px; font-weight:900; }
+    .rules-close {
+      width:36px; height:36px; border-radius:50%; border:0; background:var(--darkChip); color:#fff; font-size:20px; font-weight:900; cursor:pointer;
+    }
+    .rules-list {
+      margin:0;
+      padding-left:18px;
+      display:grid;
+      gap:8px;
+      font-size:14px;
+      font-weight:700;
+      line-height:1.35;
+    }
     .summary-box {
       width:100%; display:none; background:rgba(255,248,234,.12); border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:14px;
       text-align:center; gap:6px;
@@ -134,7 +281,7 @@
     .summary-box.show { display:grid; }
     .summary-title { font-size:15px; font-weight:800; color:rgba(255,255,255,.82); }
     .summary-total { font-size:30px; font-weight:900; color:#fff; }
-    .summary-points { font-size:20px; font-weight:900; color:#ffe08f; }
+    .summary-away { font-size:20px; font-weight:900; color:#ffe08f; }
     .bust-overlay {
       position:fixed; inset:0; display:grid; place-items:center; pointer-events:none; opacity:0; z-index:2147483647; isolation:isolate;
     }
@@ -162,142 +309,113 @@
       100% { transform:scale(1) rotate(0); opacity:1; }
     }
     @keyframes ringBoom { 0% { transform:scale(.1); opacity:0; } 20% { opacity:1; } 100% { transform:scale(2.2); opacity:0; } }
-    @media (max-width:360px) {
-      .wrap { padding-left:8px; padding-right:8px; }
-      .flip-row { gap:8px; }
-      .flip-slot { max-width:84px; }
-      .deal-zone { gap:10px; }
-      .deck-stack, .preview-slot { width:84px; }
-      .preview-row { grid-template-columns:repeat(2, 84px); }
-      .target-label { font-size:20px; }
-      .chip { width:76px; height:76px; }
-      .chip-inner { font-size:25px; }
+    @media (max-width:390px) {
+      .topbar { grid-template-columns:1fr; justify-items:center; gap:10px; }
+      .game-meta { justify-self:center; text-align:center; }
+      .rules-btn { justify-self:center; }
+      .deal-stage { gap:10px; }
+      .deck-stack { width:78px; }
+      .deck-column { min-width:78px; }
+      .deck-count { font-size:13px; min-width:54px; }
+      .flop-slot { max-width:78px; }
+      .basket-slot { max-width:66px; }
+      .target-label { font-size:17px; }
+      .chip { width:60px; height:60px; }
+      .chip-inner { font-size:22px; }
       .btn { font-size:15px; padding:10px 14px; }
       .scoreboard .line2 { font-size:22px; }
       .bust-center { top:40%; }
-      .btn-saloon img { width:46px; height:46px; }
     }
   </style>
 </head>
 <body>
   <main class="wrap">
-    <div class="game-meta">
-      <div class="game-no">Game #213</div>
-      <div class="game-date">6th May 2026</div>
-    </div>
+    <header class="topbar">
+      <div class="game-meta">
+        <div class="game-no">Game #213</div>
+        <div class="game-date">6th May 2026</div>
+      </div>
 
-    <div class="hud">
-      <div class="target-label">Today's Total =</div>
-      <div class="chip"><div class="chip-inner" id="targetChip">$21</div></div>
-    </div>
+      <div class="target-wrap">
+        <div class="target-label">Closest to</div>
+        <div class="chip"><div class="chip-inner" id="targetChip">$21</div></div>
+      </div>
 
-    <section class="round-panel active" id="round1Panel">
-      <div class="round-title">Round 1</div>
-      <div class="round-sub">Deal 2 cards on the right, cross out 0, 1 or 2, then Deal again or Locknload.</div>
+      <button class="rules-btn" id="rulesBtn" type="button">Rules</button>
+    </header>
 
-      <section class="arena">
-        <div class="flip-row">
-          <div class="flip-slot" data-slot="0"></div>
-          <div class="flip-slot" data-slot="1"></div>
-          <div class="flip-slot" data-slot="2"></div>
-          <div class="flip-slot" data-slot="3"></div>
-        </div>
+    <div class="basket-label">Your Basket (5 max)</div>
+    <section class="basket-row" id="basketRow">
+      <div class="basket-slot" data-slot="0"></div>
+      <div class="basket-slot" data-slot="1"></div>
+      <div class="basket-slot" data-slot="2"></div>
+      <div class="basket-slot" data-slot="3"></div>
+      <div class="basket-slot" data-slot="4"></div>
+    </section>
 
-        <div class="deal-zone">
-          <div class="deck-stack">
-            <div class="deck-shadow-3"></div>
-            <div class="deck-shadow-2"></div>
-            <div class="deck-shadow"></div>
-            <div class="deck-top">
-              <img src="./facecard.jpeg" alt="Super21 face card" onerror="this.onerror=null;this.src='facecard.jpeg';">
-            </div>
-          </div>
-          <div class="preview-row" id="previewRow1">
-            <div class="preview-slot" data-preview="0"></div>
-            <div class="preview-slot" data-preview="1"></div>
+    <section class="deal-stage">
+      <div class="deck-column">
+        <div class="deck-count" id="deckCount">27 left</div>
+        <div class="deck-stack">
+          <div class="deck-shadow-3"></div>
+          <div class="deck-shadow-2"></div>
+          <div class="deck-shadow"></div>
+          <div class="deck-top">
+            <img src="./facecard.jpeg" alt="Super21 face card" onerror="this.onerror=null;this.src='./facecard.jpeg';">
           </div>
         </div>
+      </div>
 
-        <div class="flip-row">
-          <div class="flip-slot" data-slot="4"></div>
-          <div class="flip-slot" data-slot="5"></div>
-          <div class="flip-slot" data-slot="6"></div>
-          <div class="flip-slot" data-slot="7"></div>
+      <div class="flop-column">
+        <div class="flop-label">Choose 1 or Deal Again</div>
+        <div class="flop-row" id="flopRow">
+          <div class="flop-slot" data-flop="0"></div>
+          <div class="flop-slot" data-flop="1"></div>
+          <div class="flop-slot" data-flop="2"></div>
         </div>
-      </section>
-
-      <div class="controls">
-        <button class="btn btn-secondary" id="dealBtn1" type="button">Deal</button>
-        <button class="btn btn-primary" id="lockBtn1" type="button">Locknload</button>
       </div>
     </section>
 
-    <section class="round-panel" id="round2Panel">
-      <div class="round-title">Last Chance Saloon</div>
-      <div class="round-sub">Same deal. Two preview cards on the right. Cross out 0, 1 or 2.</div>
-
-      <section class="arena">
-        <div class="flip-row">
-          <div class="flip-slot" data-slot="0"></div>
-          <div class="flip-slot" data-slot="1"></div>
-          <div class="flip-slot" data-slot="2"></div>
-          <div class="flip-slot" data-slot="3"></div>
-        </div>
-
-        <div class="deal-zone">
-          <div class="deck-stack">
-            <div class="deck-shadow-3"></div>
-            <div class="deck-shadow-2"></div>
-            <div class="deck-shadow"></div>
-            <div class="deck-top">
-              <img src="./facecard.jpeg" alt="Super21 face card" onerror="this.onerror=null;this.src='facecard.jpeg';">
-            </div>
-          </div>
-          <div class="preview-row" id="previewRow2">
-            <div class="preview-slot" data-preview="0"></div>
-            <div class="preview-slot" data-preview="1"></div>
-          </div>
-        </div>
-
-        <div class="flip-row">
-          <div class="flip-slot" data-slot="4"></div>
-          <div class="flip-slot" data-slot="5"></div>
-          <div class="flip-slot" data-slot="6"></div>
-          <div class="flip-slot" data-slot="7"></div>
-        </div>
-      </section>
-
-      <div class="controls">
-        <button class="btn btn-secondary" id="dealBtn2" type="button">Deal</button>
-        <button class="btn btn-primary" id="lockBtn2" type="button">Locknload</button>
-      </div>
-    </section>
+    <div class="controls">
+      <button class="btn btn-secondary" id="dealBtn" type="button">Deal</button>
+      <button class="btn btn-primary" id="lockBtn" type="button">Locknload</button>
+    </div>
 
     <section class="scoreboard" aria-live="polite">
-      <div class="line1" id="statusText">Press Deal to show 2 cards on the right. Cross out any you do not want.</div>
-      <div class="line2" id="totalText">Round 1 total: $0.00</div>
-      <div class="line3" id="scoreText">Distance from $21: $21.00</div>
-      <div class="line4" id="hintText">When you press Deal again, any preview cards without a cross are moved into the next free spots.</div>
+      <div class="line1" id="statusText">Press Deal to flop 3 cards. Keep 1 or skip all 3.</div>
+      <div class="line2" id="totalText">Basket total: $0.00</div>
+      <div class="line3" id="awayText">Distance from $21: $21.00</div>
+      <div class="line4" id="hintText">Press Deal again to clear the flop and show the next 3 cards.</div>
     </section>
 
-    <button class="btn-saloon" id="saloonBtn" type="button">
-      <img src="saloon.jpg" alt="Saloon entrance">
-      <span class="saloon-text">
-        <span class="saloon-main">Last Chance Saloon</span>
-        <span class="saloon-sub">Take your second shot</span>
-      </span>
-    </button>
-
     <section class="summary-box" id="summaryBox">
-      <div class="summary-title">Final combined total</div>
-      <div class="summary-total" id="combinedTotalText">$0.00</div>
-      <div class="summary-points" id="combinedPointsText">$42.00 away</div>
+      <div class="summary-title">Final result</div>
+      <div class="summary-total" id="finalTotalText">$0.00</div>
+      <div class="summary-away" id="finalAwayText">$21.00 away</div>
     </section>
 
     <div class="controls">
       <button class="btn btn-share" id="shareBtn" type="button">Share</button>
     </div>
   </main>
+
+  <div class="rules-modal" id="rulesModal" aria-hidden="true">
+    <div class="rules-card" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="rules-head">
+        <div class="rules-title" id="rulesTitle">RULES</div>
+        <button class="rules-close" id="rulesClose" type="button">×</button>
+      </div>
+      <ol class="rules-list">
+        <li>Closest to $21 without going over.</li>
+        <li>Pick products you want in your basket.</li>
+        <li>Press <strong>Deal</strong> from the stack of 27 to flop 3 cards.</li>
+        <li>From each flop, you may keep 1 card or skip all 3.</li>
+        <li>Press <strong>Locknload</strong> when you have your set closest to $21.</li>
+        <li>You have a maximum of 5 basket spots to fill.</li>
+        <li>If you do not keep a card, press <strong>Deal</strong> again and the next 3 cards flop out.</li>
+      </ol>
+    </div>
+  </div>
 
   <div class="bust-overlay" id="bustOverlay">
     <div class="bust-center">
@@ -308,51 +426,66 @@
 
   <script>
     const target = 21;
-    const maxSlots = 8;
-    const dealSize = 2;
+    const startingDeck = 27;
+    const maxBasket = 5;
+    const flopSize = 3;
     const gameNumber = 213;
     const gameDate = '6th May 2026';
     const shareUrl = 'https://super21-b5je.onrender.com';
 
-    const round1Cards = [
+    const deckCards = [
       { image: 'cards/morningfresh-card.png', alt: 'Morning Fresh Lemon card', price: 10.00 },
       { image: 'cards/emporiumgoats-card.png', alt: 'Emporium goat cheese card', price: 8.99 },
+      { image: 'cards/quilton-card.png', alt: 'Quilton card', price: 9.89 },
+      { image: 'cards/pizzasnacks-card.png', alt: 'Pizza Snacks card', price: 5.99 },
       { image: 'cards/halloumi-card.png', alt: 'Halloumi card', price: 4.99 },
       { image: 'cards/cadbury-card.png', alt: 'Cadbury card', price: 4.00 },
       { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 },
       { image: 'cards/cocopops-card.png', alt: 'Coco Pops card', price: 7.20 },
       { image: 'cards/smiths-card.png', alt: 'Smiths chips card', price: 2.50 },
-      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 }
-    ];
-
-    const round2Cards = [
-      { image: 'cards/quilton-card.png', alt: 'Quilton card', price: 9.89 },
-      { image: 'cards/pizzasnacks-card.png', alt: 'Pizza Snacks card', price: 5.99 },
+      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 },
       { image: 'cards/begamacandcheese-card.png', alt: 'Bega Mac and Cheese card', price: 4.69 },
       { image: 'cards/briochebuns-card.png', alt: 'Brioche buns card', price: 3.49 },
       { image: 'cards/cadbury-card.png', alt: 'Cadbury card', price: 4.00 },
       { image: 'cards/halloumi-card.png', alt: 'Halloumi card', price: 4.99 },
       { image: 'cards/cocopops-card.png', alt: 'Coco Pops card', price: 7.20 },
-      { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 }
+      { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 },
+      { image: 'cards/smiths-card.png', alt: 'Smiths chips card', price: 2.50 },
+      { image: 'cards/briochebuns-card.png', alt: 'Brioche buns card', price: 3.49 },
+      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 },
+      { image: 'cards/cadbury-card.png', alt: 'Cadbury card', price: 4.00 },
+      { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 },
+      { image: 'cards/begamacandcheese-card.png', alt: 'Bega Mac and Cheese card', price: 4.69 },
+      { image: 'cards/cocopops-card.png', alt: 'Coco Pops card', price: 7.20 },
+      { image: 'cards/halloumi-card.png', alt: 'Halloumi card', price: 4.99 },
+      { image: 'cards/smiths-card.png', alt: 'Smiths chips card', price: 2.50 },
+      { image: 'cards/briochebuns-card.png', alt: 'Brioche buns card', price: 3.49 },
+      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 }
     ];
 
-    const bustOverlay = document.getElementById('bustOverlay');
+    const basketSlots = [...document.querySelectorAll('.basket-slot')];
+    const flopSlots = [...document.querySelectorAll('.flop-slot')];
+    const deckCount = document.getElementById('deckCount');
+    const dealBtn = document.getElementById('dealBtn');
+    const lockBtn = document.getElementById('lockBtn');
     const statusText = document.getElementById('statusText');
     const totalText = document.getElementById('totalText');
-    const scoreText = document.getElementById('scoreText');
+    const awayText = document.getElementById('awayText');
     const hintText = document.getElementById('hintText');
     const summaryBox = document.getElementById('summaryBox');
-    const combinedTotalText = document.getElementById('combinedTotalText');
-    const combinedPointsText = document.getElementById('combinedPointsText');
-    const saloonBtn = document.getElementById('saloonBtn');
+    const finalTotalText = document.getElementById('finalTotalText');
+    const finalAwayText = document.getElementById('finalAwayText');
     const shareBtn = document.getElementById('shareBtn');
-    const round1Panel = document.getElementById('round1Panel');
-    const round2Panel = document.getElementById('round2Panel');
-    const targetChip = document.getElementById('targetChip');
-    targetChip.textContent = `$${target}`;
+    const bustOverlay = document.getElementById('bustOverlay');
+    const rulesBtn = document.getElementById('rulesBtn');
+    const rulesModal = document.getElementById('rulesModal');
+    const rulesClose = document.getElementById('rulesClose');
 
-    let round1Result = null;
-    let round2Result = null;
+    let deckIndex = 0;
+    let basketIndex = 0;
+    let locked = false;
+    let currentFlop = [];
+    const keptCards = [];
 
     function triggerBust() {
       bustOverlay.classList.remove('show');
@@ -360,9 +493,18 @@
       bustOverlay.classList.add('show');
     }
 
-    function makeCardMarkup(cardData, onDelete, previewMode = false) {
+    function keptTotal() {
+      return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
+    }
+
+    function updateDeckCount() {
+      const left = Math.max(0, startingDeck - deckIndex);
+      deckCount.textContent = `${left} left`;
+    }
+
+    function makeCardMarkup(cardData, revealPrice = false, showKeep = false, onKeep = null) {
       const wrap = document.createElement('div');
-      wrap.className = 'card-wrap';
+      wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
       wrap.innerHTML = `
         <div class="card">
           <div class="card-face front">
@@ -371,209 +513,131 @@
           <div class="price-badge">$${cardData.price.toFixed(2)}</div>
         </div>
       `;
-      if (previewMode) {
-        const deleteBtn = document.createElement('button');
-        deleteBtn.type = 'button';
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.textContent = '×';
-        deleteBtn.addEventListener('click', onDelete);
-        wrap.appendChild(deleteBtn);
+      if (showKeep) {
+        const keepBtn = document.createElement('button');
+        keepBtn.type = 'button';
+        keepBtn.className = 'keep-btn';
+        keepBtn.textContent = 'KEEP';
+        keepBtn.addEventListener('click', onKeep);
+        wrap.appendChild(keepBtn);
       }
       return wrap;
     }
 
-    function setupRound(options) {
-      const { panelId, previewRowId, dealBtnId, lockBtnId, cardsData, roundName, onFinish } = options;
-      const panel = document.getElementById(panelId);
-      const previewRow = document.getElementById(previewRowId);
-      const previewSlots = [...previewRow.querySelectorAll('.preview-slot')];
-      const boardSlots = [...panel.querySelectorAll('.flip-slot')];
-      const dealBtn = document.getElementById(dealBtnId);
-      const lockBtn = document.getElementById(lockBtnId);
-
-      let deckIndex = 0;
-      let boardIndex = 0;
-      let locked = false;
-      let previewCards = [];
-      const keptCards = [];
-
-      function keptTotal() {
-        return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
-      }
-
-      function refreshTexts(customStatus, customHint) {
-        const total = keptTotal();
-        totalText.textContent = `${roundName} total: $${total.toFixed(2)}`;
-        if (total > target) {
-          scoreText.textContent = `Distance from $21: BUST by $${(total - target).toFixed(2)}`;
-        } else {
-          scoreText.textContent = `Distance from $21: $${(target - total).toFixed(2)}`;
-        }
-        statusText.textContent = customStatus;
-        hintText.textContent = customHint;
-      }
-
-      function clearPreviewUI() {
-        previewSlots.forEach(slot => {
-          slot.innerHTML = '';
-          slot.classList.remove('filled');
-        });
-      }
-
-      function commitPreviewToBoard() {
-        if (!previewCards.length) return;
-        const survivors = previewCards.filter(card => !card.deleted);
-        survivors.forEach(card => {
-          if (boardIndex >= maxSlots) return;
-          const slot = boardSlots[boardIndex++];
-          slot.classList.add('filled');
-          slot.innerHTML = '';
-          slot.appendChild(makeCardMarkup(card, null, false));
-          keptCards.push(card);
-        });
-        previewCards = [];
-        clearPreviewUI();
-      }
-
-      function renderPreview() {
-        clearPreviewUI();
-        previewCards.forEach((card, i) => {
-          if (card.deleted) return;
-          const slot = previewSlots[i];
-          slot.classList.add('filled');
-          slot.appendChild(makeCardMarkup(card, () => {
-            card.deleted = true;
-            renderPreview();
-            const left = previewCards.filter(c => !c.deleted).length;
-            refreshTexts(
-              `${roundName}: ${left} preview card${left === 1 ? '' : 's'} still in the deal window.`,
-              'Press Deal to bank the remaining preview cards into the next free spots, or Locknload now.'
-            );
-          }, true));
-        });
-      }
-
-      dealBtn.addEventListener('click', () => {
-        if (locked) return;
-
-        commitPreviewToBoard();
-
-        if (boardIndex >= maxSlots || deckIndex >= cardsData.length) {
-          dealBtn.disabled = true;
-          refreshTexts(
-            `${roundName}: no more room to deal.`,
-            'Locknload whenever you are ready.'
-          );
-          return;
-        }
-
-        previewCards = [];
-        for (let i = 0; i < dealSize && deckIndex < cardsData.length; i++) {
-          previewCards.push({ ...cardsData[deckIndex++], deleted: false });
-        }
-        renderPreview();
-
-        const live = previewCards.filter(c => !c.deleted).length;
-        refreshTexts(
-          `${roundName}: 2 cards dealt to the right of the deck. Cross out 0, 1 or 2.`,
-          'Press Deal again to move the remaining preview cards into the next free spots.'
-        );
-
-        if (boardIndex >= maxSlots) {
-          dealBtn.disabled = true;
-        }
+    function clearFlop() {
+      flopSlots.forEach(slot => {
+        slot.innerHTML = '';
+        slot.classList.remove('filled');
       });
-
-      lockBtn.addEventListener('click', () => {
-        if (locked) return;
-        commitPreviewToBoard();
-        if (!keptCards.length) return;
-
-        locked = true;
-        dealBtn.disabled = true;
-        lockBtn.disabled = true;
-
-        panel.querySelectorAll('.card-wrap').forEach(cardEl => cardEl.classList.add('revealed'));
-
-        const total = keptTotal();
-        const bust = total > target;
-        const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
-        if (bust) triggerBust();
-
-        onFinish({ total, keptCount: keptCards.length, bust, away });
-      });
+      currentFlop = [];
     }
 
-    setupRound({
-      panelId: 'round1Panel',
-      previewRowId: 'previewRow1',
-      dealBtnId: 'dealBtn1',
-      lockBtnId: 'lockBtn1',
-      cardsData: round1Cards,
-      roundName: 'Round 1',
-      onFinish: (result) => {
-        round1Result = result;
-        totalText.textContent = `Round 1 total: $${result.total.toFixed(2)}`;
-        scoreText.textContent = result.bust ? `Distance from $21: BUST by $${result.away.toFixed(2)}` : `Distance from $21: $${result.away.toFixed(2)}`;
-        statusText.textContent = result.bust
-          ? `Round 1 BUST! You went over $21 by $${result.away.toFixed(2)}.`
-          : `Round 1 locked at $${result.total.toFixed(2)} with ${result.keptCount} cards kept.`;
-        hintText.textContent = 'Now head to Last Chance Saloon for Round 2.';
-        saloonBtn.style.display = 'flex';
+    function updateTexts() {
+      const total = keptTotal();
+      totalText.textContent = `Basket total: $${total.toFixed(2)}`;
+      if (total > target) {
+        awayText.textContent = `Distance from $21: BUST by $${(total - target).toFixed(2)}`;
+      } else {
+        awayText.textContent = `Distance from $21: $${(target - total).toFixed(2)}`;
       }
-    });
+    }
 
-    setupRound({
-      panelId: 'round2Panel',
-      previewRowId: 'previewRow2',
-      dealBtnId: 'dealBtn2',
-      lockBtnId: 'lockBtn2',
-      cardsData: round2Cards,
-      roundName: 'Round 2',
-      onFinish: (result) => {
-        round2Result = result;
-        const combinedTotal = +((round1Result?.total || 0) + result.total).toFixed(2);
-        const combinedAway = +((round1Result?.away || 0) + result.away).toFixed(2);
-        totalText.textContent = `Round 2 total: $${result.total.toFixed(2)}`;
-        scoreText.textContent = result.bust ? `Distance from $21: BUST by $${result.away.toFixed(2)}` : `Distance from $21: $${result.away.toFixed(2)}`;
-        statusText.textContent = result.bust
-          ? `Round 2 BUST! You went over $21 by $${result.away.toFixed(2)}.`
-          : `Round 2 locked at $${result.total.toFixed(2)} with ${result.keptCount} cards kept.`;
-        hintText.textContent = 'Final result ready to share.';
-        summaryBox.classList.add('show');
-        combinedTotalText.textContent = `$${combinedTotal.toFixed(2)}`;
-        combinedPointsText.textContent = `$${combinedAway.toFixed(2)} away`;
-        shareBtn.style.display = 'inline-block';
+    function keepCard(cardData) {
+      if (locked || basketIndex >= maxBasket) return;
+      const slot = basketSlots[basketIndex++];
+      slot.classList.add('filled');
+      slot.innerHTML = '';
+      slot.appendChild(makeCardMarkup(cardData, false, false, null));
+      keptCards.push(cardData);
+      clearFlop();
+      updateTexts();
+
+      if (basketIndex >= maxBasket) {
+        dealBtn.disabled = true;
+        statusText.textContent = 'Your basket is full.';
+        hintText.textContent = 'Press Locknload to reveal prices and final result.';
+      } else {
+        statusText.textContent = `${keptCards.length} card${keptCards.length === 1 ? '' : 's'} kept in your basket.`;
+        hintText.textContent = 'Press Deal for the next 3 cards, or Locknload now.';
       }
-    });
+    }
 
-    saloonBtn.addEventListener('click', () => {
-      saloonBtn.style.display = 'none';
-      round1Panel.classList.remove('active');
-      round2Panel.classList.add('active');
-      statusText.textContent = 'Welcome to Last Chance Saloon. Press Deal to show 2 cards on the right.';
-      totalText.textContent = `Round 1 total: $${(round1Result?.total || 0).toFixed(2)}`;
-      scoreText.textContent = round1Result?.bust
-        ? `Distance from $21: BUST by $${(round1Result?.away || 0).toFixed(2)}`
-        : `Distance from $21: $${(round1Result?.away || target).toFixed(2)}`;
-      hintText.textContent = 'Cross out 0, 1 or 2 preview cards. Deal again to bank the rest.';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    function flopThree() {
+      if (locked || basketIndex >= maxBasket) return;
+
+      clearFlop();
+
+      const nextCards = [];
+      for (let i = 0; i < flopSize && deckIndex < deckCards.length; i++) {
+        nextCards.push(deckCards[deckIndex++]);
+      }
+      updateDeckCount();
+      currentFlop = nextCards;
+
+      flopSlots.forEach((slot, i) => {
+        const card = nextCards[i];
+        slot.innerHTML = '';
+        slot.classList.remove('filled');
+        if (!card) return;
+        slot.classList.add('filled');
+        slot.appendChild(makeCardMarkup(card, false, true, () => keepCard(card)));
+      });
+
+      if (!nextCards.length) {
+        dealBtn.disabled = true;
+        statusText.textContent = 'No cards left to deal.';
+        hintText.textContent = 'Press Locknload to finish with your current basket.';
+        return;
+      }
+
+      statusText.textContent = 'Choose 1 card from the flop, or press Deal again to skip all 3.';
+      hintText.textContent = 'Only 1 card can be kept from each flop of 3.';
+    }
+
+    function lockAndReveal() {
+      if (locked || keptCards.length === 0) return;
+      locked = true;
+      dealBtn.disabled = true;
+      lockBtn.disabled = true;
+      clearFlop();
+
+      basketSlots.forEach(slot => {
+        const wrap = slot.querySelector('.card-wrap');
+        if (wrap) wrap.classList.add('revealed');
+      });
+
+      const total = keptTotal();
+      const bust = total > target;
+      const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+      if (bust) triggerBust();
+
+      statusText.textContent = bust
+        ? `BUST! You went over $21 by $${away.toFixed(2)}.`
+        : `Locked at $${total.toFixed(2)} with ${keptCards.length} card${keptCards.length === 1 ? '' : 's'} in your basket.`;
+      hintText.textContent = 'Final result ready to share.';
+      updateTexts();
+      summaryBox.classList.add('show');
+      finalTotalText.textContent = `$${total.toFixed(2)}`;
+      finalAwayText.textContent = bust ? `BUST by $${away.toFixed(2)}` : `$${away.toFixed(2)} away`;
+      shareBtn.style.display = 'inline-block';
+    }
 
     function buildShareText() {
-      const combinedTotal = +((round1Result?.total || 0) + (round2Result?.total || 0)).toFixed(2);
-      const combinedAway = +((round1Result?.away || 0) + (round2Result?.away || 0)).toFixed(2);
+      const total = keptTotal();
+      const bust = total > target;
+      const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
       return [
         `Super21 Game #${gameNumber}`,
         `${gameDate}`,
-        `Target each round: $${target}`,
-        `Round 1: $${(round1Result?.total || 0).toFixed(2)} (${round1Result?.bust ? 'BUST by' : 'away'} $${(round1Result?.away || 0).toFixed(2)})`,
-        `Round 2: $${(round2Result?.total || 0).toFixed(2)} (${round2Result?.bust ? 'BUST by' : 'away'} $${(round2Result?.away || 0).toFixed(2)})`,
-        `Combined total: $${combinedTotal.toFixed(2)}`,
-        `Combined away: $${combinedAway.toFixed(2)}`,
+        `Target: $${target}`,
+        `Basket total: $${total.toFixed(2)}`,
+        bust ? `BUST by $${away.toFixed(2)}` : `$${away.toFixed(2)} away`,
         `${shareUrl}`
       ].join('\n');
     }
+
+    dealBtn.addEventListener('click', flopThree);
+    lockBtn.addEventListener('click', lockAndReveal);
 
     shareBtn.addEventListener('click', async () => {
       const text = buildShareText();
@@ -591,6 +655,26 @@
         alert(text);
       }
     });
+
+    rulesBtn.addEventListener('click', () => {
+      rulesModal.classList.add('show');
+      rulesModal.setAttribute('aria-hidden', 'false');
+    });
+
+    rulesClose.addEventListener('click', () => {
+      rulesModal.classList.remove('show');
+      rulesModal.setAttribute('aria-hidden', 'true');
+    });
+
+    rulesModal.addEventListener('click', (e) => {
+      if (e.target === rulesModal) {
+        rulesModal.classList.remove('show');
+        rulesModal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    updateDeckCount();
+    updateTexts();
   </script>
 </body>
 </html>
