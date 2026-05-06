@@ -178,6 +178,10 @@
       position:relative;
       overflow:visible;
     }
+    .flop-slot.selectable { cursor:pointer; }
+    .flop-slot.selected { transform:translateY(-4px); }
+    .flop-slot.selected .card-face { border-color:var(--gold); box-shadow:0 0 0 3px rgba(255,217,120,.28) inset; }
+    .flop-slot.disabled { opacity:.44; }
     .flop-slot.filled {
       border-color:transparent;
       background:transparent;
@@ -195,23 +199,27 @@
       transition:opacity .35s ease, transform .35s ease; border:2px solid rgba(255,255,255,.88); line-height:1;
     }
     .revealed .price-badge { opacity:1; transform:translateX(-50%) translateY(-1px); }
-    .keep-btn {
+    .select-badge {
       position:absolute;
-      left:50%;
-      bottom:-12px;
-      transform:translateX(-50%);
-      border:0;
-      border-radius:999px;
-      padding:7px 12px;
-      background:var(--gold);
-      color:#15233e;
-      font-size:12px;
+      right:-6px;
+      top:-6px;
+      width:28px;
+      height:28px;
+      border-radius:50%;
+      background:#fff;
+      color:#0f223f;
+      border:2px solid var(--gold);
+      display:grid;
+      place-items:center;
+      font-size:16px;
       font-weight:900;
       box-shadow:0 6px 14px rgba(0,0,0,.25);
-      cursor:pointer;
       z-index:20;
-      white-space:nowrap;
+      opacity:0;
+      transform:scale(.85);
+      transition:opacity .18s ease, transform .18s ease;
     }
+    .flop-slot.selected .select-badge { opacity:1; transform:scale(1); }
     .controls {
       display:flex;
       gap:10px;
@@ -367,7 +375,7 @@
       </div>
 
       <div class="flop-column">
-        <div class="flop-label">Choose 1 or Deal Again</div>
+        <div class="flop-label" id="flopLabel">Select up to 3 cards</div>
         <div class="flop-row" id="flopRow">
           <div class="flop-slot" data-flop="0"></div>
           <div class="flop-slot" data-flop="1"></div>
@@ -382,10 +390,10 @@
     </div>
 
     <section class="scoreboard" aria-live="polite">
-      <div class="line1" id="statusText">Press Deal to flop 3 cards. Keep 1 or skip all 3.</div>
+      <div class="line1" id="statusText">Press Deal to flop 3 cards. Select any you want to keep.</div>
       <div class="line2" id="totalText">Basket total: $0.00</div>
       <div class="line3" id="awayText">Distance from $21: $21.00</div>
-      <div class="line4" id="hintText">Press Deal again to clear the flop and show the next 3 cards.</div>
+      <div class="line4" id="hintText">Deal banks selected cards first, then flops the next 3 cards.</div>
     </section>
 
     <section class="summary-box" id="summaryBox">
@@ -409,10 +417,11 @@
         <li>Closest to $21 without going over.</li>
         <li>Pick products you want in your basket.</li>
         <li>Press <strong>Deal</strong> from the stack of 27 to flop 3 cards.</li>
-        <li>From each flop, you may keep 1 card or skip all 3.</li>
+        <li>From each flop, you may keep 0, 1, 2 or 3 cards.</li>
         <li>Press <strong>Locknload</strong> when you have your set closest to $21.</li>
         <li>You have a maximum of 5 basket spots to fill.</li>
-        <li>If you do not keep a card, press <strong>Deal</strong> again and the next 3 cards flop out.</li>
+        <li>Press <strong>Deal</strong> again to bank selected cards and flop the next 3 cards.</li>
+        <li>You cannot keep more cards than empty basket spots remaining.</li>
       </ol>
     </div>
   </div>
@@ -465,6 +474,7 @@
 
     const basketSlots = [...document.querySelectorAll('.basket-slot')];
     const flopSlots = [...document.querySelectorAll('.flop-slot')];
+    const flopLabel = document.getElementById('flopLabel');
     const deckCount = document.getElementById('deckCount');
     const dealBtn = document.getElementById('dealBtn');
     const lockBtn = document.getElementById('lockBtn');
@@ -485,6 +495,7 @@
     let basketIndex = 0;
     let locked = false;
     let currentFlop = [];
+    let selectedFlop = new Set();
     const keptCards = [];
 
     function triggerBust() {
@@ -497,12 +508,20 @@
       return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
     }
 
+    function slotsLeft() {
+      return Math.max(0, maxBasket - basketIndex);
+    }
+
+    function maxSelectable() {
+      return Math.min(3, slotsLeft());
+    }
+
     function updateDeckCount() {
       const left = Math.max(0, startingDeck - deckIndex);
       deckCount.textContent = `${left} left`;
     }
 
-    function makeCardMarkup(cardData, revealPrice = false, showKeep = false, onKeep = null) {
+    function makeCardMarkup(cardData, revealPrice = false) {
       const wrap = document.createElement('div');
       wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
       wrap.innerHTML = `
@@ -513,23 +532,17 @@
           <div class="price-badge">$${cardData.price.toFixed(2)}</div>
         </div>
       `;
-      if (showKeep) {
-        const keepBtn = document.createElement('button');
-        keepBtn.type = 'button';
-        keepBtn.className = 'keep-btn';
-        keepBtn.textContent = 'KEEP';
-        keepBtn.addEventListener('click', onKeep);
-        wrap.appendChild(keepBtn);
-      }
       return wrap;
     }
 
     function clearFlop() {
       flopSlots.forEach(slot => {
         slot.innerHTML = '';
-        slot.classList.remove('filled');
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
       });
       currentFlop = [];
+      selectedFlop = new Set();
+      flopLabel.textContent = `Select up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'}`;
     }
 
     function updateTexts() {
@@ -542,36 +555,182 @@
       }
     }
 
-    function keepCard(cardData) {
-      if (locked || basketIndex >= maxBasket) return;
-      const slot = basketSlots[basketIndex++];
-      slot.classList.add('filled');
-      slot.innerHTML = '';
-      slot.appendChild(makeCardMarkup(cardData, false, false, null));
-      keptCards.push(cardData);
+    function syncFlopStates() {
+      const limit = maxSelectable();
+      flopLabel.textContent = `Select up to ${limit} card${limit === 1 ? '' : 's'}`;
+      flopSlots.forEach((slot, i) => {
+        const hasCard = !!currentFlop[i];
+        const selected = selectedFlop.has(i);
+        slot.classList.toggle('selected', selected);
+        slot.classList.toggle('selectable', hasCard);
+        slot.classList.toggle('disabled', hasCard && !selected && selectedFlop.size >= limit && limit > 0);
+      });
+    }
+
+    function toggleSelect(index) {
+      if (locked || !currentFlop[index]) return;
+      const limit = maxSelectable();
+      if (selectedFlop.has(index)) {
+        selectedFlop.delete(index);
+      } else {
+        if (selectedFlop.size >= limit) return;
+        selectedFlop.add(index);
+      }
+      syncFlopStates();
+      if (selectedFlop.size) {
+        statusText.textContent = `${selectedFlop.size} card${selectedFlop.size === 1 ? '' : 's'} selected from this flop.`;
+        hintText.textContent = 'Press Deal to bank selected cards and flop the next 3 cards.';
+      } else if (currentFlop.length) {
+        statusText.textContent = 'Select any cards you want to keep, or press Deal again to skip all 3.';
+        hintText.textContent = `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
+      }
+    }
+
+    function bankSelectedCards() {
+      if (!selectedFlop.size) return;
+      [...selectedFlop].sort((a, b) => a - b).forEach(index => {
+        if (basketIndex >= maxBasket || !currentFlop[index]) return;
+        const cardData = currentFlop[index];
+        const slot = basketSlots[basketIndex++];
+        slot.classList.add('filled');
+        slot.innerHTML = '';
+        slot.appendChild(makeCardMarkup(cardData, false));
+        keptCards.push(cardData);
+      });
       clearFlop();
       updateTexts();
-
-      if (basketIndex >= maxBasket) {
-        dealBtn.disabled = true;
-        statusText.textContent = 'Your basket is full.';
-        hintText.textContent = 'Press Locknload to reveal prices and final result.';
-      } else {
-        statusText.textContent = `${keptCards.length} card${keptCards.length === 1 ? '' : 's'} kept in your basket.`;
-        hintText.textContent = 'Press Deal for the next 3 cards, or Locknload now.';
-      }
     }
 
     function flopThree() {
       if (locked || basketIndex >= maxBasket) return;
 
-      clearFlop();
+      if (currentFlop.length) {
+        bankSelectedCards();
+        if (basketIndex >= maxBasket) {
+          dealBtn.disabled = true;
+          statusText.textContent = 'Your basket is full.';
+          hintText.textContent = 'Press Locknload to reveal prices and final result.';
+          return;
+        }
+      }
 
       const nextCards = [];
       for (let i = 0; i < flopSize && deckIndex < deckCards.length; i++) {
         nextCards.push(deckCards[deckIndex++]);
       }
       updateDeckCount();
+      currentFlop = nextCards;
+      selectedFlop = new Set();
+
+      flopSlots.forEach((slot, i) => {
+        const card = nextCards[i];
+        slot.innerHTML = '';
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
+        if (!card) return;
+        slot.classList.add('filled', 'selectable');
+        slot.appendChild(makeCardMarkup(card, false));
+        const badge = document.createElement('div');
+        badge.className = 'select-badge';
+        badge.textContent = '✓';
+        slot.appendChild(badge);
+        slot.onclick = () => toggleSelect(i);
+      });
+
+      if (!nextCards.length) {
+        dealBtn.disabled = true;
+        statusText.textContent = 'No cards left to deal.';
+        hintText.textContent = 'Press Locknload to finish with your current basket.';
+        clearFlop();
+        return;
+      }
+
+      syncFlopStates();
+      statusText.textContent = 'Select any cards you want to keep, or press Deal again to skip all 3.';
+      hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+    }
+
+    function lockAndReveal() {
+      if (locked || keptCards.length === 0) return;
+      if (currentFlop.length) bankSelectedCards();
+      locked = true;
+      dealBtn.disabled = true;
+      lockBtn.disabled = true;
+      clearFlop();
+
+      basketSlots.forEach(slot => {
+        const wrap = slot.querySelector('.card-wrap');
+        if (wrap) wrap.classList.add('revealed');
+      });
+
+      const total = keptTotal();
+      const bust = total > target;
+      const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+      if (bust) triggerBust();
+
+      statusText.textContent = bust
+        ? `BUST! You went over $21 by $${away.toFixed(2)}.`
+        : `Locked at $${total.toFixed(2)} with ${keptCards.length} card${keptCards.length === 1 ? '' : 's'} in your basket.`;
+      hintText.textContent = 'Final result ready to share.';
+      updateTexts();
+      summaryBox.classList.add('show');
+      finalTotalText.textContent = `$${total.toFixed(2)}`;
+      finalAwayText.textContent = bust ? `BUST by $${away.toFixed(2)}` : `$${away.toFixed(2)} away`;
+      shareBtn.style.display = 'inline-block';
+    }
+
+    function buildShareText() {
+      const total = keptTotal();
+      const bust = total > target;
+      const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+      return [
+        `Super21 Game #${gameNumber}`,
+        `${gameDate}`,
+        `Target: $${target}`,
+        `Basket total: $${total.toFixed(2)}`,
+        bust ? `BUST by $${away.toFixed(2)}` : `$${away.toFixed(2)} away`,
+        `${shareUrl}`
+      ].join('
+');
+    }
+
+    dealBtn.addEventListener('click', flopThree);
+    lockBtn.addEventListener('click', lockAndReveal);
+
+    shareBtn.addEventListener('click', async () => {
+      const text = buildShareText();
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: `Super21 Game #${gameNumber}`, text, url: shareUrl });
+          return;
+        } catch (e) {}
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        shareBtn.textContent = 'Copied!';
+        setTimeout(() => { shareBtn.textContent = 'Share'; }, 1400);
+      } catch (e) {
+        alert(text);
+      }
+    });
+
+    rulesBtn.addEventListener('click', () => {
+      rulesModal.classList.add('show');
+      rulesModal.setAttribute('aria-hidden', 'false');
+    });
+
+    rulesClose.addEventListener('click', () => {
+      rulesModal.classList.remove('show');
+      rulesModal.setAttribute('aria-hidden', 'true');
+    });
+
+    rulesModal.addEventListener('click', (e) => {
+      if (e.target === rulesModal) {
+        rulesModal.classList.remove('show');
+        rulesModal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    updateDeckCount();
       currentFlop = nextCards;
 
       flopSlots.forEach((slot, i) => {
