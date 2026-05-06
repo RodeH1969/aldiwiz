@@ -280,13 +280,6 @@
       font-weight:700;
       line-height:1.35;
     }
-    .summary-box {
-      width:100%; display:none; background:rgba(255,248,234,.12); border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:16px 14px;
-      text-align:center; gap:8px;
-    }
-    .summary-box.show { display:grid; }
-    .summary-title { font-size:16px; font-weight:900; color:#fff; }
-    .summary-total { font-size:18px; font-weight:900; color:#fff; line-height:1.35; }
     .bust-overlay {
       position:fixed; inset:0; display:grid; place-items:center; pointer-events:none; opacity:0; z-index:2147483647; isolation:isolate;
     }
@@ -393,10 +386,6 @@
       <div class="line4" id="hintText">Deal banks selected cards first, then flops the next 3 cards.</div>
     </section>
 
-    <section class="summary-box" id="summaryBox">
-      <div class="summary-title">Final result</div>
-      <div class="summary-total" id="finalTotalText">Basket total: $0.00, just $21.00 off perfection!</div>
-    </section>
 
     <div class="controls">
       <button class="btn btn-share" id="shareBtn" type="button">Share</button>
@@ -478,8 +467,6 @@
     const totalText = document.getElementById('totalText');
     const awayText = document.getElementById('awayText');
     const hintText = document.getElementById('hintText');
-    const summaryBox = document.getElementById('summaryBox');
-    const finalTotalText = document.getElementById('finalTotalText');
     const shareBtn = document.getElementById('shareBtn');
     const bustOverlay = document.getElementById('bustOverlay');
     const rulesBtn = document.getElementById('rulesBtn');
@@ -665,14 +652,13 @@
       if (bust) triggerBust();
 
       statusText.textContent = bust
-        ? `BUST! You went over $21 by $${away.toFixed(2)}.`
+        ? `🤯 BUSTED!!! You went over $21 by $${away.toFixed(2)}.`
         : `Locked at $${total.toFixed(2)} with ${keptCards.length} card${keptCards.length === 1 ? '' : 's'} in your basket.`;
-      hintText.textContent = 'Final result ready to share.';
-      updateTexts();
-      summaryBox.classList.add('show');
-      finalTotalText.textContent = bust
-        ? `Basket total: $${total.toFixed(2)}, bust by $${away.toFixed(2)}.`
+      hintText.textContent = 'Ready to share.';
+      totalText.textContent = bust
+        ? `🤯 BUSTED!!! Basket total: $${total.toFixed(2)}, bust by $${away.toFixed(2)}.`
         : `Basket total: $${total.toFixed(2)}, just $${away.toFixed(2)} off perfection!`;
+      awayText.textContent = bust ? `Distance from $21: BUST by $${away.toFixed(2)}` : `Distance from $21: $${away.toFixed(2)}`;
       shareBtn.style.display = 'inline-block';
     }
 
@@ -680,7 +666,7 @@
       const total = keptTotal();
       const bust = total > target;
       const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
-      const emoji = away <= 2 ? '🏆' : (away <= 4 ? '👍' : (away <= 7 ? '🌻' : '🙂'));
+      const emoji = bust ? '🤯' : (away <= 2 ? '🏆' : (away <= 4 ? '👍' : (away <= 7 ? '🌻' : '🙂')));
       return [
         `${emoji} ${keptCards.length} products selected`.trim(),
         `Total $${total.toFixed(2)} selected`,
