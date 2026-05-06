@@ -42,10 +42,7 @@
       align-items:center;
       gap:8px;
     }
-    .game-meta {
-      justify-self:start;
-      line-height:1.15;
-    }
+    .game-meta { justify-self:start; line-height:1.15; }
     .game-no { font-size:13px; font-weight:800; color:rgba(255,255,255,.92); }
     .game-date { font-size:13px; font-weight:700; color:rgba(255,255,255,.74); margin-top:3px; }
     .target-wrap {
@@ -177,6 +174,7 @@
       background:rgba(4,17,41,.42);
       position:relative;
       overflow:visible;
+      transition:transform .18s ease, opacity .18s ease;
     }
     .flop-slot.selectable { cursor:pointer; }
     .flop-slot.selected { transform:translateY(-4px); }
@@ -441,33 +439,33 @@
     const shareUrl = 'https://super21-b5je.onrender.com';
 
     const deckCards = [
-      { image: 'cards/morningfresh-card.png', alt: 'Morning Fresh Lemon card', price: 10.00 },
-      { image: 'cards/emporiumgoats-card.png', alt: 'Emporium goat cheese card', price: 8.99 },
-      { image: 'cards/quilton-card.png', alt: 'Quilton card', price: 9.89 },
-      { image: 'cards/pizzasnacks-card.png', alt: 'Pizza Snacks card', price: 5.99 },
-      { image: 'cards/halloumi-card.png', alt: 'Halloumi card', price: 4.99 },
-      { image: 'cards/cadbury-card.png', alt: 'Cadbury card', price: 4.00 },
-      { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 },
-      { image: 'cards/cocopops-card.png', alt: 'Coco Pops card', price: 7.20 },
-      { image: 'cards/smiths-card.png', alt: 'Smiths chips card', price: 2.50 },
-      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 },
-      { image: 'cards/begamacandcheese-card.png', alt: 'Bega Mac and Cheese card', price: 4.69 },
-      { image: 'cards/briochebuns-card.png', alt: 'Brioche buns card', price: 3.49 },
-      { image: 'cards/cadbury-card.png', alt: 'Cadbury card', price: 4.00 },
-      { image: 'cards/halloumi-card.png', alt: 'Halloumi card', price: 4.99 },
-      { image: 'cards/cocopops-card.png', alt: 'Coco Pops card', price: 7.20 },
-      { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 },
-      { image: 'cards/smiths-card.png', alt: 'Smiths chips card', price: 2.50 },
-      { image: 'cards/briochebuns-card.png', alt: 'Brioche buns card', price: 3.49 },
-      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 },
-      { image: 'cards/cadbury-card.png', alt: 'Cadbury card', price: 4.00 },
-      { image: 'cards/nutrigrain-card.png', alt: 'Nutri-Grain card', price: 4.50 },
-      { image: 'cards/begamacandcheese-card.png', alt: 'Bega Mac and Cheese card', price: 4.69 },
-      { image: 'cards/cocopops-card.png', alt: 'Coco Pops card', price: 7.20 },
-      { image: 'cards/halloumi-card.png', alt: 'Halloumi card', price: 4.99 },
-      { image: 'cards/smiths-card.png', alt: 'Smiths chips card', price: 2.50 },
-      { image: 'cards/briochebuns-card.png', alt: 'Brioche buns card', price: 3.49 },
-      { image: 'cards/atlasflyspray-card.png', alt: 'Atlas Fly Spray card', price: 2.79 }
+      { image: 'cards/cadbury-card.png',              alt: 'Cadbury Peppermint 180g card',                  price: 4.00 },
+      { image: 'cards/emporiumgoats-card.png',        alt: "Emporium Goat's Cheese 350g card",              price: 8.99 },
+      { image: 'cards/halloumi-card.png',             alt: 'Emporium Halloumi 225g card',                   price: 4.99 },
+      { image: 'cards/cocopops-card.png',             alt: "Kellogg's Coco Pops 535g card",                 price: 7.20 },
+      { image: 'cards/nutrigrain-card.png',           alt: "Kellogg's Nutri-Grain 470g card",               price: 4.50 },
+      { image: 'cards/morningfresh-card.png',         alt: 'Morning Fresh Lemon 900ml card',                price: 10.00 },
+      { image: 'cards/linguine-card.png',             alt: 'Remano Egg Linguine 375g card',                 price: 4.49 },
+      { image: 'cards/smiths-card.png',               alt: "Smith's Chicken Chips 170g card",               price: 2.50 },
+      { image: 'cards/cottagecheese-card.png',        alt: 'Westacre Cottage Cheese 500g card',             price: 5.49 },
+      { image: 'cards/tastycheese-card.png',          alt: 'Westacre Tasty Cheese 1kg card',                price: 8.99 },
+      { image: 'cards/atlasflyspray-card.png',        alt: 'Atlas Fly Spray 300g card',                     price: 2.79 },
+      { image: 'cards/begamacandcheese-card.png',     alt: 'Bega Mac & Cheese 280g card',                   price: 4.69 },
+      { image: 'cards/briochebuns-card.png',          alt: 'Bon Appetit Brioche Burger Buns 200g card',     price: 3.49 },
+      { image: 'cards/worcestersauce-card.png',       alt: 'Holbrooks Worcestershire Sauce 500ml card',     price: 6.00 },
+      { image: 'cards/pizzasnacks-card.png',          alt: 'International Cuisine Pizza Snacks 400g card',  price: 5.99 },
+      { image: 'cards/niveadeo-card.png',             alt: 'Nivea Men Black & White Deodorant 200ml card',  price: 4.99 },
+      { image: 'cards/ramyun-card.png',               alt: 'Nongshim Shin Ramyun 480g card',                price: 4.99 },
+      { image: 'cards/quilton-card.png',              alt: 'Quilton 3 Ply Toilet Paper 18 rolls card',      price: 9.89 },
+      { image: 'cards/emporiumgranapadano-card.png',  alt: 'Emporium Grana Padano Cheese 250g card',        price: 0.00 },
+      { image: 'cards/emporiumblue-card.png',         alt: 'Emporium Selection Blue Cheese 200g card',      price: 5.99 },
+      { image: 'cards/farmdalemilk-card.png',         alt: 'Farmdale Full Cream Milk 2L card',              price: 3.55 },
+      { image: 'cards/ironbarkporkmince-card.png',    alt: 'Ironbark Pork Mince 500g card',                 price: 4.99 },
+      { image: 'cards/knoppers-card.png',             alt: 'Knoppers Milk Wafers 200g card',                price: 4.99 },
+      { image: 'cards/powerforcegarbagebag-card.png', alt: 'Powerforce Garbage Bags 20 pack card',          price: 3.59 },
+      { image: 'cards/shapesbarbecue-card.png',       alt: "Arnott's Shapes Barbecue 250g card",            price: 3.99 },
+      { image: 'cards/tricaresoap-card.png',          alt: 'Tricare Antibacterial Soap 250ml card',         price: 2.00 },
+      { image: 'cards/wisdomtoothbrush-card.png',     alt: 'Wisdom Toothbrush 2 pack card',                 price: 1.89 }
     ];
 
     const basketSlots = [...document.querySelectorAll('.basket-slot')];
@@ -482,7 +480,7 @@
     const hintText = document.getElementById('hintText');
     const summaryBox = document.getElementById('summaryBox');
     const finalTotalText = document.getElementById('finalTotalText');
-        const shareBtn = document.getElementById('shareBtn');
+    const shareBtn = document.getElementById('shareBtn');
     const bustOverlay = document.getElementById('bustOverlay');
     const rulesBtn = document.getElementById('rulesBtn');
     const rulesModal = document.getElementById('rulesModal');
@@ -536,6 +534,7 @@
       flopSlots.forEach(slot => {
         slot.innerHTML = '';
         slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
+        slot.onclick = null;
       });
       currentFlop = [];
       selectedFlop = new Set();
@@ -623,6 +622,7 @@
         const card = nextCards[i];
         slot.innerHTML = '';
         slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
+        slot.onclick = null;
         if (!card) return;
         slot.classList.add('filled', 'selectable');
         slot.appendChild(makeCardMarkup(card, false));
@@ -680,7 +680,7 @@
       const total = keptTotal();
       const bust = total > target;
       const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
-      const emoji = away <= 2 ? '🏆' : (away <= 4 ? '👍' : '');
+      const emoji = away <= 2 ? '🏆' : (away <= 4 ? '👍' : (away <= 7 ? '🌻' : '🙂'));
       return [
         `${emoji} ${keptCards.length} products selected`.trim(),
         `Total $${total.toFixed(2)} selected`,
