@@ -5,7 +5,7 @@
     "line": "PEPPERMINT",
     "size": "180g",
     "price": "$4.00",
-    "special": true,
+    "special": false,
     "supermarket": "Woolworths",
     "out": "cards\\cadbury-card.png"
   },
@@ -35,7 +35,7 @@
     "line": "COCO POPS",
     "size": "535g",
     "price": "$7.20",
-    "special": true,
+    "special": false,
     "supermarket": "Coles",
     "out": "cards\\cocopops-card.png"
   },
@@ -45,7 +45,7 @@
     "line": "NUTRI-GRAIN",
     "size": "470g",
     "price": "$4.50",
-    "special": true,
+    "special": false,
     "supermarket": "Woolworths",
     "out": "cards\\nutrigrain-card.png"
   },
@@ -75,7 +75,7 @@
     "line": "CHICKEN CHIPS",
     "size": "170g",
     "price": "$2.50",
-    "special": true,
+    "special": false,
     "supermarket": "Woolworths",
     "out": "cards\\smiths-card.png"
   },
@@ -184,7 +184,7 @@
     "name": "Emporium",
     "line": "GRANA PADANO CHEESE",
     "size": "250g",
-    "price": "",
+    "price": "$8.29",
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\emporiumgranapadano-card.png"
