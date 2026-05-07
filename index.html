@@ -1021,14 +1021,70 @@
     function buildShareText() {
       const total = keptTotal();
       const bust = total > target;
-      const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
-      const emoji = bust ? '🤯' : (away <= 2 ? '🏆' : (away <= 4 ? '👍' : (away <= 7 ? '🌻' : '🙂')));
-      return [
-        `${emoji} ${keptCards.length} products selected`.trim(),
-        `Total $${total.toFixed(2)} selected`,
-        `$${away.toFixed(2)} distance from $21`,
-        `${shareUrl}`
-      ].join('\n');
+      const rawAway = bust
+        ? +(total - target).toFixed(2)
+        : +(target - total).toFixed(2);
+
+      const away = rawAway;
+      const t = target.toFixed(2);
+      const tot = total.toFixed(2);
+      const a = away.toFixed(2);
+
+      let lines = [];
+
+      if (bust) {
+        if (away <= 1) {
+          lines.push(
+            `🤯 YOU BUSTED at $${tot}.`,
+            `Only $${a} over $${t} — you were so close.`,
+            `One less reckless grab and you'd be a genius.`
+          );
+        } else if (away <= 5) {
+          lines.push(
+            `🤯 YOU BUSTED at $${tot}.`,
+            `That's $${a} over $${t}.`,
+            `Maybe watch your supermarket bill,`,
+            `not the hot checkout operator.`
+          );
+        } else {
+          lines.push(
+            `🔥 CATASTROPHIC BUST: $${tot}.`,
+            `$${a} over $${t}.`,
+            `Are you shopping or just financially self-harming?`
+          );
+        }
+      } else {
+        if (away === 0) {
+          lines.push(
+            `🎯 PERFECT $${tot} on the nose.`,
+            `You absolutely bullied $${t}.`,
+            `Send this to someone who still thinks they're “good with money”.`
+          );
+        } else if (away <= 1) {
+          lines.push(
+            `😏 $${tot} — only $${a} shy of $${t}.`,
+            `You actually look like you read the receipt.`
+          );
+        } else if (away <= 5) {
+          lines.push(
+            `👍 $${tot}, just $${a} under $${t}.`,
+            `Not bad… but don't start calling yourself a checkout sniper.`
+          );
+        } else if (away <= 10) {
+          lines.push(
+            `🤨 $${tot}, a soft $${a} miss under $${t}.`,
+            `You shop like every aisle is a sightseeing tour.`
+          );
+        } else {
+          lines.push(
+            `💸 $${tot}, a lazy $${a} short of $${t}.`,
+            `You were nowhere near it, but thanks for participating.`
+          );
+        }
+      }
+
+      lines.push('', `Play Super21 Locknload: ${shareUrl}`);
+      return lines.join('\n');
     }
 
     dealBtn.addEventListener('click', flopThree);
@@ -1038,7 +1094,10 @@
       const text = buildShareText();
       if (navigator.share) {
         try {
-          await navigator.share({ title: `Super21 Game #${gameNumber}`, text, url: shareUrl });
+          await navigator.share({
+            title: `Super21 Game #${gameNumber}`,
+            text
+          });
           return;
         } catch (e) {}
       }
