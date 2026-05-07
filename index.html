@@ -16,7 +16,9 @@
       --panelBorder:rgba(255,255,255,.18);
       --darkChip:#091a38;
     }
+
     * { box-sizing:border-box; }
+
     body {
       margin:0;
       min-height:100vh;
@@ -25,6 +27,7 @@
       background:radial-gradient(circle at 50% 10%, #0a3773 0%, var(--bg1) 40%, var(--bg2) 100%);
       overflow-x:hidden;
     }
+
     .wrap {
       width:min(100%,430px);
       margin:0 auto;
@@ -36,6 +39,7 @@
       gap:14px;
       position:relative;
     }
+
     .topbar {
       width:100%;
       display:grid;
@@ -43,9 +47,11 @@
       align-items:center;
       gap:8px;
     }
+
     .game-meta { justify-self:start; line-height:1.15; }
     .game-no { font-size:13px; font-weight:800; color:rgba(255,255,255,.92); }
     .game-date { font-size:13px; font-weight:700; color:rgba(255,255,255,.74); margin-top:3px; }
+
     .target-wrap {
       display:flex;
       align-items:center;
@@ -53,15 +59,33 @@
       gap:8px;
       font-weight:900;
     }
+
     .target-label { font-size:18px; white-space:nowrap; }
+
     .chip {
-      width:66px; height:66px; border-radius:50%; background:var(--red); padding:6px; display:grid; place-items:center;
+      width:66px;
+      height:66px;
+      border-radius:50%;
+      background:var(--red);
+      padding:6px;
+      display:grid;
+      place-items:center;
       box-shadow:0 10px 24px rgba(0,0,0,.35);
     }
+
     .chip-inner {
-      width:100%; height:100%; border-radius:50%; background:#fff; color:#111; display:grid; place-items:center;
-      font-weight:900; font-size:24px; border:3px solid rgba(0,0,0,.08);
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background:#fff;
+      color:#111;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:24px;
+      border:3px solid rgba(0,0,0,.08);
     }
+
     .rules-btn {
       justify-self:end;
       border:0;
@@ -74,6 +98,7 @@
       box-shadow:0 8px 22px rgba(0,0,0,.28);
       cursor:pointer;
     }
+
     .basket-label {
       width:100%;
       text-align:center;
@@ -82,6 +107,7 @@
       color:rgba(255,255,255,.78);
       margin-top:2px;
     }
+
     .basket-row {
       width:100%;
       display:grid;
@@ -89,6 +115,7 @@
       gap:8px;
       justify-items:center;
     }
+
     .basket-slot {
       width:100%;
       max-width:72px;
@@ -98,19 +125,11 @@
       background:rgba(4,17,41,.58);
       position:relative;
       overflow:visible;
-      transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
     }
+
     .basket-slot.filled {
       border-color:transparent;
       background:transparent;
-    }
-    .basket-slot.slot-hit {
-      animation:slotHit .22s ease-out;
-    }
-    @keyframes slotHit {
-      0% { transform:scale(1); box-shadow:0 0 0 rgba(255,217,120,0); }
-      35% { transform:scale(1.05) translateY(-2px); box-shadow:0 0 18px rgba(255,217,120,.65); }
-      100% { transform:scale(1); box-shadow:0 0 0 rgba(255,217,120,0); }
     }
 
     .deal-stage {
@@ -121,6 +140,7 @@
       gap:14px;
       padding:6px 0 2px;
     }
+
     .deck-column {
       display:flex;
       flex-direction:column;
@@ -128,6 +148,7 @@
       gap:8px;
       min-width:88px;
     }
+
     .deck-count {
       min-width:58px;
       padding:7px 10px;
@@ -138,23 +159,54 @@
       font-weight:900;
       text-align:center;
       border:2px solid rgba(255,255,255,.9);
-      transition:transform .22s ease, box-shadow .22s ease, color .22s ease, border-color .22s ease, background .22s ease;
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        color .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        letter-spacing .22s ease;
     }
-    .deck-count.deck-low {
-      color:#ffe08f;
-      border-color:rgba(255,217,120,.95);
-      box-shadow:0 0 16px rgba(255,217,120,.22);
+
+    .deck-stage-0 { transform:scale(1); }
+    .deck-stage-1 {
+      transform:scale(1.04);
+      color:#ffe7a8;
+      border-color:#ffd978;
+      box-shadow:0 0 12px rgba(255,217,120,.25);
     }
-    .deck-count.deck-critical {
-      color:#fff1cf;
-      border-color:rgba(255,106,61,.98);
-      background:rgba(48,10,10,.82);
-      box-shadow:0 0 18px rgba(255,106,61,.38);
-      animation:deckPulse .9s ease-in-out infinite;
+    .deck-stage-2 {
+      transform:scale(1.08);
+      color:#ffd4a6;
+      border-color:#ffb347;
+      background:rgba(42,15,0,.76);
+      box-shadow:0 0 16px rgba(255,179,71,.35);
     }
-    @keyframes deckPulse {
-      0%,100% { transform:scale(1); }
-      50% { transform:scale(1.06); }
+    .deck-stage-3 {
+      transform:scale(1.12);
+      color:#ffc1a1;
+      border-color:#ff8a47;
+      background:rgba(56,10,0,.82);
+      box-shadow:0 0 20px rgba(255,138,71,.42);
+      animation:deckThrob 1.2s ease-in-out infinite;
+    }
+    .deck-stage-4 {
+      transform:scale(1.16);
+      color:#ffb0b0;
+      border-color:#ff5a47;
+      background:rgba(74,7,7,.88);
+      box-shadow:0 0 24px rgba(255,90,71,.5);
+      animation:deckThrob 1s ease-in-out infinite;
+      letter-spacing:.03em;
+    }
+    .deck-stage-5 {
+      transform:scale(1.22);
+      color:#fff0f0;
+      border-color:#ff2d2d;
+      background:rgba(95,0,0,.95);
+      box-shadow:0 0 30px rgba(255,45,45,.7);
+      animation:deckFreakout .72s ease-in-out infinite;
+      letter-spacing:.05em;
     }
 
     .deck-stack {
@@ -163,17 +215,36 @@
       position:relative;
       filter:drop-shadow(0 10px 16px rgba(0,0,0,.28));
     }
+
     .deck-shadow,.deck-shadow-2,.deck-shadow-3 {
-      position:absolute; inset:0; border-radius:14px; background:rgba(255,255,255,.12); border:2px solid rgba(255,255,255,.18);
+      position:absolute;
+      inset:0;
+      border-radius:14px;
+      background:rgba(255,255,255,.12);
+      border:2px solid rgba(255,255,255,.18);
     }
+
     .deck-shadow { transform:translate(0,0); }
     .deck-shadow-2 { transform:translate(4px,4px); }
     .deck-shadow-3 { transform:translate(8px,8px); }
+
     .deck-top {
-      position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff; z-index:4;
+      position:absolute;
+      inset:0;
+      border-radius:14px;
+      overflow:hidden;
+      border:2px solid rgba(255,255,255,.9);
+      background:#fff;
+      z-index:4;
     }
+
     .deck-top img,
-    .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+    .card-face img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
 
     .flop-column {
       display:flex;
@@ -182,12 +253,14 @@
       gap:8px;
       flex:1;
     }
+
     .flop-label {
       font-size:13px;
       font-weight:800;
       color:rgba(255,255,255,.78);
       text-align:center;
     }
+
     .flop-row {
       display:grid;
       grid-template-columns:repeat(3, 1fr);
@@ -195,6 +268,7 @@
       width:100%;
       justify-items:center;
     }
+
     .flop-slot {
       width:100%;
       max-width:88px;
@@ -206,6 +280,7 @@
       overflow:visible;
       transition:transform .18s ease, opacity .18s ease;
     }
+
     .flop-slot.selectable { cursor:pointer; }
     .flop-slot.selected { transform:translateY(-4px); }
     .flop-slot.selected .card-face { border-color:var(--gold); box-shadow:0 0 0 3px rgba(255,217,120,.28) inset; }
@@ -214,34 +289,46 @@
       border-color:transparent;
       background:transparent;
     }
-    .flop-slot.deal-in {
-      animation:dealIn .32s cubic-bezier(.2,.9,.24,1) both;
-    }
-    @keyframes dealIn {
-      0% { opacity:0; transform:translateY(-14px) scale(.92) rotate(-2deg); }
-      100% { opacity:1; transform:translateY(0) scale(1) rotate(0); }
-    }
 
     .card-wrap { width:100%; height:100%; position:relative; }
+
     .card {
-      width:100%; height:100%; position:relative; box-shadow:0 9px 10px rgba(0,0,0,.28); border-radius:14px;
-      transform-style:preserve-3d;
+      width:100%;
+      height:100%;
+      position:relative;
+      box-shadow:0 9px 10px rgba(0,0,0,.28);
+      border-radius:14px;
     }
+
     .card-face {
-      position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff;
-      backface-visibility:hidden;
-      transition:transform .36s ease, opacity .36s ease;
+      position:absolute;
+      inset:0;
+      border-radius:14px;
+      overflow:hidden;
+      border:2px solid rgba(255,255,255,.9);
+      background:#fff;
     }
-    .card-face.back { transform:rotateY(0deg); opacity:1; }
-    .card-face.front { transform:rotateY(90deg); opacity:0; }
-    .card-wrap.is-revealed .card-face.back { transform:rotateY(-90deg); opacity:0; }
-    .card-wrap.is-revealed .card-face.front { transform:rotateY(0deg); opacity:1; }
 
     .price-badge {
-      position:absolute; left:50%; bottom:8px; transform:translateX(-50%); min-width:56px; padding:6px 8px; border-radius:999px;
-      background:rgba(0,0,0,.84); color:#fff; text-align:center; font-weight:900; font-size:14px; z-index:8; opacity:0;
-      transition:opacity .35s ease, transform .35s ease; border:2px solid rgba(255,255,255,.88); line-height:1;
+      position:absolute;
+      left:50%;
+      bottom:8px;
+      transform:translateX(-50%);
+      min-width:56px;
+      padding:6px 8px;
+      border-radius:999px;
+      background:rgba(0,0,0,.84);
+      color:#fff;
+      text-align:center;
+      font-weight:900;
+      font-size:14px;
+      z-index:8;
+      opacity:0;
+      transition:opacity .35s ease, transform .35s ease;
+      border:2px solid rgba(255,255,255,.88);
+      line-height:1;
     }
+
     .revealed .price-badge { opacity:1; transform:translateX(-50%) translateY(-1px); }
 
     .select-badge {
@@ -263,8 +350,8 @@
       opacity:0;
       transform:scale(.85);
       transition:opacity .18s ease, transform .18s ease;
-      pointer-events:none;
     }
+
     .flop-slot.selected .select-badge { opacity:1; transform:scale(1); }
 
     .controls {
@@ -275,43 +362,100 @@
       flex-wrap:wrap;
       margin-top:6px;
     }
+
     .btn {
-      border:0; border-radius:999px; padding:11px 18px; font-weight:900; font-size:16px; box-shadow:0 8px 22px rgba(0,0,0,.28); cursor:pointer;
-      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      border:0;
+      border-radius:999px;
+      padding:11px 18px;
+      font-weight:900;
+      font-size:16px;
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+      cursor:pointer;
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        background .22s ease,
+        filter .22s ease,
+        letter-spacing .22s ease;
     }
+
     .btn:disabled { opacity:.45; cursor:default; }
     .btn-primary { background:var(--gold); color:#172033; }
     .btn-secondary { background:#fff; color:#041a3c; }
     .btn-share { background:#e9f3ff; color:#062a54; display:none; }
 
-    .btn-primary.lock-warm {
-      transform:scale(1.02);
-      box-shadow:0 10px 24px rgba(255,196,88,.26);
+    .lock-stage-0 {}
+    .lock-stage-1 {
+      transform:scale(1.03);
+      box-shadow:0 0 14px rgba(255,217,120,.22), 0 8px 22px rgba(0,0,0,.28);
     }
-    .btn-primary.lock-hot {
-      transform:scale(1.05);
-      box-shadow:0 0 22px rgba(255,170,60,.34), 0 10px 24px rgba(0,0,0,.32);
+    .lock-stage-2 {
+      transform:scale(1.06);
+      background:#ffcf5c;
+      box-shadow:0 0 18px rgba(255,196,88,.35), 0 10px 24px rgba(0,0,0,.3);
     }
-    .btn-primary.lock-critical {
-      transform:scale(1.08);
-      box-shadow:0 0 28px rgba(255,106,61,.42), 0 10px 24px rgba(0,0,0,.34);
-      animation:lockPulse 1s ease-in-out infinite;
+    .lock-stage-3 {
+      transform:scale(1.1);
+      background:#ffba47;
+      box-shadow:0 0 24px rgba(255,138,71,.45), 0 10px 24px rgba(0,0,0,.32);
+      animation:lockHeartbeat 1s ease-in-out infinite;
+      letter-spacing:.02em;
     }
-    @keyframes lockPulse {
-      0%,100% { filter:brightness(1); }
-      50% { filter:brightness(1.12); }
+    .lock-stage-4 {
+      transform:scale(1.14);
+      background:#ff8d3a;
+      color:#fff;
+      box-shadow:0 0 28px rgba(255,90,71,.58), 0 10px 24px rgba(0,0,0,.34);
+      animation:lockHeartbeat .78s ease-in-out infinite;
+      letter-spacing:.04em;
+    }
+    .lock-stage-5 {
+      transform:scale(1.2);
+      background:#ff3b30;
+      color:#fff;
+      box-shadow:0 0 34px rgba(255,45,45,.78), 0 10px 24px rgba(0,0,0,.36);
+      animation:lockFreakout .55s ease-in-out infinite;
+      letter-spacing:.06em;
     }
 
     .scoreboard {
-      width:100%; background:var(--panel); border:1px solid var(--panelBorder); border-radius:18px; padding:14px 14px;
-      display:grid; gap:6px; text-align:center;
+      width:100%;
+      background:var(--panel);
+      border:1px solid var(--panelBorder);
+      border-radius:18px;
+      padding:14px 14px;
+      display:grid;
+      gap:6px;
+      text-align:center;
       min-height:82px;
       place-items:center;
     }
-    .scoreboard .line1 { font-size:16px; font-weight:800; }
+
+    .scoreboard .line1 {
+      font-size:16px;
+      font-weight:900;
+      transition:
+        transform .25s ease,
+        color .25s ease,
+        text-shadow .25s ease,
+        letter-spacing .25s ease;
+    }
+
     .scoreboard .line2,
     .scoreboard .line3 { display:none; }
-    .scoreboard .line4 { font-size:13px; color:rgba(255,255,255,.8); }
+
+    .scoreboard .line4 {
+      font-size:13px;
+      color:rgba(255,255,255,.8);
+    }
+
+    .keepers-callout {
+      color:#ffe9a8;
+      text-shadow:0 0 10px rgba(255,217,120,.45), 0 0 18px rgba(255,217,120,.22);
+      letter-spacing:.08em;
+      animation:keepersPulse .9s ease-in-out infinite;
+      transform:scale(1.06);
+    }
 
     .rules-modal {
       position:fixed;
@@ -323,7 +467,9 @@
       z-index:9999;
       padding:18px;
     }
+
     .rules-modal.show { display:flex; }
+
     .rules-card {
       width:min(100%, 380px);
       background:#fff8ea;
@@ -332,6 +478,7 @@
       padding:18px 16px 16px;
       box-shadow:0 22px 60px rgba(0,0,0,.36);
     }
+
     .rules-head {
       display:flex;
       align-items:center;
@@ -339,10 +486,21 @@
       gap:10px;
       margin-bottom:10px;
     }
+
     .rules-title { font-size:24px; font-weight:900; }
+
     .rules-close {
-      width:36px; height:36px; border-radius:50%; border:0; background:var(--darkChip); color:#fff; font-size:20px; font-weight:900; cursor:pointer;
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      border:0;
+      background:var(--darkChip);
+      color:#fff;
+      font-size:20px;
+      font-weight:900;
+      cursor:pointer;
     }
+
     .rules-list {
       margin:0;
       padding-left:18px;
@@ -362,10 +520,12 @@
       z-index:2147483646;
       pointer-events:none;
     }
+
     .reveal-overlay.show {
       display:flex;
       pointer-events:auto;
     }
+
     .reveal-dim {
       position:absolute;
       inset:0;
@@ -374,10 +534,12 @@
       animation:dimIn .32s ease forwards;
       backdrop-filter:blur(2px);
     }
+
     @keyframes dimIn {
       from { opacity:0; }
       to { opacity:1; }
     }
+
     .reveal-content {
       position:relative;
       z-index:2;
@@ -386,7 +548,9 @@
       align-items:center;
       gap:16px;
     }
+
     .reveal-content.show { display:flex; }
+
     .reveal-total {
       font-size:clamp(46px, 14vw, 72px);
       font-weight:900;
@@ -394,22 +558,26 @@
       animation:totalPop .7s cubic-bezier(.18,1.2,.26,1) forwards;
       color:#fff;
     }
+
     @keyframes totalPop {
       0% { transform:scale(.3); opacity:0; }
       55% { transform:scale(1.12); opacity:1; }
       100% { transform:scale(1); opacity:1; }
     }
+
     .bullseye-wrap {
       position:relative;
       width:220px;
       height:220px;
     }
+
     .bullseye {
       width:100%;
       height:100%;
       filter:drop-shadow(0 10px 24px rgba(0,0,0,.6));
       border-radius:50%;
     }
+
     .bullseye-arrow {
       position:absolute;
       left:50%;
@@ -424,6 +592,7 @@
       opacity:0;
       animation:arrowDrop .6s ease-out forwards .2s;
     }
+
     .bullseye-arrow::after {
       content:'';
       position:absolute;
@@ -434,11 +603,13 @@
       border-style:solid;
       border-color:transparent transparent #fff transparent;
     }
+
     @keyframes arrowDrop {
       0% { transform:translate(-50%,-165%) rotate(-8deg); opacity:0; }
       70% { transform:translate(-50%,-95%) rotate(4deg); opacity:1; }
       100% { transform:translate(-50%,-100%) rotate(0deg); opacity:1; }
     }
+
     .bullseye-badge {
       position:absolute;
       left:50%;
@@ -456,9 +627,11 @@
       border:2px solid rgba(0,0,0,.2);
       opacity:0;
     }
+
     .bullseye-badge.show {
       animation:badgeStamp .5s ease-out forwards .25s;
     }
+
     @keyframes badgeStamp {
       0% { transform:translate(-50%, -50%) rotate(-18deg) scale(2); opacity:0; }
       70% { transform:translate(-50%, -50%) rotate(-8deg) scale(1.05); opacity:1; }
@@ -480,6 +653,7 @@
       opacity:0;
       animation:bustStamp .34s cubic-bezier(.18,.92,.2,1.01) forwards;
     }
+
     .reveal-bust .bust-amount {
       margin-top:6px;
       font-size:19px;
@@ -487,6 +661,7 @@
       color:#ffd1d1;
       text-shadow:0 3px 10px rgba(0,0,0,.7);
     }
+
     @keyframes bustStamp {
       0% { transform:scale(2.1) rotate(-8deg); filter:blur(3px); opacity:0; }
       70% { transform:scale(1.03) rotate(-6deg); filter:blur(0); opacity:1; }
@@ -494,30 +669,96 @@
     }
 
     .bust-overlay {
-      position:fixed; inset:0; display:grid; place-items:center; pointer-events:none; opacity:0; z-index:2147483647; isolation:isolate;
+      position:fixed;
+      inset:0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      opacity:0;
+      z-index:2147483647;
+      isolation:isolate;
     }
+
     .bust-overlay.show { animation:bustFlash .32s ease forwards; }
-    .bust-center { position:fixed; left:50%; top:42%; transform:translate(-50%, -50%); display:grid; place-items:center; z-index:2147483647; }
+
+    .bust-center {
+      position:fixed;
+      left:50%;
+      top:42%;
+      transform:translate(-50%, -50%);
+      display:grid;
+      place-items:center;
+      z-index:2147483647;
+    }
+
     .bust-text {
-      font-size:24vw; font-weight:900; color:#fff; letter-spacing:.08em;
+      font-size:24vw;
+      font-weight:900;
+      color:#fff;
+      letter-spacing:.08em;
       text-shadow:0 0 10px rgba(255,255,255,.55), 0 0 25px rgba(255,0,0,.85), 0 0 60px rgba(255,0,0,.95);
-      transform:scale(.2) rotate(-8deg); opacity:0; position:relative; z-index:2147483647;
+      transform:scale(.2) rotate(-8deg);
+      opacity:0;
+      position:relative;
+      z-index:2147483647;
     }
+
     .bust-overlay.show .bust-text { animation:bustPop .32s ease forwards; }
+
     .burst, .burst::before, .burst::after {
-      position:absolute; content:""; width:220px; height:220px; border-radius:50%; border:8px solid rgba(255,60,60,.55);
+      position:absolute;
+      content:"";
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      border:8px solid rgba(255,60,60,.55);
     }
+
     .burst { transform:scale(.2); opacity:0; z-index:2147483646; }
     .bust-overlay.show .burst { animation:ringBoom .45s ease-out forwards; }
     .burst::before { inset:-24px; }
     .burst::after { inset:24px; }
 
     @keyframes bustFlash { 0% { opacity:0; } 35% { opacity:.75; } 100% { opacity:0; } }
-    @keyframes bustPop {
-      0% { transform:scale(.15) rotate(-12deg); opacity:0; }
-      100% { transform:scale(1) rotate(0); opacity:1; }
-    }
+    @keyframes bustPop { 0% { transform:scale(.15) rotate(-12deg); opacity:0; } 100% { transform:scale(1) rotate(0); opacity:1; } }
     @keyframes ringBoom { 0% { transform:scale(.1); opacity:0; } 20% { opacity:1; } 100% { transform:scale(1.6); opacity:0; } }
+
+    @keyframes deckThrob {
+      0%,100% { transform:scale(1.12); }
+      50% { transform:scale(1.17); }
+    }
+
+    @keyframes deckFreakout {
+      0%,100% { transform:scale(1.22) rotate(0deg); }
+      25% { transform:scale(1.27) rotate(-1deg); }
+      50% { transform:scale(1.24) rotate(1deg); }
+      75% { transform:scale(1.28) rotate(-1deg); }
+    }
+
+    @keyframes lockHeartbeat {
+      0%,100% { transform:scale(1.1); filter:brightness(1); }
+      50% { transform:scale(1.16); filter:brightness(1.08); }
+    }
+
+    @keyframes lockFreakout {
+      0%,100% { transform:scale(1.2); filter:brightness(1); }
+      25% { transform:scale(1.24) rotate(-.5deg); filter:brightness(1.08); }
+      50% { transform:scale(1.27) rotate(.5deg); filter:brightness(1.14); }
+      75% { transform:scale(1.23) rotate(-.5deg); filter:brightness(1.08); }
+    }
+
+    @keyframes keepersPulse {
+      0%,100% {
+        transform:scale(1.04);
+        letter-spacing:.08em;
+        text-shadow:0 0 10px rgba(255,217,120,.45), 0 0 18px rgba(255,217,120,.22);
+      }
+      50% {
+        transform:scale(1.1);
+        letter-spacing:.12em;
+        text-shadow:0 0 16px rgba(255,217,120,.8), 0 0 30px rgba(255,217,120,.36);
+      }
+    }
 
     @media (max-width:390px) {
       .topbar { grid-template-columns:1fr; justify-items:center; gap:10px; }
@@ -592,10 +833,10 @@
     </div>
 
     <section class="scoreboard" aria-live="polite">
-      <div class="line1" id="statusText">Deal to reveal three cards, one by one.</div>
+      <div class="line1" id="statusText">Deal cards. Build suspense.</div>
       <div class="line2" id="totalText"></div>
       <div class="line3" id="awayText"></div>
-      <div class="line4" id="hintText">Scarcity and suspense only. No thermometer.</div>
+      <div class="line4" id="hintText">No thermometer. Pure nerves.</div>
     </section>
 
     <div class="controls">
@@ -612,12 +853,12 @@
       <ol class="rules-list">
         <li>Closest to $21 without going over.</li>
         <li>Pick products you want in your basket.</li>
-        <li>Press <strong>Deal</strong> from the stack of 27 to reveal 3 cards one at a time.</li>
+        <li>Press <strong>Deal</strong> from the stack of 27 to flop 3 cards.</li>
         <li>From each flop, you may keep 0, 1, 2 or 3 cards.</li>
-        <li>The deck counter heats up as cards run out, but it never tells you your total.</li>
+        <li>Use the shrinking deck and rising drama to judge your nerve.</li>
         <li>Press <strong>Locknload</strong> when you want the reveal.</li>
         <li>You have a maximum of 5 basket spots to fill.</li>
-        <li>Press <strong>Deal</strong> again to bank selected cards and reveal the next 3.</li>
+        <li>Press <strong>Deal</strong> again to bank selected cards and flop the next 3 cards.</li>
       </ol>
     </div>
   </div>
@@ -717,13 +958,9 @@
     let deckIndex = 0;
     let basketIndex = 0;
     let locked = false;
-    let dealing = false;
-    let dealsTaken = 0;
     let currentFlop = [];
     let selectedFlop = new Set();
     const keptCards = [];
-
-    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     function playSfx() {}
 
@@ -749,38 +986,48 @@
       return Math.max(0, startingDeck - deckIndex);
     }
 
-    function updateDeckCount() {
+    function getUrgencyStage() {
+      const left = cardsLeft();
+      if (left <= 3) return 5;
+      if (left <= 6) return 4;
+      if (left <= 9) return 3;
+      if (left <= 12) return 2;
+      if (left <= 15) return 1;
+      return 0;
+    }
+
+    function updateDeckDrama() {
       const left = cardsLeft();
       deckCount.textContent = `${left} left`;
-      deckCount.classList.remove('deck-low', 'deck-critical');
-      if (left <= 9) {
-        deckCount.classList.add('deck-critical');
-      } else if (left <= 15) {
-        deckCount.classList.add('deck-low');
-      }
+      deckCount.classList.remove('deck-stage-0','deck-stage-1','deck-stage-2','deck-stage-3','deck-stage-4','deck-stage-5');
+      deckCount.classList.add(`deck-stage-${getUrgencyStage()}`);
     }
 
-    function updateLockPressure() {
-      lockBtn.classList.remove('lock-warm', 'lock-hot', 'lock-critical');
-      if (locked) return;
-      const left = cardsLeft();
-      if (left <= 9 || dealsTaken >= 4 || basketIndex >= 4) {
-        lockBtn.classList.add('lock-critical');
-      } else if (left <= 15 || dealsTaken >= 3 || basketIndex >= 3) {
-        lockBtn.classList.add('lock-hot');
-      } else if (left <= 21 || dealsTaken >= 2 || basketIndex >= 2) {
-        lockBtn.classList.add('lock-warm');
+    function updateLockDrama() {
+      lockBtn.classList.remove('lock-stage-0','lock-stage-1','lock-stage-2','lock-stage-3','lock-stage-4','lock-stage-5');
+
+      let stage = getUrgencyStage();
+
+      if (basketIndex >= 4) stage = Math.max(stage, 4);
+      else if (basketIndex >= 3) stage = Math.max(stage, 3);
+      else if (basketIndex >= 2) stage = Math.max(stage, 2);
+
+      if (currentFlop.length && selectedFlop.size > 0) {
+        stage = Math.max(stage, 2);
       }
+
+      lockBtn.classList.add(`lock-stage-${stage}`);
     }
 
-    function makeCardMarkup(cardData, revealPrice = false, showBack = false) {
+    function updateDeckCount() {
+      updateDeckDrama();
+    }
+
+    function makeCardMarkup(cardData, revealPrice = false) {
       const wrap = document.createElement('div');
-      wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '') + (showBack ? '' : ' is-revealed');
+      wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
       wrap.innerHTML = `
         <div class="card">
-          <div class="card-face back">
-            <img src="./facecard.jpeg" alt="Super21 face card">
-          </div>
           <div class="card-face front">
             <img src="${cardData.image}" alt="${cardData.alt}">
           </div>
@@ -793,7 +1040,7 @@
     function clearFlop() {
       flopSlots.forEach(slot => {
         slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-in');
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
         slot.onclick = null;
       });
       currentFlop = [];
@@ -801,15 +1048,21 @@
       flopLabel.textContent = `Select up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'}`;
     }
 
+    function setKeepersStatus() {
+      statusText.textContent = 'Choose your KEEPERS';
+      statusText.classList.add('keepers-callout');
+    }
+
     function updateTexts() {
       if (locked) return;
-      statusText.textContent = 'Deal to reveal three cards, one by one.';
+      statusText.textContent = 'Deal cards. Build suspense.';
+      statusText.classList.remove('keepers-callout');
       hintText.textContent = currentFlop.length
         ? `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`
-        : 'Scarcity and suspense only. No thermometer.';
+        : 'No thermometer. Pure nerves.';
       totalText.textContent = '';
       awayText.textContent = '';
-      updateLockPressure();
+      updateLockDrama();
     }
 
     function syncFlopStates() {
@@ -822,103 +1075,63 @@
         slot.classList.toggle('selectable', hasCard);
         slot.classList.toggle('disabled', hasCard && !selected && selectedFlop.size >= limit && limit > 0);
       });
+      updateLockDrama();
     }
 
     function toggleSelect(index) {
-      if (locked || dealing || !currentFlop[index]) return;
+      if (locked || !currentFlop[index]) return;
       const limit = maxSelectable();
+
       if (selectedFlop.has(index)) {
         selectedFlop.delete(index);
       } else {
         if (selectedFlop.size >= limit) return;
         selectedFlop.add(index);
       }
-      syncFlopStates();
-      statusText.textContent = 'Choose what to bank, or chase one more deal.';
-      hintText.textContent = selectedFlop.size
-        ? 'Press Deal to bank your selected cards.'
-        : `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
-      updateLockPressure();
-    }
 
-    function flashBasketSlot(slot) {
-      slot.classList.remove('slot-hit');
-      void slot.offsetWidth;
-      slot.classList.add('slot-hit');
-      setTimeout(() => slot.classList.remove('slot-hit'), 240);
+      syncFlopStates();
+
+      if (selectedFlop.size) {
+        setKeepersStatus();
+        hintText.textContent = 'Press Deal to bank them, or Locknload to risk it all.';
+      } else {
+        statusText.textContent = 'Choose your KEEPERS';
+        statusText.classList.add('keepers-callout');
+        hintText.textContent = `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
+      }
+
+      updateLockDrama();
     }
 
     function bankSelectedCards() {
       if (!selectedFlop.size) return;
+
       [...selectedFlop].sort((a, b) => a - b).forEach(index => {
         if (basketIndex >= maxBasket || !currentFlop[index]) return;
         const cardData = currentFlop[index];
         const slot = basketSlots[basketIndex++];
         slot.classList.add('filled');
         slot.innerHTML = '';
-        slot.appendChild(makeCardMarkup(cardData, false, false));
-        flashBasketSlot(slot);
+        slot.appendChild(makeCardMarkup(cardData, false));
         keptCards.push(cardData);
       });
+
       clearFlop();
       updateTexts();
+      updateLockDrama();
     }
 
-    async function revealFlopSequentially(nextCards) {
-      dealing = true;
-      dealBtn.disabled = true;
-      lockBtn.disabled = true;
-      statusText.textContent = 'Dealing...';
-      hintText.textContent = 'Cards are flipping one at a time.';
-
-      flopSlots.forEach((slot, i) => {
-        slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-in');
-        slot.onclick = null;
-        const card = nextCards[i];
-        if (!card) return;
-        slot.classList.add('filled');
-        const wrap = makeCardMarkup(card, false, true);
-        slot.appendChild(wrap);
-        const badge = document.createElement('div');
-        badge.className = 'select-badge';
-        badge.textContent = '✓';
-        slot.appendChild(badge);
-      });
-
-      for (let i = 0; i < nextCards.length; i++) {
-        const slot = flopSlots[i];
-        if (!nextCards[i] || !slot) continue;
-        await wait(500);
-        slot.classList.add('deal-in', 'selectable');
-        const wrap = slot.querySelector('.card-wrap');
-        if (wrap) wrap.classList.add('is-revealed');
-      }
-
-      flopSlots.forEach((slot, i) => {
-        if (!nextCards[i]) return;
-        slot.onclick = () => toggleSelect(i);
-      });
-
-      dealing = false;
-      syncFlopStates();
-      dealBtn.disabled = false;
-      lockBtn.disabled = false;
-      statusText.textContent = 'Choose your keeps.';
-      hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
-      updateLockPressure();
-    }
-
-    async function flopThree() {
-      if (locked || dealing || basketIndex >= maxBasket) return;
+    function flopThree() {
+      if (locked || basketIndex >= maxBasket) return;
 
       if (currentFlop.length) {
         bankSelectedCards();
         if (basketIndex >= maxBasket) {
           dealBtn.disabled = true;
           statusText.textContent = 'Basket full.';
+          statusText.classList.remove('keepers-callout');
           hintText.textContent = 'Lock it in.';
-          updateLockPressure();
+          updateLockDrama();
           return;
         }
       }
@@ -932,18 +1145,35 @@
       currentFlop = nextCards;
       selectedFlop = new Set();
 
+      flopSlots.forEach((slot, i) => {
+        const card = nextCards[i];
+        slot.innerHTML = '';
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
+        slot.onclick = null;
+        if (!card) return;
+        slot.classList.add('filled', 'selectable');
+        slot.appendChild(makeCardMarkup(card, false));
+        const badge = document.createElement('div');
+        badge.className = 'select-badge';
+        badge.textContent = '✓';
+        slot.appendChild(badge);
+        slot.onclick = () => toggleSelect(i);
+      });
+
       if (!nextCards.length) {
         dealBtn.disabled = true;
         statusText.textContent = 'No cards left.';
+        statusText.classList.remove('keepers-callout');
         hintText.textContent = 'Lock it in.';
         clearFlop();
-        updateLockPressure();
+        updateLockDrama();
         return;
       }
 
-      dealsTaken += 1;
-      updateLockPressure();
-      await revealFlopSequentially(nextCards);
+      syncFlopStates();
+      setKeepersStatus();
+      hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+      updateLockDrama();
     }
 
     function resetReveal() {
@@ -992,12 +1222,12 @@
     }
 
     function lockAndReveal() {
-      if (locked || dealing || (keptCards.length === 0 && !currentFlop.length)) return;
+      if (locked || keptCards.length === 0) return;
       if (currentFlop.length) bankSelectedCards();
+
       locked = true;
       dealBtn.disabled = true;
       lockBtn.disabled = true;
-      lockBtn.classList.remove('lock-warm', 'lock-hot', 'lock-critical');
       clearFlop();
 
       basketSlots.forEach(slot => {
@@ -1010,6 +1240,7 @@
       const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
 
       statusText.textContent = '';
+      statusText.classList.remove('keepers-callout');
       hintText.textContent = '';
       totalText.textContent = '';
       awayText.textContent = '';
@@ -1101,6 +1332,7 @@
           return;
         } catch (e) {}
       }
+
       try {
         await navigator.clipboard.writeText(text);
         shareBtn.textContent = 'Copied!';
@@ -1135,7 +1367,7 @@
     updateDeckCount();
     updateTexts();
     clearFlop();
-    updateLockPressure();
+    updateLockDrama();
   </script>
 </body>
 </html>
