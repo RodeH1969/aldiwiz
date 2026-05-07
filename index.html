@@ -978,7 +978,7 @@
           bullseyeArrow.style.height = `${maxLen * radiusPct}px`;
           bullseyeArrow.style.opacity = '1';
 
-          if (distance <= 1) {
+          if (distance === 0) {
             bullseyeBadge.classList.add('show');
             playSfx('fireworks');
           }
