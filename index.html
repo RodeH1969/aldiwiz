@@ -565,77 +565,79 @@
       100% { transform:scale(1); opacity:1; }
     }
 
-    .bullseye-wrap {
-      position:relative;
-      width:220px;
-      height:220px;
+    .result-meter-wrap {
+      width:min(92vw, 320px);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
     }
 
-    .bullseye {
+    .result-meter-labels {
       width:100%;
-      height:100%;
-      filter:drop-shadow(0 10px 24px rgba(0,0,0,.6));
-      border-radius:50%;
+      display:flex;
+      justify-content:space-between;
+      font-size:12px;
+      font-weight:800;
+      color:rgba(255,255,255,.82);
     }
 
-    .bullseye-arrow {
-      position:absolute;
-      left:50%;
-      top:50%;
-      width:8px;
-      height:72px;
-      background:#fff;
+    .result-meter {
+      position:relative;
+      width:100%;
+      height:32px;
       border-radius:999px;
-      transform-origin:50% 100%;
-      transform:translate(-50%, -100%) rotate(0deg);
-      box-shadow:0 0 10px rgba(0,0,0,.7);
-      opacity:0;
-      animation:arrowDrop .6s ease-out forwards .2s;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:28% 24% 24% 24%;
+      box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.18);
+      background:#111;
     }
 
-    .bullseye-arrow::after {
+    .meter-band { height:100%; }
+    .band-bad { background:linear-gradient(90deg,#d61e24,#f15a24); }
+    .band-mid { background:linear-gradient(90deg,#f3a93b,#ffd978); }
+    .band-good { background:linear-gradient(90deg,#7fd15c,#3db65d); }
+    .band-perfect { background:linear-gradient(90deg,#ffe48a,#fff2b8); }
+
+    .meter-pin {
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#fff;
+      border:3px solid #091a38;
+      transform:translate(-50%, -50%) scale(0);
+      box-shadow:0 0 0 4px rgba(255,255,255,.2), 0 8px 18px rgba(0,0,0,.4);
+      animation:pinPop .35s ease-out forwards;
+    }
+
+    .meter-pin::after {
       content:'';
       position:absolute;
-      top:-14px;
       left:50%;
+      top:-11px;
       transform:translateX(-50%);
-      border-width:0 9px 14px 9px;
-      border-style:solid;
-      border-color:transparent transparent #fff transparent;
+      border-left:7px solid transparent;
+      border-right:7px solid transparent;
+      border-bottom:12px solid #fff;
     }
 
-    @keyframes arrowDrop {
-      0% { transform:translate(-50%,-165%) rotate(-8deg); opacity:0; }
-      70% { transform:translate(-50%,-95%) rotate(4deg); opacity:1; }
-      100% { transform:translate(-50%,-100%) rotate(0deg); opacity:1; }
-    }
-
-    .bullseye-badge {
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%, -50%) rotate(-8deg) scale(0);
-      padding:10px 18px;
-      border-radius:999px;
-      background:#ffd978;
-      color:#351e00;
-      font-weight:900;
+    .result-verdict {
+      min-height:24px;
       font-size:18px;
-      box-shadow:0 10px 24px rgba(0,0,0,.6);
-      text-transform:uppercase;
-      letter-spacing:.08em;
-      border:2px solid rgba(0,0,0,.2);
-      opacity:0;
+      font-weight:900;
+      text-align:center;
+      color:#fff4c4;
+      text-shadow:0 4px 14px rgba(0,0,0,.45);
     }
 
-    .bullseye-badge.show {
-      animation:badgeStamp .5s ease-out forwards .25s;
-    }
-
-    @keyframes badgeStamp {
-      0% { transform:translate(-50%, -50%) rotate(-18deg) scale(2); opacity:0; }
-      70% { transform:translate(-50%, -50%) rotate(-8deg) scale(1.05); opacity:1; }
-      100% { transform:translate(-50%, -50%) rotate(-8deg) scale(1); opacity:1; }
+    @keyframes pinPop {
+      0% { transform:translate(-50%, -50%) scale(0); opacity:0; }
+      70% { transform:translate(-50%, -50%) scale(1.18); opacity:1; }
+      100% { transform:translate(-50%, -50%) scale(1); opacity:1; }
     }
 
     .reveal-bust .bust-stamp {
@@ -775,7 +777,6 @@
       .chip-inner { font-size:22px; }
       .btn { font-size:15px; padding:10px 14px; }
       .bust-center { top:40%; }
-      .bullseye-wrap { width:196px; height:196px; }
     }
   </style>
 </head>
@@ -868,15 +869,23 @@
 
     <div class="reveal-content" id="revealUnder">
       <div class="reveal-total" id="revealTotal">$0.00</div>
-      <div class="bullseye-wrap">
-        <svg class="bullseye" viewBox="0 0 200 200" aria-hidden="true">
-          <circle cx="100" cy="100" r="94" fill="#d61e24"></circle>
-          <circle cx="100" cy="100" r="70" fill="#f3a93b"></circle>
-          <circle cx="100" cy="100" r="48" fill="#3db65d"></circle>
-          <circle cx="100" cy="100" r="24" fill="#ffd978"></circle>
-        </svg>
-        <div class="bullseye-arrow" id="bullseyeArrow"></div>
-        <div class="bullseye-badge" id="bullseyeBadge">PERFECT</div>
+
+      <div class="result-meter-wrap">
+        <div class="result-meter-labels">
+          <span>Missed badly</span>
+          <span>Close</span>
+          <span>Perfect</span>
+        </div>
+
+        <div class="result-meter" id="resultMeter">
+          <div class="meter-band band-bad"></div>
+          <div class="meter-band band-mid"></div>
+          <div class="meter-band band-good"></div>
+          <div class="meter-band band-perfect"></div>
+          <div class="meter-pin" id="resultPin"></div>
+        </div>
+
+        <div class="result-verdict" id="resultVerdict"></div>
       </div>
     </div>
 
@@ -951,9 +960,9 @@
     const revealUnder = document.getElementById('revealUnder');
     const revealBust = document.getElementById('revealBust');
     const revealTotal = document.getElementById('revealTotal');
-    const bullseyeArrow = document.getElementById('bullseyeArrow');
-    const bullseyeBadge = document.getElementById('bullseyeBadge');
     const bustAmount = document.getElementById('bustAmount');
+    const resultPin = document.getElementById('resultPin');
+    const resultVerdict = document.getElementById('resultVerdict');
 
     let deckIndex = 0;
     let basketIndex = 0;
@@ -1180,9 +1189,8 @@
       revealOverlay.classList.remove('show');
       revealUnder.classList.remove('show');
       revealBust.classList.remove('show');
-      bullseyeBadge.classList.remove('show');
-      bullseyeArrow.style.height = '72px';
-      bullseyeArrow.style.opacity = '0';
+      resultVerdict.textContent = '';
+      resultPin.style.left = '50%';
     }
 
     function runReveal({ total, distance, bust }) {
@@ -1198,20 +1206,28 @@
           revealUnder.classList.add('show');
           revealTotal.textContent = `$${total.toFixed(2)}`;
 
-          let radiusPct;
-          if (distance <= 1) radiusPct = 0.20;
-          else if (distance <= 3) radiusPct = 0.38;
-          else if (distance <= 7) radiusPct = 0.60;
-          else radiusPct = 0.85;
-
-          const maxLen = 82;
-          bullseyeArrow.style.height = `${maxLen * radiusPct}px`;
-          bullseyeArrow.style.opacity = '1';
+          let pinLeft = 50;
+          let verdict = '';
 
           if (distance === 0) {
-            bullseyeBadge.classList.add('show');
-            playSfx('fireworks');
+            pinLeft = 88;
+            verdict = 'PERFECT HIT. FILTHY WORK.';
+          } else if (distance <= 1) {
+            pinLeft = 72 + ((1 - distance) * 12);
+            verdict = `$${distance.toFixed(2)} short — ridiculously close.`;
+          } else if (distance <= 3) {
+            pinLeft = 50 + ((3 - distance) / 2) * 20;
+            verdict = `$${distance.toFixed(2)} short — decent, but no cigar.`;
+          } else if (distance <= 7) {
+            pinLeft = 26 + ((7 - distance) / 4) * 22;
+            verdict = `$${distance.toFixed(2)} short — you were wandering.`;
+          } else {
+            pinLeft = 10;
+            verdict = `$${distance.toFixed(2)} short — nowhere near it.`;
           }
+
+          resultPin.style.left = `${pinLeft}%`;
+          resultVerdict.textContent = verdict;
         } else {
           triggerBust();
           revealBust.classList.add('show');
