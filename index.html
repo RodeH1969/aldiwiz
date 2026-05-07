@@ -98,11 +98,21 @@
       background:rgba(4,17,41,.58);
       position:relative;
       overflow:visible;
+      transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
     }
     .basket-slot.filled {
       border-color:transparent;
       background:transparent;
     }
+    .basket-slot.slot-hit {
+      animation:slotHit .22s ease-out;
+    }
+    @keyframes slotHit {
+      0% { transform:scale(1); box-shadow:0 0 0 rgba(255,217,120,0); }
+      35% { transform:scale(1.05) translateY(-2px); box-shadow:0 0 18px rgba(255,217,120,.65); }
+      100% { transform:scale(1); box-shadow:0 0 0 rgba(255,217,120,0); }
+    }
+
     .deal-stage {
       width:100%;
       display:flex;
@@ -128,7 +138,25 @@
       font-weight:900;
       text-align:center;
       border:2px solid rgba(255,255,255,.9);
+      transition:transform .22s ease, box-shadow .22s ease, color .22s ease, border-color .22s ease, background .22s ease;
     }
+    .deck-count.deck-low {
+      color:#ffe08f;
+      border-color:rgba(255,217,120,.95);
+      box-shadow:0 0 16px rgba(255,217,120,.22);
+    }
+    .deck-count.deck-critical {
+      color:#fff1cf;
+      border-color:rgba(255,106,61,.98);
+      background:rgba(48,10,10,.82);
+      box-shadow:0 0 18px rgba(255,106,61,.38);
+      animation:deckPulse .9s ease-in-out infinite;
+    }
+    @keyframes deckPulse {
+      0%,100% { transform:scale(1); }
+      50% { transform:scale(1.06); }
+    }
+
     .deck-stack {
       width:88px;
       aspect-ratio:2.5/3.7;
@@ -146,6 +174,7 @@
     }
     .deck-top img,
     .card-face img { width:100%; height:100%; object-fit:cover; display:block; }
+
     .flop-column {
       display:flex;
       flex-direction:column;
@@ -185,19 +214,36 @@
       border-color:transparent;
       background:transparent;
     }
+    .flop-slot.deal-in {
+      animation:dealIn .32s cubic-bezier(.2,.9,.24,1) both;
+    }
+    @keyframes dealIn {
+      0% { opacity:0; transform:translateY(-14px) scale(.92) rotate(-2deg); }
+      100% { opacity:1; transform:translateY(0) scale(1) rotate(0); }
+    }
+
     .card-wrap { width:100%; height:100%; position:relative; }
     .card {
       width:100%; height:100%; position:relative; box-shadow:0 9px 10px rgba(0,0,0,.28); border-radius:14px;
+      transform-style:preserve-3d;
     }
     .card-face {
       position:absolute; inset:0; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.9); background:#fff;
+      backface-visibility:hidden;
+      transition:transform .36s ease, opacity .36s ease;
     }
+    .card-face.back { transform:rotateY(0deg); opacity:1; }
+    .card-face.front { transform:rotateY(90deg); opacity:0; }
+    .card-wrap.is-revealed .card-face.back { transform:rotateY(-90deg); opacity:0; }
+    .card-wrap.is-revealed .card-face.front { transform:rotateY(0deg); opacity:1; }
+
     .price-badge {
       position:absolute; left:50%; bottom:8px; transform:translateX(-50%); min-width:56px; padding:6px 8px; border-radius:999px;
       background:rgba(0,0,0,.84); color:#fff; text-align:center; font-weight:900; font-size:14px; z-index:8; opacity:0;
       transition:opacity .35s ease, transform .35s ease; border:2px solid rgba(255,255,255,.88); line-height:1;
     }
     .revealed .price-badge { opacity:1; transform:translateX(-50%) translateY(-1px); }
+
     .select-badge {
       position:absolute;
       right:-6px;
@@ -217,130 +263,9 @@
       opacity:0;
       transform:scale(.85);
       transition:opacity .18s ease, transform .18s ease;
+      pointer-events:none;
     }
     .flop-slot.selected .select-badge { opacity:1; transform:scale(1); }
-
-    .thermo-row {
-      width:100%;
-      padding:2px 2px 0;
-    }
-    .thermo {
-      width:100%;
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .thermo-track {
-      position:relative;
-      flex:1;
-      height:20px;
-      border-radius:999px;
-      background:rgba(1,8,25,.92);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.18), 0 6px 14px rgba(0,0,0,.24);
-      overflow:hidden;
-    }
-    .thermo-fill {
-      position:absolute;
-      inset:0 auto 0 0;
-      width:0%;
-      border-radius:999px;
-      background:linear-gradient(90deg,#2f80ed,#56ccf2);
-      box-shadow:0 0 12px rgba(86,204,242,.6);
-      transition:width .4s ease-out, background .35s ease-out, box-shadow .35s ease-out;
-    }
-    .thermo-tip-glow {
-      position:absolute;
-      top:50%;
-      left:var(--tip-left, 0%);
-      width:22px;
-      height:22px;
-      border-radius:50%;
-      transform:translate(-50%, -50%);
-      pointer-events:none;
-      background:radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 72%);
-      opacity:.92;
-      filter:blur(.4px);
-      transition:left .4s ease-out, opacity .35s ease-out;
-      mix-blend-mode:screen;
-    }
-    .thermo-flame {
-      width:28px;
-      height:28px;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      font-size:17px;
-      background:rgba(0,0,0,.78);
-      border:1px solid rgba(255,255,255,.35);
-      box-shadow:0 3px 8px rgba(0,0,0,.45);
-      color:#9fb0cb;
-      transition:color .35s ease-out, text-shadow .35s ease-out, transform .35s ease-out, filter .35s ease-out;
-      filter:grayscale(.85);
-    }
-    .thermo--warming .thermo-fill {
-      background:linear-gradient(90deg,#2f80ed,#f2994a);
-      box-shadow:0 0 14px rgba(242,153,74,.75);
-    }
-    .thermo--near .thermo-fill {
-      background:linear-gradient(90deg,#f2994a,#3db65d);
-      box-shadow:0 0 16px rgba(61,182,93,.85);
-    }
-    .thermo--sweet .thermo-fill {
-      background:linear-gradient(90deg,#2ecf73,#9be15d);
-      box-shadow:0 0 18px rgba(155,225,93,.95);
-    }
-    .thermo--danger .thermo-fill {
-      background:linear-gradient(90deg,#75d55f,#ff6a3d);
-      box-shadow:0 0 18px rgba(255,106,61,.9);
-    }
-    .thermo--hot .thermo-fill {
-      background:linear-gradient(90deg,#f83600,#fe8c00);
-      box-shadow:0 0 22px rgba(248,54,0,.98);
-    }
-    .thermo--sweet .thermo-flame,
-    .thermo--danger .thermo-flame,
-    .thermo--hot .thermo-flame,
-    .thermo--near .thermo-flame,
-    .thermo--warming .thermo-flame {
-      filter:none;
-      color:#ffe08f;
-      text-shadow:0 0 8px rgba(255,180,0,.9);
-    }
-    .thermo--hot .thermo-flame,
-    .thermo--danger .thermo-flame,
-    .thermo--sweet .thermo-flame {
-      animation:flameFlicker .9s ease-in-out infinite alternate;
-    }
-    .thermo-shake .thermo-track {
-      animation:thermoShake .18s linear infinite;
-    }
-    .thermo-pulse .thermo-fill {
-      animation:thermoPulse .8s ease-in-out infinite;
-    }
-    .thermo-broken .thermo-track {
-      overflow:visible;
-    }
-    .thermo-broken .thermo-fill {
-      opacity:.12;
-      transform:skewX(-12deg);
-    }
-    .thermo-broken .thermo-track::before,
-    .thermo-broken .thermo-track::after {
-      content:'';
-      position:absolute;
-      inset:2px;
-      border-radius:999px;
-      background:
-        linear-gradient(115deg, transparent 22%, rgba(255,255,255,.0) 22%, rgba(255,255,255,.0) 45%, rgba(255,255,255,.9) 45%, rgba(255,255,255,.9) 47%, transparent 47%),
-        linear-gradient(70deg, transparent 38%, rgba(255,255,255,.0) 38%, rgba(255,255,255,.0) 63%, rgba(255,255,255,.95) 63%, rgba(255,255,255,.95) 65%, transparent 65%);
-      mix-blend-mode:screen;
-      opacity:.95;
-      pointer-events:none;
-    }
-    .thermo-broken .thermo-track::after {
-      transform:translateX(18px) rotate(3deg);
-      opacity:.8;
-    }
 
     .controls {
       display:flex;
@@ -352,11 +277,30 @@
     }
     .btn {
       border:0; border-radius:999px; padding:11px 18px; font-weight:900; font-size:16px; box-shadow:0 8px 22px rgba(0,0,0,.28); cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
     }
     .btn:disabled { opacity:.45; cursor:default; }
     .btn-primary { background:var(--gold); color:#172033; }
     .btn-secondary { background:#fff; color:#041a3c; }
     .btn-share { background:#e9f3ff; color:#062a54; display:none; }
+
+    .btn-primary.lock-warm {
+      transform:scale(1.02);
+      box-shadow:0 10px 24px rgba(255,196,88,.26);
+    }
+    .btn-primary.lock-hot {
+      transform:scale(1.05);
+      box-shadow:0 0 22px rgba(255,170,60,.34), 0 10px 24px rgba(0,0,0,.32);
+    }
+    .btn-primary.lock-critical {
+      transform:scale(1.08);
+      box-shadow:0 0 28px rgba(255,106,61,.42), 0 10px 24px rgba(0,0,0,.34);
+      animation:lockPulse 1s ease-in-out infinite;
+    }
+    @keyframes lockPulse {
+      0%,100% { filter:brightness(1); }
+      50% { filter:brightness(1.12); }
+    }
 
     .scoreboard {
       width:100%; background:var(--panel); border:1px solid var(--panelBorder); border-radius:18px; padding:14px 14px;
@@ -574,23 +518,6 @@
       100% { transform:scale(1) rotate(0); opacity:1; }
     }
     @keyframes ringBoom { 0% { transform:scale(.1); opacity:0; } 20% { opacity:1; } 100% { transform:scale(1.6); opacity:0; } }
-    @keyframes thermoShake {
-      0% { transform:translateX(0); }
-      25% { transform:translateX(-3px); }
-      50% { transform:translateX(3px); }
-      75% { transform:translateX(-2px); }
-      100% { transform:translateX(0); }
-    }
-    @keyframes thermoPulse {
-      0% { box-shadow:0 0 14px rgba(255,255,255,.55); }
-      50% { box-shadow:0 0 24px rgba(255,255,255,1); }
-      100% { box-shadow:0 0 14px rgba(255,255,255,.55); }
-    }
-    @keyframes flameFlicker {
-      0% { transform:translateY(0) scale(1); }
-      50% { transform:translateY(-1px) scale(1.06); }
-      100% { transform:translateY(0) scale(1); }
-    }
 
     @media (max-width:390px) {
       .topbar { grid-template-columns:1fr; justify-items:center; gap:10px; }
@@ -659,26 +586,16 @@
       </div>
     </section>
 
-    <section class="thermo-row">
-      <div class="thermo" id="thermo">
-        <div class="thermo-track">
-          <div class="thermo-fill" id="thermoFill"></div>
-          <div class="thermo-tip-glow" id="thermoTipGlow"></div>
-        </div>
-        <div class="thermo-flame" id="thermoFlame" aria-hidden="true">🔥</div>
-      </div>
-    </section>
-
     <div class="controls">
       <button class="btn btn-secondary" id="dealBtn" type="button">Deal</button>
       <button class="btn btn-primary" id="lockBtn" type="button">Locknload</button>
     </div>
 
     <section class="scoreboard" aria-live="polite">
-      <div class="line1" id="statusText">Reading the heat...</div>
+      <div class="line1" id="statusText">Deal to reveal three cards, one by one.</div>
       <div class="line2" id="totalText"></div>
       <div class="line3" id="awayText"></div>
-      <div class="line4" id="hintText">Deal cards. Watch the thermometer. Lock it in.</div>
+      <div class="line4" id="hintText">Scarcity and suspense only. No thermometer.</div>
     </section>
 
     <div class="controls">
@@ -695,12 +612,12 @@
       <ol class="rules-list">
         <li>Closest to $21 without going over.</li>
         <li>Pick products you want in your basket.</li>
-        <li>Press <strong>Deal</strong> from the stack of 27 to flop 3 cards.</li>
+        <li>Press <strong>Deal</strong> from the stack of 27 to reveal 3 cards one at a time.</li>
         <li>From each flop, you may keep 0, 1, 2 or 3 cards.</li>
-        <li>Watch the thermometer, not the dollars.</li>
+        <li>The deck counter heats up as cards run out, but it never tells you your total.</li>
         <li>Press <strong>Locknload</strong> when you want the reveal.</li>
         <li>You have a maximum of 5 basket spots to fill.</li>
-        <li>Press <strong>Deal</strong> again to bank selected cards and flop the next 3 cards.</li>
+        <li>Press <strong>Deal</strong> again to bank selected cards and reveal the next 3.</li>
       </ol>
     </div>
   </div>
@@ -789,10 +706,6 @@
     const rulesBtn = document.getElementById('rulesBtn');
     const rulesModal = document.getElementById('rulesModal');
     const rulesClose = document.getElementById('rulesClose');
-
-    const thermo = document.getElementById('thermo');
-    const thermoFill = document.getElementById('thermoFill');
-    const thermoTipGlow = document.getElementById('thermoTipGlow');
     const revealOverlay = document.getElementById('revealOverlay');
     const revealUnder = document.getElementById('revealUnder');
     const revealBust = document.getElementById('revealBust');
@@ -804,9 +717,13 @@
     let deckIndex = 0;
     let basketIndex = 0;
     let locked = false;
+    let dealing = false;
+    let dealsTaken = 0;
     let currentFlop = [];
     let selectedFlop = new Set();
     const keptCards = [];
+
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     function playSfx() {}
 
@@ -828,43 +745,42 @@
       return Math.min(3, slotsLeft());
     }
 
+    function cardsLeft() {
+      return Math.max(0, startingDeck - deckIndex);
+    }
+
     function updateDeckCount() {
-      const left = Math.max(0, startingDeck - deckIndex);
+      const left = cardsLeft();
       deckCount.textContent = `${left} left`;
+      deckCount.classList.remove('deck-low', 'deck-critical');
+      if (left <= 9) {
+        deckCount.classList.add('deck-critical');
+      } else if (left <= 15) {
+        deckCount.classList.add('deck-low');
+      }
     }
 
-    function updateThermometer(total) {
-      const maxScale = 42;
-      const pct = Math.max(0, Math.min(100, (total / maxScale) * 100));
-      thermoFill.style.width = `${pct}%`;
-      thermoTipGlow.style.setProperty('--tip-left', `${pct}%`);
-      thermoTipGlow.style.left = `${pct}%`;
-
-      thermo.classList.remove(
-        'thermo--cold',
-        'thermo--warming',
-        'thermo--near',
-        'thermo--sweet',
-        'thermo--danger',
-        'thermo--hot'
-      );
-
-      let zone = 'cold';
-      if (total < 8) zone = 'cold';
-      else if (total < 16) zone = 'warming';
-      else if (total < 20) zone = 'near';
-      else if (total <= 22) zone = 'sweet';
-      else if (total < 28) zone = 'danger';
-      else zone = 'hot';
-
-      thermo.classList.add(`thermo--${zone}`);
+    function updateLockPressure() {
+      lockBtn.classList.remove('lock-warm', 'lock-hot', 'lock-critical');
+      if (locked) return;
+      const left = cardsLeft();
+      if (left <= 9 || dealsTaken >= 4 || basketIndex >= 4) {
+        lockBtn.classList.add('lock-critical');
+      } else if (left <= 15 || dealsTaken >= 3 || basketIndex >= 3) {
+        lockBtn.classList.add('lock-hot');
+      } else if (left <= 21 || dealsTaken >= 2 || basketIndex >= 2) {
+        lockBtn.classList.add('lock-warm');
+      }
     }
 
-    function makeCardMarkup(cardData, revealPrice = false) {
+    function makeCardMarkup(cardData, revealPrice = false, showBack = false) {
       const wrap = document.createElement('div');
-      wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
+      wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '') + (showBack ? '' : ' is-revealed');
       wrap.innerHTML = `
         <div class="card">
+          <div class="card-face back">
+            <img src="./facecard.jpeg" alt="Super21 face card">
+          </div>
           <div class="card-face front">
             <img src="${cardData.image}" alt="${cardData.alt}">
           </div>
@@ -877,7 +793,7 @@
     function clearFlop() {
       flopSlots.forEach(slot => {
         slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-in');
         slot.onclick = null;
       });
       currentFlop = [];
@@ -886,13 +802,14 @@
     }
 
     function updateTexts() {
-      const total = keptTotal();
-      updateThermometer(total);
       if (locked) return;
-      statusText.textContent = 'Reading the heat...';
-      hintText.textContent = 'Deal cards. Watch the thermometer. Lock it in.';
+      statusText.textContent = 'Deal to reveal three cards, one by one.';
+      hintText.textContent = currentFlop.length
+        ? `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`
+        : 'Scarcity and suspense only. No thermometer.';
       totalText.textContent = '';
       awayText.textContent = '';
+      updateLockPressure();
     }
 
     function syncFlopStates() {
@@ -908,7 +825,7 @@
     }
 
     function toggleSelect(index) {
-      if (locked || !currentFlop[index]) return;
+      if (locked || dealing || !currentFlop[index]) return;
       const limit = maxSelectable();
       if (selectedFlop.has(index)) {
         selectedFlop.delete(index);
@@ -917,10 +834,18 @@
         selectedFlop.add(index);
       }
       syncFlopStates();
-      statusText.textContent = 'Reading the heat...';
+      statusText.textContent = 'Choose what to bank, or chase one more deal.';
       hintText.textContent = selectedFlop.size
         ? 'Press Deal to bank your selected cards.'
         : `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
+      updateLockPressure();
+    }
+
+    function flashBasketSlot(slot) {
+      slot.classList.remove('slot-hit');
+      void slot.offsetWidth;
+      slot.classList.add('slot-hit');
+      setTimeout(() => slot.classList.remove('slot-hit'), 240);
     }
 
     function bankSelectedCards() {
@@ -931,22 +856,69 @@
         const slot = basketSlots[basketIndex++];
         slot.classList.add('filled');
         slot.innerHTML = '';
-        slot.appendChild(makeCardMarkup(cardData, false));
+        slot.appendChild(makeCardMarkup(cardData, false, false));
+        flashBasketSlot(slot);
         keptCards.push(cardData);
       });
       clearFlop();
       updateTexts();
     }
 
-    function flopThree() {
-      if (locked || basketIndex >= maxBasket) return;
+    async function revealFlopSequentially(nextCards) {
+      dealing = true;
+      dealBtn.disabled = true;
+      lockBtn.disabled = true;
+      statusText.textContent = 'Dealing...';
+      hintText.textContent = 'Cards are flipping one at a time.';
+
+      flopSlots.forEach((slot, i) => {
+        slot.innerHTML = '';
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-in');
+        slot.onclick = null;
+        const card = nextCards[i];
+        if (!card) return;
+        slot.classList.add('filled');
+        const wrap = makeCardMarkup(card, false, true);
+        slot.appendChild(wrap);
+        const badge = document.createElement('div');
+        badge.className = 'select-badge';
+        badge.textContent = '✓';
+        slot.appendChild(badge);
+      });
+
+      for (let i = 0; i < nextCards.length; i++) {
+        const slot = flopSlots[i];
+        if (!nextCards[i] || !slot) continue;
+        await wait(500);
+        slot.classList.add('deal-in', 'selectable');
+        const wrap = slot.querySelector('.card-wrap');
+        if (wrap) wrap.classList.add('is-revealed');
+      }
+
+      flopSlots.forEach((slot, i) => {
+        if (!nextCards[i]) return;
+        slot.onclick = () => toggleSelect(i);
+      });
+
+      dealing = false;
+      syncFlopStates();
+      dealBtn.disabled = false;
+      lockBtn.disabled = false;
+      statusText.textContent = 'Choose your keeps.';
+      hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+      updateLockPressure();
+    }
+
+    async function flopThree() {
+      if (locked || dealing || basketIndex >= maxBasket) return;
 
       if (currentFlop.length) {
         bankSelectedCards();
         if (basketIndex >= maxBasket) {
           dealBtn.disabled = true;
-          statusText.textContent = 'Reading the heat...';
-          hintText.textContent = 'Basket full. Lock it in.';
+          statusText.textContent = 'Basket full.';
+          hintText.textContent = 'Lock it in.';
+          updateLockPressure();
           return;
         }
       }
@@ -955,36 +927,23 @@
       for (let i = 0; i < flopSize && deckIndex < deckCards.length; i++) {
         nextCards.push(deckCards[deckIndex++]);
       }
+
       updateDeckCount();
       currentFlop = nextCards;
       selectedFlop = new Set();
 
-      flopSlots.forEach((slot, i) => {
-        const card = nextCards[i];
-        slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
-        slot.onclick = null;
-        if (!card) return;
-        slot.classList.add('filled', 'selectable');
-        slot.appendChild(makeCardMarkup(card, false));
-        const badge = document.createElement('div');
-        badge.className = 'select-badge';
-        badge.textContent = '✓';
-        slot.appendChild(badge);
-        slot.onclick = () => toggleSelect(i);
-      });
-
       if (!nextCards.length) {
         dealBtn.disabled = true;
-        statusText.textContent = 'Reading the heat...';
-        hintText.textContent = 'No cards left. Lock it in.';
+        statusText.textContent = 'No cards left.';
+        hintText.textContent = 'Lock it in.';
         clearFlop();
+        updateLockPressure();
         return;
       }
 
-      syncFlopStates();
-      statusText.textContent = 'Reading the heat...';
-      hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+      dealsTaken += 1;
+      updateLockPressure();
+      await revealFlopSequentially(nextCards);
     }
 
     function resetReveal() {
@@ -994,17 +953,13 @@
       bullseyeBadge.classList.remove('show');
       bullseyeArrow.style.height = '72px';
       bullseyeArrow.style.opacity = '0';
-      thermo.classList.remove('thermo-shake', 'thermo-pulse', 'thermo-broken');
     }
 
     function runReveal({ total, distance, bust }) {
       resetReveal();
-      thermo.classList.add('thermo-shake', 'thermo-pulse');
       playSfx('lock');
 
       setTimeout(() => {
-        thermo.classList.remove('thermo-shake');
-        updateThermometer(total);
         playSfx('slam');
         revealOverlay.classList.add('show');
         revealOverlay.setAttribute('aria-hidden', 'false');
@@ -1023,30 +978,26 @@
           bullseyeArrow.style.height = `${maxLen * radiusPct}px`;
           bullseyeArrow.style.opacity = '1';
 
-          if (distance === 0) {
+          if (distance <= 1) {
             bullseyeBadge.classList.add('show');
             playSfx('fireworks');
           }
         } else {
-          thermo.classList.add('thermo-broken');
           triggerBust();
           revealBust.classList.add('show');
           bustAmount.textContent = `Over by $${distance.toFixed(2)}`;
           playSfx('bust');
         }
-
-        setTimeout(() => {
-          thermo.classList.remove('thermo-pulse');
-        }, 700);
-      }, 800);
+      }, 500);
     }
 
     function lockAndReveal() {
-      if (locked || keptCards.length === 0) return;
+      if (locked || dealing || (keptCards.length === 0 && !currentFlop.length)) return;
       if (currentFlop.length) bankSelectedCards();
       locked = true;
       dealBtn.disabled = true;
       lockBtn.disabled = true;
+      lockBtn.classList.remove('lock-warm', 'lock-hot', 'lock-critical');
       clearFlop();
 
       basketSlots.forEach(slot => {
@@ -1125,6 +1076,7 @@
     updateDeckCount();
     updateTexts();
     clearFlop();
+    updateLockPressure();
   </script>
 </body>
 </html>
