@@ -111,7 +111,7 @@
     .basket-row {
       width:100%;
       display:grid;
-      grid-template-columns:repeat(5, 1fr);
+      grid-template-columns:repeat(6, 1fr);
       gap:8px;
       justify-items:center;
     }
@@ -670,6 +670,68 @@
       100% { transform:scale(1) rotate(-6deg); filter:blur(0); opacity:1; }
     }
 
+    .fireworks {
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:1200;
+    }
+
+    .firework-burst {
+      position:absolute;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      opacity:0;
+    }
+
+    .firework-burst::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      background:currentColor;
+      box-shadow:
+        0 -42px 0 0 currentColor,
+        0 42px 0 0 currentColor,
+        42px 0 0 0 currentColor,
+        -42px 0 0 0 currentColor,
+        30px 30px 0 0 currentColor,
+        -30px -30px 0 0 currentColor,
+        30px -30px 0 0 currentColor,
+        -30px 30px 0 0 currentColor,
+        0 -62px 0 -2px currentColor,
+        0 62px 0 -2px currentColor,
+        62px 0 0 -2px currentColor,
+        -62px 0 0 -2px currentColor;
+    }
+
+    .firework-burst.go {
+      animation:fireworkBoom 1.15s ease-out forwards;
+    }
+
+    .flop-slot.deal-enter .card-wrap {
+      opacity:0;
+      transform:translateX(-72px) translateY(-10px) rotate(-10deg) scale(.92);
+    }
+
+    .flop-slot.deal-enter.show .card-wrap {
+      animation:dealerPitch .5s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes fireworkBoom {
+      0% { opacity:0; transform:scale(.15); }
+      18% { opacity:1; }
+      100% { opacity:0; transform:scale(1.7); }
+    }
+
+    @keyframes dealerPitch {
+      0% { opacity:0; transform:translateX(-72px) translateY(-10px) rotate(-10deg) scale(.92); }
+      70% { opacity:1; transform:translateX(4px) translateY(0) rotate(1deg) scale(1.02); }
+      100% { opacity:1; transform:translateX(0) translateY(0) rotate(0) scale(1); }
+    }
+
     .bust-overlay {
       position:fixed;
       inset:0;
@@ -789,20 +851,21 @@
       </div>
 
       <div class="target-wrap">
-        <div class="target-label">Closest to</div>
+        <div class="target-label">Today's target</div>
         <div class="chip"><div class="chip-inner" id="targetChip">$21</div></div>
       </div>
 
       <button class="rules-btn" id="rulesBtn" type="button">Rules</button>
     </header>
 
-    <div class="basket-label">Your Basket (5 max)</div>
+    <div class="basket-label">Your Basket (6 max)</div>
     <section class="basket-row" id="basketRow">
       <div class="basket-slot" data-slot="0"></div>
       <div class="basket-slot" data-slot="1"></div>
       <div class="basket-slot" data-slot="2"></div>
       <div class="basket-slot" data-slot="3"></div>
       <div class="basket-slot" data-slot="4"></div>
+      <div class="basket-slot" data-slot="5"></div>
     </section>
 
     <section class="deal-stage">
@@ -834,10 +897,10 @@
     </div>
 
     <section class="scoreboard" aria-live="polite">
-      <div class="line1" id="statusText">Deal cards. Build suspense.</div>
+      <div class="line1" id="statusText">Deal cards. Guess prices.</div>
       <div class="line2" id="totalText"></div>
       <div class="line3" id="awayText"></div>
-      <div class="line4" id="hintText">No thermometer. Pure nerves.</div>
+      <div class="line4" id="hintText">There are 3 perfect combos to $21.</div>
     </section>
 
     <div class="controls">
@@ -858,7 +921,7 @@
         <li>From each flop, you may keep 0, 1, 2 or 3 cards.</li>
         <li>Use the shrinking deck and rising drama to judge your nerve.</li>
         <li>Press <strong>Locknload</strong> when you want the reveal.</li>
-        <li>You have a maximum of 5 basket spots to fill.</li>
+        <li>You have a maximum of 6 basket spots to fill.</li>
         <li>Press <strong>Deal</strong> again to bank selected cards and flop the next 3 cards.</li>
       </ol>
     </div>
@@ -905,7 +968,7 @@
   <script>
     const target = 21;
     const startingDeck = 27;
-    const maxBasket = 5;
+    const maxBasket = 6;
     const flopSize = 3;
     const gameNumber = 213;
     const gameDate = '6th May 2026';
@@ -963,20 +1026,46 @@
     const bustAmount = document.getElementById('bustAmount');
     const resultPin = document.getElementById('resultPin');
     const resultVerdict = document.getElementById('resultVerdict');
+    const fireworks = document.getElementById('fireworks');
 
     let deckIndex = 0;
     let basketIndex = 0;
     let locked = false;
+    let dealing = false;
     let currentFlop = [];
     let selectedFlop = new Set();
     const keptCards = [];
 
     function playSfx() {}
 
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     function triggerBust() {
       bustOverlay.classList.remove('show');
       void bustOverlay.offsetWidth;
       bustOverlay.classList.add('show');
+    }
+
+    function launchFireworks() {
+      if (!fireworks) return;
+      const colors = ['#ffd978', '#ff5f45', '#7cf1ff', '#ffffff', '#9cff57', '#ff7edb'];
+
+      for (let wave = 0; wave < 4; wave++) {
+        setTimeout(() => {
+          for (let i = 0; i < 8; i++) {
+            const burst = document.createElement('div');
+            burst.className = 'firework-burst';
+            burst.style.left = `${8 + Math.random() * 84}%`;
+            burst.style.top = `${8 + Math.random() * 45}%`;
+            burst.style.color = colors[Math.floor(Math.random() * colors.length)];
+            fireworks.appendChild(burst);
+            requestAnimationFrame(() => burst.classList.add('go'));
+            setTimeout(() => burst.remove(), 1300);
+          }
+        }, wave * 220);
+      }
     }
 
     function keptTotal() {
@@ -1049,7 +1138,7 @@
     function clearFlop() {
       flopSlots.forEach(slot => {
         slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
         slot.onclick = null;
       });
       currentFlop = [];
@@ -1064,11 +1153,11 @@
 
     function updateTexts() {
       if (locked) return;
-      statusText.textContent = 'Deal cards. Build suspense.';
+      statusText.textContent = 'Deal cards. Guess Prices.';
       statusText.classList.remove('keepers-callout');
       hintText.textContent = currentFlop.length
         ? `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`
-        : 'No thermometer. Pure nerves.';
+        : 'There are 3 perfect combos to $21.';
       totalText.textContent = '';
       awayText.textContent = '';
       updateLockDrama();
@@ -1130,8 +1219,8 @@
       updateLockDrama();
     }
 
-    function flopThree() {
-      if (locked || basketIndex >= maxBasket) return;
+    async function flopThree() {
+      if (locked || dealing || basketIndex >= maxBasket) return;
 
       if (currentFlop.length) {
         bankSelectedCards();
@@ -1150,25 +1239,6 @@
         nextCards.push(deckCards[deckIndex++]);
       }
 
-      updateDeckCount();
-      currentFlop = nextCards;
-      selectedFlop = new Set();
-
-      flopSlots.forEach((slot, i) => {
-        const card = nextCards[i];
-        slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable');
-        slot.onclick = null;
-        if (!card) return;
-        slot.classList.add('filled', 'selectable');
-        slot.appendChild(makeCardMarkup(card, false));
-        const badge = document.createElement('div');
-        badge.className = 'select-badge';
-        badge.textContent = '✓';
-        slot.appendChild(badge);
-        slot.onclick = () => toggleSelect(i);
-      });
-
       if (!nextCards.length) {
         dealBtn.disabled = true;
         statusText.textContent = 'No cards left.';
@@ -1179,9 +1249,48 @@
         return;
       }
 
+      dealing = true;
+      dealBtn.disabled = true;
+      lockBtn.disabled = true;
+      currentFlop = [];
+      selectedFlop = new Set();
+
+      flopSlots.forEach(slot => {
+        slot.innerHTML = '';
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
+        slot.onclick = null;
+      });
+
+      updateDeckCount();
+
+      for (let i = 0; i < nextCards.length; i++) {
+        const card = nextCards[i];
+        currentFlop[i] = card;
+
+        const slot = flopSlots[i];
+        slot.innerHTML = '';
+        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'show');
+        slot.classList.add('filled', 'selectable', 'deal-enter');
+        slot.appendChild(makeCardMarkup(card, false));
+        const badge = document.createElement('div');
+        badge.className = 'select-badge';
+        badge.textContent = '✓';
+        slot.appendChild(badge);
+        slot.onclick = () => toggleSelect(i);
+
+        await wait(80);
+        slot.classList.add('show');
+        updateDeckCount();
+        await wait(320);
+      }
+
+      selectedFlop = new Set();
       syncFlopStates();
       setKeepersStatus();
       hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+      dealing = false;
+      dealBtn.disabled = false;
+      lockBtn.disabled = false;
       updateLockDrama();
     }
 
@@ -1212,6 +1321,7 @@
           if (distance === 0) {
             pinLeft = 88;
             verdict = 'PERFECT HIT. FILTHY WORK.';
+            launchFireworks();
           } else if (distance <= 1) {
             pinLeft = 72 + ((1 - distance) * 12);
             verdict = `$${distance.toFixed(2)} short — ridiculously close.`;
@@ -1283,20 +1393,20 @@
         if (away <= 1) {
           lines.push(
             `🤯 YOU BUSTED at $${tot}.`,
-            `Only $${a} over $${t} — you were so close.`,
+            `$${a} over — so close!`,
             `One less reckless grab and you'd be a genius.`
           );
         } else if (away <= 5) {
           lines.push(
             `🤯 YOU BUSTED at $${tot}.`,
-            `That's $${a} over $${t}.`,
+            `That's $${a} over.`,
             `Maybe watch your supermarket bill,`,
             `not the hot checkout operator.`
           );
         } else {
           lines.push(
             `🔥 CATASTROPHIC BUST: $${tot}.`,
-            `$${a} over $${t}.`,
+            `$${a} over.`,
             `Are you shopping or just financially self-harming?`
           );
         }
@@ -1314,17 +1424,17 @@
           );
         } else if (away <= 5) {
           lines.push(
-            `👍 $${tot}, just $${a} under $${t}.`,
+            `👍 $${tot}, just $${a} under.`,
             `Not bad… but don't start calling yourself a checkout sniper.`
           );
         } else if (away <= 10) {
           lines.push(
-            `🤨 $${tot}, a soft $${a} miss under $${t}.`,
+            `🤨 $${tot}, a soft $${a} miss.`,
             `You shop like every aisle is a sightseeing tour.`
           );
         } else {
           lines.push(
-            `💸 $${tot}, a lazy $${a} short of $${t}.`,
+            `💸 $${tot}, a lazy $${a} short.`,
             `You were nowhere near it, but thanks for participating.`
           );
         }
@@ -1385,5 +1495,6 @@
     clearFlop();
     updateLockDrama();
   </script>
+  <div class="fireworks" id="fireworks"></div>
 </body>
 </html>
