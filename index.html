@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super21 Locknload</title>
+  <title>ALDI21 </title>
   <link rel="icon" href="./favicon.ico" type="image/x-icon">
   <style>
     :root {
@@ -876,7 +876,7 @@
           <div class="deck-shadow-2"></div>
           <div class="deck-shadow"></div>
           <div class="deck-top">
-            <img src="./facecard.jpeg" alt="Super21 face card" onerror="this.onerror=null;this.src='./facecard.jpeg';">
+            <img src="./facecard.png" alt="ALDI21 face card" onerror="this.onerror=null;this.src='./facecard.png';">
           </div>
         </div>
       </div>
@@ -967,41 +967,79 @@
 
   <script>
     const target = 21;
-    const startingDeck = 27;
+    const startingDeck = 65;
     const maxBasket = 6;
     const flopSize = 3;
     const gameNumber = 213;
-    const gameDate = '6th May 2026';
+    const gameDate = '8th May 2026';
     const shareUrl = 'https://super21-b5je.onrender.com';
 
     const deckCards = [
-      { image: 'cards/cadbury-card.png',              alt: 'Cadbury Peppermint 180g card',                  price: 4.00 },
-      { image: 'cards/emporiumgoats-card.png',        alt: "Emporium Goat's Cheese 350g card",              price: 8.99 },
-      { image: 'cards/halloumi-card.png',             alt: 'Emporium Halloumi 225g card',                   price: 4.99 },
-      { image: 'cards/cocopops-card.png',             alt: "Kellogg's Coco Pops 535g card",                 price: 7.20 },
-      { image: 'cards/nutrigrain-card.png',           alt: "Kellogg's Nutri-Grain 470g card",               price: 4.50 },
-      { image: 'cards/morningfresh-card.png',         alt: 'Morning Fresh Lemon 900ml card',                price: 10.00 },
-      { image: 'cards/linguine-card.png',             alt: 'Remano Egg Linguine 375g card',                 price: 4.49 },
-      { image: 'cards/smiths-card.png',               alt: "Smith's Chicken Chips 170g card",               price: 2.50 },
-      { image: 'cards/cottagecheese-card.png',        alt: 'Westacre Cottage Cheese 500g card',             price: 5.49 },
-      { image: 'cards/tastycheese-card.png',          alt: 'Westacre Tasty Cheese 1kg card',                price: 8.99 },
-      { image: 'cards/atlasflyspray-card.png',        alt: 'Atlas Fly Spray 300g card',                     price: 2.79 },
-      { image: 'cards/begamacandcheese-card.png',     alt: 'Bega Mac & Cheese 280g card',                   price: 4.69 },
-      { image: 'cards/briochebuns-card.png',          alt: 'Bon Appetit Brioche Burger Buns 200g card',     price: 3.49 },
-      { image: 'cards/worcestersauce-card.png',       alt: 'Holbrooks Worcestershire Sauce 500ml card',     price: 6.00 },
-      { image: 'cards/pizzasnacks-card.png',          alt: 'International Cuisine Pizza Snacks 400g card',  price: 5.99 },
-      { image: 'cards/niveadeo-card.png',             alt: 'Nivea Men Black & White Deodorant 200ml card',  price: 4.99 },
-      { image: 'cards/ramyun-card.png',               alt: 'Nongshim Shin Ramyun 480g card',                price: 4.99 },
-      { image: 'cards/quilton-card.png',              alt: 'Quilton 3 Ply Toilet Paper 18 rolls card',      price: 9.89 },
-      { image: 'cards/emporiumgranapadano-card.png',  alt: 'Emporium Grana Padano Cheese 250g card',        price: 8.29 },
-      { image: 'cards/emporiumblue-card.png',         alt: 'Emporium Selection Blue Cheese 200g card',      price: 5.99 },
-      { image: 'cards/farmdalemilk-card.png',         alt: 'Farmdale Full Cream Milk 2L card',              price: 3.55 },
-      { image: 'cards/ironbarkporkmince-card.png',    alt: 'Ironbark Pork Mince 500g card',                 price: 4.99 },
-      { image: 'cards/knoppers-card.png',             alt: 'Knoppers Milk Wafers 200g card',                price: 4.99 },
-      { image: 'cards/powerforcegarbagebag-card.png', alt: 'Powerforce Garbage Bags 20 pack card',          price: 3.59 },
-      { image: 'cards/shapesbarbecue-card.png',       alt: "Arnott's Shapes Barbecue 250g card",            price: 3.99 },
-      { image: 'cards/tricaresoap-card.png',          alt: 'Tricare Antibacterial Soap 250ml card',         price: 2.00 },
-      { image: 'cards/wisdomtoothbrush-card.png',     alt: 'Wisdom Toothbrush 2 pack card',                 price: 1.89 }
+      { image: './cards/atlasflyspray-card.png', alt: "Atlas FLY SPRAY 300g card", price: 2.80 },
+      { image: './cards/begamacandcheese-card.png', alt: "Bega MAC & CHEESE 280g card", price: 4.70 },
+      { image: './cards/bergdeliprosciutto-card.png', alt: "Berg Deli PROSCIUTTO 100g card", price: 5.00 },
+      { image: './cards/bergdelibacon-card.png', alt: "Berg Deli RINDLESS MIDDLE BACON 500g card", price: 8.00 },
+      { image: './cards/bergdelisalami-card.png', alt: "Berg Deli SALAMI 100g card", price: 3.80 },
+      { image: './cards/bergdeliselections-card.png', alt: "Berg Deli SELECTIONS 150g card", price: 9.00 },
+      { image: './cards/blackstonechips-card.png', alt: "Blackstone SEA SALT CHIPS 175g card", price: 3.00 },
+      { image: './cards/briochebuns-card.png', alt: "Bon Appetit BRIOCHE BURGER BUNS 200g card", price: 3.50 },
+      { image: './cards/broadoakchicken-card.png', alt: "Broadoak Farms WHOLE CHICKEN  card", price: 7.60 },
+      { image: './cards/delibabypeppers-card.png', alt: "Deli Originals BABY PEPPERS 130g card", price: 3.00 },
+      { image: './cards/delicornrelish-card.png', alt: "Deli Originals CORN RELISH DIP 200g card", price: 2.50 },
+      { image: './cards/delihommus-card.png', alt: "Deli Originals HOMMUS 1kg card", price: 6.00 },
+      { image: './cards/delifetadip-card.png', alt: "Deli Originals PERSIANFETA DIP 150g card", price: 3.00 },
+      { image: './cards/deliolives-card.png', alt: "Deli Originals STUFFED GREEN OLIVES 450g card", price: 2.25 },
+      { image: './cards/doritos-card.png', alt: "Doritos CHEESE SUPREME PARTY SIZE 500g card", price: 5.60 },
+      { image: './cards/elmsburysausagerolls-card.png', alt: "Elmsbury PARTY SAUSAGE ROLLS 900g card", price: 9.00 },
+      { image: './cards/eltorafajitakit-card.png', alt: "El Tora FAJITA KIT  card", price: 5.50 },
+      { image: './cards/eltorafajitaseasoning-card.png', alt: "El Tora FAJITA SEASONING 40g card", price: 1.30 },
+      { image: './cards/emporiumgoats-card.png', alt: "Emporium GOAT'S CHEESE 350g card", price: 11.00 },
+      { image: './cards/emporiumgranapadano-card.png', alt: "Emporium GRANA PADANO CHEESE 250g card", price: 8.30 },
+      { image: './cards/halloumi-card.png', alt: "Emporium HALLOUMI 225g card", price: 5.00 },
+      { image: './cards/emporiumblue-card.png', alt: "Emporium SELECTION BLUE CHEESE 200g card", price: 6.00 },
+      { image: './cards/farmdalemilk-card.png', alt: "Farmdale FULL CREAM MILK 2L card", price: 3.60 },
+      { image: './cards/farmwoodwings-card.png', alt: "Farmwood BUFFALO STYLE CHICKEN WINGS 1kg card", price: 10.00 },
+      { image: './cards/farmwoodkyiv-card.png', alt: "Farmwood CHICKEN KYIV 350g card", price: 7.00 },
+      { image: './cards/farmwoodschnitzel-card.png', alt: "Farmwood CHICKEN SCHNITZEL 400g card", price: 5.00 },
+      { image: './cards/goldenvale-card.png', alt: "Golden Vale HONEY PECAN GRANOLA 300g card", price: 8.00 },
+      { image: './cards/hillcrestbran-card.png', alt: "Hillcrest BRAN & SULTANAS 580g card", price: 4.00 },
+      { image: './cards/hillcrestbubbles-card.png', alt: "Hillcrest BREAKFAST BUBBLES 450g card", price: 3.50 },
+      { image: './cards/hillcrestchocorice-card.png', alt: "Hillcrest CHOCO RICE 650g card", price: 3.50 },
+      { image: './cards/hillcrestpeanutbars-card.png', alt: "Hillcrest CHOC PEANUT BARS 210g card", price: 3.00 },
+      { image: './cards/hillcresthoneynut-card.png', alt: "Hillcrest HONEY NUT CORNFLAKES 670g card", price: 4.70 },
+      { image: './cards/hillcrestmuesli-card.png', alt: "Hillcrest MUESLI 500g card", price: 4.70 },
+      { image: './cards/colwayworcestershire-card.png', alt: "Colway WORCESTERSHIRE SAUCE 250ml card", price: 1.90 },
+      { image: './cards/imperialgrain-card.png', alt: "Imperial Grain LONG GRAIN WHITE RICE 250g card", price: 1.70 },
+      { image: './cards/intlcuisinepizzasnacks-card.png', alt: "International Cuisine PIZZA SNACKS 400g card", price: 6.00 },
+      { image: './cards/ironbarkporkmince-card.png', alt: "Ironbark PORK MINCE 500g card", price: 5.00 },
+      { image: './cards/jindurrabeef-card.png', alt: "Jindurra Station 5 STAR BEEF MINCE 500g card", price: 10.50 },
+      { image: './cards/julius-card.png', alt: "Julius HOME STYLE DOG FOOD 700g card", price: 2.30 },
+      { image: './cards/knoppers-card.png', alt: "Knoppers MILK WAFERS 200g card", price: 5.00 },
+      { image: './cards/niveamendeodorant-card.png', alt: "Nivea Men BLACK & WHITE DEODORANT 200ml card", price: 5.00 },
+      { image: './cards/nongshinramyun-card.png', alt: "Nongshim SHIN RAMYUN 480g card", price: 5.00 },
+      { image: './cards/oceanroyaleprawns-card.png', alt: "Ocean Royale RAW PRAWN CUTLETS 500g card", price: 15.00 },
+      { image: './cards/oceanroyalesalmon-card.png', alt: "Ocean Royale SALMON 1kg card", price: 27.50 },
+      { image: './cards/oceanroyalewhiting-card.png', alt: "Ocean Royale WHITING 1kg card", price: 10.00 },
+      { image: './cards/powerforcegarbagebag-card.png', alt: "Powerforce GARBAGE BAGS 20 pack card", price: 3.60 },
+      { image: './cards/quiltontoiletpaper-card.png', alt: "Quilton 3 PLY TOILET PAPER 18 rolls card", price: 9.90 },
+      { image: './cards/readysetcookbeef-card.png', alt: "Ready Set Cook BUTTERFLIED BEEF  card", price: 20.00 },
+      { image: './cards/readysetcookteriyaki-card.png', alt: "Ready Set Cook CHICKEN KEBABS TERIYAKI 375g card", price: 6.50 },
+      { image: './cards/readysetcooksausages-card.png', alt: "Ready Set Cook THIN SAUSAGES 1.8kg card", price: 10.00 },
+      { image: './cards/pappardelle-card.png', alt: "Remano EGG LINGUINE 375g card", price: 4.50 },
+      { image: './cards/remanomac-card.png', alt: "Remano MACARONI 500g card", price: 1.00 },
+      { image: './cards/remanognocchi-card.png', alt: "Remano POTATO GNOCCHI 500g card", price: 3.00 },
+      { image: './cards/remanosauce-card.png', alt: "Remano TOMATO PASTA SAUCE 500g card", price: 1.70 },
+      { image: './cards/shapesbarbecue-card.png', alt: "Shapes Originals BARBECUE 250g card", price: 4.00 },
+      { image: './cards/simpleecarbonara-card.png', alt: "Simplee CARBONARA SAUCE 125g card", price: 1.70 },
+      { image: './cards/simpleemac-card.png', alt: "Simplee MACARONI & CHEESE 130g card", price: 1.70 },
+      { image: './cards/quincepaste-card.png', alt: "Specially Selected QUINCE PASTE 100g card", price: 2.90 },
+      { image: './cards/sprinterspopcorn-card.png', alt: "Sprinters POPCORN 120g card", price: 1.80 },
+      { image: './cards/werthers-card.png', alt: "Storck WERTHER'S ORIGINAL CREAM CANDIES 42g card", price: 2.50 },
+      { image: './cards/fishmonger-card.png', alt: "The Fishmonger SMOKED SALMON 200g card", price: 10.00 },
+      { image: './cards/tricaresoap-card.png', alt: "Tricare ANTIBACTERIAL SOAP 250ml card", price: 2.00 },
+      { image: './cards/cottagecheese-card.png', alt: "Westacre COTTAGE CHEESE 500g card", price: 5.50 },
+      { image: './cards/tastycheese-card.png', alt: "Westacre TASTY CHEESE 1kg card", price: 9.00 },
+      { image: './cards/wisdomtoothbrush-card.png', alt: "Wisdom TOOTHBRUSH 2 pack card", price: 1.90 }
     ];
 
     const basketSlots = [...document.querySelectorAll('.basket-slot')];
@@ -1086,11 +1124,11 @@
 
     function getUrgencyStage() {
       const left = cardsLeft();
-      if (left <= 3) return 5;
-      if (left <= 6) return 4;
-      if (left <= 9) return 3;
-      if (left <= 12) return 2;
-      if (left <= 15) return 1;
+      if (left <= 11) return 5;
+      if (left <= 23) return 4;
+      if (left <= 35) return 3;
+      if (left <= 47) return 2;
+      if (left <= 59) return 1;
       return 0;
     }
 
@@ -1440,7 +1478,7 @@
         }
       }
 
-      lines.push('', `Play Super21 Locknload: ${shareUrl}`);
+      lines.push('', `Play ALDI21 Locknload: ${shareUrl}`);
       return lines.join('\n');
     }
 
@@ -1452,7 +1490,7 @@
       if (navigator.share) {
         try {
           await navigator.share({
-            title: `Super21 Game #${gameNumber}`,
+            title: `ALDI21 Game #${gameNumber}`,
             text
           });
           return;
