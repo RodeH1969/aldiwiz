@@ -846,8 +846,8 @@
   <main class="wrap">
     <header class="topbar">
       <div class="game-meta">
-        <div class="game-no">Game #213</div>
-        <div class="game-date">6th May 2026</div>
+        <div class="game-no" id="gameNoEl">Game #213</div>
+        <div class="game-date" id="gameDateEl">8th May 2026</div>
       </div>
 
       <div class="target-wrap">
@@ -970,9 +970,46 @@
     const startingDeck = 65;
     const maxBasket = 6;
     const flopSize = 3;
-    const gameNumber = 213;
-    const gameDate = '8th May 2026';
-    const shareUrl = 'https://super21-b5je.onrender.com';
+    const shareUrl = 'https://aldi21.onrender.com';
+
+    // Brisbane time (AEST = UTC+10, no DST)
+    const nowBrisbane = new Date(Date.now() + 10 * 60 * 60 * 1000);
+    const bYear  = nowBrisbane.getUTCFullYear();
+    const bMonth = nowBrisbane.getUTCMonth(); // 0-indexed
+    const bDay   = nowBrisbane.getUTCDate();
+
+    // Game #213 = 8 May 2026; increment by days since
+    const baseDate = new Date(Date.UTC(2026, 4, 8) - 10 * 60 * 60 * 1000); // midnight Brisbane 8 May
+    const todayMidnight = new Date(Date.UTC(bYear, bMonth, bDay) - 10 * 60 * 60 * 1000);
+    const daysSinceBase = Math.round((todayMidnight - baseDate) / 86400000);
+    const gameNumber = 213 + daysSinceBase;
+
+    const monthNames = ['January','February','March','April','May','June',
+                        'July','August','September','October','November','December'];
+    function ordinal(n) {
+      const s = ['th','st','nd','rd'], v = n % 100;
+      return n + (s[(v-20)%10] || s[v] || s[0]);
+    }
+    const gameDate = ordinal(bDay) + ' ' + monthNames[bMonth] + ' ' + bYear;
+
+    // Seeded shuffle — same order for everyone on same Brisbane day
+    function seededRng(seed) {
+      let s = seed;
+      return function() {
+        s = (s * 1664525 + 1013904223) & 0xffffffff;
+        return (s >>> 0) / 0xffffffff;
+      };
+    }
+    const dateSeed = bYear * 10000 + (bMonth + 1) * 100 + bDay;
+    const rng = seededRng(dateSeed);
+    function seededShuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
 
     const deckCards = [
       { image: './cards/atlasflyspray-card.png', alt: "Atlas FLY SPRAY 300g card", price: 2.80 },
@@ -1041,6 +1078,8 @@
       { image: './cards/tastycheese-card.png', alt: "Westacre TASTY CHEESE 1kg card", price: 9.00 },
       { image: './cards/wisdomtoothbrush-card.png', alt: "Wisdom TOOTHBRUSH 2 pack card", price: 1.90 }
     ];
+
+    const shuffledDeck = seededShuffle(deckCards);
 
     const basketSlots = [...document.querySelectorAll('.basket-slot')];
     const flopSlots = [...document.querySelectorAll('.flop-slot')];
@@ -1273,8 +1312,8 @@
       }
 
       const nextCards = [];
-      for (let i = 0; i < flopSize && deckIndex < deckCards.length; i++) {
-        nextCards.push(deckCards[deckIndex++]);
+      for (let i = 0; i < flopSize && deckIndex < shuffledDeck.length; i++) {
+        nextCards.push(shuffledDeck[deckIndex++]);
       }
 
       if (!nextCards.length) {
@@ -1528,6 +1567,8 @@
       revealOverlay.setAttribute('aria-hidden', 'true');
     });
 
+    document.getElementById('gameNoEl').textContent = 'Game #' + gameNumber;
+    document.getElementById('gameDateEl').textContent = gameDate;
     updateDeckCount();
     updateTexts();
     clearFlop();
