@@ -861,7 +861,7 @@
 
       <div class="target-wrap">
         <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
-        <div class="chip"><div class="chip-inner" id="targetChip">$21</div></div>
+        <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
       </div>
 
       <button class="rules-btn" id="rulesBtn" type="button">Rules</button>
@@ -909,7 +909,7 @@
       <div class="line1" id="statusText">Deal cards. Guess prices.</div>
       <div class="line2" id="totalText"></div>
       <div class="line3" id="awayText"></div>
-      <div class="line4" id="hintText">There are 3 perfect combos to $21.</div>
+      <div class="line4" id="hintText">Find the perfect combo to $21.</div>
     </section>
 
     <div class="controls">
@@ -921,17 +921,18 @@
     <div class="rules-card" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
       <div class="rules-head">
         <div class="rules-title" id="rulesTitle">RULES</div>
+        <img src="./facecard.png" alt="ALDI21" style="height:48px;width:auto;border-radius:6px;border:2px solid rgba(0,0,0,.15);box-shadow:0 4px 10px rgba(0,0,0,.2);">
         <button class="rules-close" id="rulesClose" type="button">×</button>
       </div>
       <ol class="rules-list">
-        <li>Closest to $21 without going over.</li>
-        <li>Pick products you want in your basket.</li>
-        <li>Press <strong>Deal</strong> from the stack of 27 to flop 3 cards.</li>
-        <li>From each flop, you may keep 0, 1, 2 or 3 cards.</li>
-        <li>Use the shrinking deck and rising drama to judge your nerve.</li>
-        <li>Press <strong>Locknload</strong> when you want the reveal.</li>
-        <li>You have a maximum of 6 basket spots to fill.</li>
-        <li>Press <strong>Deal</strong> again to bank selected cards and flop the next 3 cards.</li>
+        <li>Build a basket as close to $21 as possible without going over.</li>
+        <li>The deck starts with 65 product cards.</li>
+        <li>You get ONE look at each card. Pass on it and it's gone forever.</li>
+        <li>Press <strong>DEAL</strong> to reveal 3 new cards.</li>
+        <li>From each flop, you may keep 1, 2 or 3 cards.</li>
+        <li>Kept cards go into your basket. You have 6 basket spots max.</li>
+        <li>Only a handful of perfect combos exist.</li>
+        <li>Press <strong>LOCKNLOAD</strong> when your basket is final and find out if you nailed ALDI21… or busted by a cent.</li>
       </ol>
     </div>
   </div>
@@ -1243,7 +1244,7 @@
       statusText.classList.remove('keepers-callout');
       hintText.textContent = currentFlop.length
         ? `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`
-        : 'There are 3 perfect combos to $21.';
+        : 'Find the perfect combo to $21.';
       totalText.textContent = '';
       awayText.textContent = '';
       updateLockDrama();
