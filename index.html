@@ -1157,6 +1157,27 @@
       bustOverlay.classList.add('show');
     }
 
+    function playCardSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.12, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          const t = i / ctx.sampleRate;
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 40) * 0.8
+                  + (Math.random() * 2 - 1) * Math.exp(-t * 80) * 0.4;
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.7, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        src.connect(gain);
+        gain.connect(ctx.destination);
+        src.start();
+      } catch(e) {}
+    }
+
     function playFireworkSound() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1419,6 +1440,7 @@
 
         await wait(80);
         slot.classList.add('show');
+        playCardSound();
         updateDeckCount();
         await wait(320);
       }
