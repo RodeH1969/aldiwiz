@@ -392,6 +392,16 @@
     .btn-primary { background:var(--gold); color:#172033; }
     .btn-secondary { background:#fff; color:#041a3c; }
     .btn-share { background:#e9f3ff; color:#062a54; display:none; }
+    .btn-share.throb {
+      background:#ff69b4;
+      color:#fff;
+      animation:shareThrob .9s ease-in-out infinite;
+      box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28);
+    }
+    @keyframes shareThrob {
+      0%,100% { transform:scale(1);   box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28); }
+      50%      { transform:scale(1.08); box-shadow:0 0 34px rgba(255,105,180,.9), 0 10px 26px rgba(0,0,0,.32); }
+    }
 
     .lock-stage-0 {}
     .lock-stage-1 {
@@ -1485,7 +1495,11 @@
       awayText.textContent = '';
 
       runReveal({ total, distance: away, bust });
+      dealBtn.style.display = 'none';
+      lockBtn.style.display = 'none';
+      deckCount.style.display = 'none';
       shareBtn.style.display = 'inline-block';
+      shareBtn.classList.add('throb');
     }
 
     function buildShareText() {
