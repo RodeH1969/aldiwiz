@@ -1137,8 +1137,32 @@
       bustOverlay.classList.add('show');
     }
 
+    function playFireworkSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        [0, 0.08, 0.18].forEach(delay => {
+          const buf = ctx.createBuffer(1, ctx.sampleRate * 1.2, ctx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < data.length; i++) {
+            const t = i / ctx.sampleRate;
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 8) * 0.9
+                    + (Math.random() * 2 - 1) * Math.exp(-t * 3) * 0.4;
+          }
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(1, ctx.currentTime + delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 1.2);
+          src.connect(gain);
+          gain.connect(ctx.destination);
+          src.start(ctx.currentTime + delay);
+        });
+      } catch(e) {}
+    }
+
     function launchFireworks() {
       if (!fireworks) return;
+      playFireworkSound();
       const colors = ['#ffd978', '#ff5f45', '#7cf1ff', '#ffffff', '#9cff57', '#ff7edb'];
 
       for (let wave = 0; wave < 4; wave++) {
