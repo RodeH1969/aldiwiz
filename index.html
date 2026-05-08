@@ -466,6 +466,16 @@
     .scoreboard .line4 {
       font-size:13px;
       color:rgba(255,255,255,.8);
+      font-weight:900;
+    }
+    .hint-throb {
+      color:#ff69b4;
+      text-shadow:0 0 10px rgba(255,105,180,.5);
+      animation:hintThrob 1.1s ease-in-out infinite;
+    }
+    @keyframes hintThrob {
+      0%,100% { color:#ff69b4; text-shadow:0 0 10px rgba(255,105,180,.5); }
+      50%      { color:#ffb6da; text-shadow:0 0 18px rgba(255,105,180,.9); }
     }
 
     .keepers-callout {
@@ -1278,9 +1288,13 @@
       if (locked) return;
       statusText.textContent = 'Deal cards. Guess Prices.';
       statusText.classList.remove('keepers-callout');
-      hintText.textContent = currentFlop.length
-        ? `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`
-        : 'Find the perfect combo to $21.';
+      if (currentFlop.length) {
+        hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+        hintText.classList.remove('hint-throb');
+      } else {
+        hintText.textContent = 'Find the perfect combo to $21.';
+        hintText.classList.add('hint-throb');
+      }
       totalText.textContent = '';
       awayText.textContent = '';
       updateLockDrama();
@@ -1314,7 +1328,7 @@
 
       if (selectedFlop.size) {
         setKeepersStatus();
-        hintText.textContent = 'Press Deal to bank them, or Locknload to risk it all.';
+        hintText.classList.remove('hint-throb'); hintText.textContent = 'Press Deal to bank them, or Locknload to risk it all.';
       } else {
         statusText.textContent = 'Choose your KEEPERS';
         statusText.classList.add('keepers-callout');
@@ -1351,6 +1365,7 @@
           dealBtn.disabled = true;
           statusText.textContent = 'Basket full.';
           statusText.classList.remove('keepers-callout');
+          hintText.classList.remove('hint-throb');
           hintText.textContent = 'Lock it in.';
           updateLockDrama();
           return;
@@ -1366,6 +1381,7 @@
         dealBtn.disabled = true;
         statusText.textContent = 'No cards left.';
         statusText.classList.remove('keepers-callout');
+        hintText.classList.remove('hint-throb');
         hintText.textContent = 'Lock it in.';
         clearFlop();
         updateLockDrama();
