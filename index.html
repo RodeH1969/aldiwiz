@@ -1023,674 +1023,615 @@
   </div>
 
   <script>
-    const target = parseFloat(localStorage.getItem('aldi21_target')) || 21;
-    const startingDeck = 65;
-    const maxBasket = 6;
-    const flopSize = 3;
-    const shareUrl = 'https://aldi21.onrender.com';
+    // ── TARGET: fetch from server, fall back to 21 ──────────────────────────
+    let target = 21;
 
-    // Brisbane time (AEST = UTC+10, no DST)
-    const nowBrisbane = new Date(Date.now() + 10 * 60 * 60 * 1000);
-    const bYear  = nowBrisbane.getUTCFullYear();
-    const bMonth = nowBrisbane.getUTCMonth(); // 0-indexed
-    const bDay   = nowBrisbane.getUTCDate();
+    function initGame() {
+      const startingDeck = 65;
+      const maxBasket = 6;
+      const flopSize = 3;
+      const shareUrl = 'https://aldiq.onrender.com';
 
-    // Game #213 = 8 May 2026; increment by days since
-    const baseDate = new Date(Date.UTC(2026, 4, 8) - 10 * 60 * 60 * 1000); // midnight Brisbane 8 May
-    const todayMidnight = new Date(Date.UTC(bYear, bMonth, bDay) - 10 * 60 * 60 * 1000);
-    const daysSinceBase = Math.round((todayMidnight - baseDate) / 86400000);
-    const gameNumber = 213 + daysSinceBase;
+      // Brisbane time (AEST = UTC+10)
+      const nowBrisbane = new Date(Date.now() + 10 * 60 * 60 * 1000);
+      const bYear  = nowBrisbane.getUTCFullYear();
+      const bMonth = nowBrisbane.getUTCMonth();
+      const bDay   = nowBrisbane.getUTCDate();
 
-    const monthNames = ['January','February','March','April','May','June',
-                        'July','August','September','October','November','December'];
-    function ordinal(n) {
-      const s = ['th','st','nd','rd'], v = n % 100;
-      return n + (s[(v-20)%10] || s[v] || s[0]);
-    }
-    const gameDate = ordinal(bDay) + ' ' + monthNames[bMonth] + ' ' + bYear;
+      const baseDate = new Date(Date.UTC(2026, 4, 8) - 10 * 60 * 60 * 1000);
+      const todayMidnight = new Date(Date.UTC(bYear, bMonth, bDay) - 10 * 60 * 60 * 1000);
+      const daysSinceBase = Math.round((todayMidnight - baseDate) / 86400000);
+      const gameNumber = 213 + daysSinceBase;
 
-    // Seeded shuffle — same order for everyone on same Brisbane day
-    function seededRng(seed) {
-      let s = seed;
-      return function() {
-        s = (s * 1664525 + 1013904223) & 0xffffffff;
-        return (s >>> 0) / 0xffffffff;
-      };
-    }
-    const dateSeed = bYear * 10000 + (bMonth + 1) * 100 + bDay;
-    const rng = seededRng(dateSeed);
-    function seededShuffle(arr) {
-      const a = arr.slice();
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+      const monthNames = ['January','February','March','April','May','June',
+                          'July','August','September','October','November','December'];
+      function ordinal(n) {
+        const s = ['th','st','nd','rd'], v = n % 100;
+        return n + (s[(v-20)%10] || s[v] || s[0]);
       }
-      return a;
-    }
+      const gameDate = ordinal(bDay) + ' ' + monthNames[bMonth] + ' ' + bYear;
 
-    const deckCards = [
-      { image: './cards/atlasflyspray-card.png', alt: "Atlas FLY SPRAY 300g card", price: 2.79 },
-      { image: './cards/begamacandcheese-card.png', alt: "Bega MAC & CHEESE 280g card", price: 4.69 },
-      { image: './cards/bergdeliprosciutto-card.png', alt: "Berg Deli PROSCIUTTO 100g card", price: 4.99 },
-      { image: './cards/bergdelibacon-card.png', alt: "Berg Deli RINDLESS MIDDLE BACON 500g card", price: 7.99 },
-      { image: './cards/bergdelisalami-card.png', alt: "Berg Deli SALAMI 100g card", price: 3.79 },
-      { image: './cards/bergdeliselections-card.png', alt: "Berg Deli SELECTIONS 150g card", price: 8.99 },
-      { image: './cards/blackstonechips-card.png', alt: "Blackstone SEA SALT CHIPS 175g card", price: 2.99 },
-      { image: './cards/briochebuns-card.png', alt: "Bon Appetit BRIOCHE BURGER BUNS 200g card", price: 3.4 },
-      { image: './cards/broadoakchicken-card.png', alt: "Broadoak Farms WHOLE CHICKEN  card", price: 7.58 },
-      { image: './cards/delibabypeppers-card.png', alt: "Deli Originals BABY PEPPERS 130g card", price: 3.00 },
-      { image: './cards/delicornrelish-card.png', alt: "Deli Originals CORN RELISH DIP 200g card", price: 2.49 },
-      { image: './cards/delihommus-card.png', alt: "Deli Originals HOMMUS 1kg card", price: 5.99 },
-      { image: './cards/delifetadip-card.png', alt: "Deli Originals PERSIANFETA DIP 150g card", price: 2.99 },
-      { image: './cards/deliolives-card.png', alt: "Deli Originals STUFFED GREEN OLIVES 450g card", price: 2.25 },
-      { image: './cards/doritos-card.png', alt: "Doritos CHEESE SUPREME PARTY SIZE 500g card", price: 5.59 },
-      { image: './cards/elmsburysausagerolls-card.png', alt: "Elmsbury PARTY SAUSAGE ROLLS 900g card", price: 8.99 },
-      { image: './cards/eltorafajitakit-card.png', alt: "El Tora FAJITA KIT  card", price: 5.49 },
-      { image: './cards/eltorafajitaseasoning-card.png', alt: "El Tora FAJITA SEASONING 40g card", price: 1.29 },
-      { image: './cards/emporiumgoats-card.png', alt: "Emporium GOAT'S CHEESE 350g card", price: 10.99 },
-      { image: './cards/emporiumgranapadano-card.png', alt: "Emporium GRANA PADANO CHEESE 250g card", price: 8.2 },
-      { image: './cards/halloumi-card.png', alt: "Emporium HALLOUMI 225g card", price: 4.99 },
-      { image: './cards/emporiumblue-card.png', alt: "Emporium SELECTION BLUE CHEESE 200g card", price: 5.99 },
-      { image: './cards/farmdalemilk-card.png', alt: "Farmdale FULL CREAM MILK 2L card", price: 3.55 },
-      { image: './cards/farmwoodwings-card.png', alt: "Farmwood BUFFALO STYLE CHICKEN WINGS 1kg card", price: 9.99 },
-      { image: './cards/farmwoodkyiv-card.png', alt: "Farmwood CHICKEN KYIV 350g card", price: 6.99 },
-      { image: './cards/farmwoodschnitzel-card.png', alt: "Farmwood CHICKEN SCHNITZEL 400g card", price: 4.99 },
-      { image: './cards/goldenvale-card.png', alt: "Golden Vale HONEY PECAN GRANOLA 300g card", price: 7.99 },
-      { image: './cards/hillcrestbran-card.png', alt: "Hillcrest BRAN & SULTANAS 580g card", price: 3.99 },
-      { image: './cards/hillcrestbubbles-card.png', alt: "Hillcrest BREAKFAST BUBBLES 450g card", price: 3.49 },
-      { image: './cards/hillcrestchocorice-card.png', alt: "Hillcrest CHOCO RICE 650g card", price: 5.99 },
-      { image: './cards/hillcrestpeanutbars-card.png', alt: "Hillcrest CHOC PEANUT BARS 210g card", price: 2.99 },
-      { image: './cards/hillcresthoneynut-card.png', alt: "Hillcrest HONEY NUT CORNFLAKES 670g card", price: 4.7 },
-      { image: './cards/hillcrestmuesli-card.png', alt: "Hillcrest MUESLI 500g card", price: 4.69 },
-      { image: './cards/colwayworcestershire-card.png', alt: "Colway WORCESTERSHIRE SAUCE 250ml card", price: 1.89 },
-      { image: './cards/imperialgrain-card.png', alt: "Imperial Grain LONG GRAIN WHITE RICE 250g card", price: 1.65 },
-      { image: './cards/intlcuisinepizzasnacks-card.png', alt: "International Cuisine PIZZA SNACKS 400g card", price: 5.99 },
-      { image: './cards/ironbarkporkmince-card.png', alt: "Ironbark PORK MINCE 500g card", price: 4.99 },
-      { image: './cards/jindurrabeef-card.png', alt: "Jindurra Station 5 STAR BEEF MINCE 500g card", price: 10.49 },
-      { image: './cards/julius-card.png', alt: "Julius HOME STYLE DOG FOOD 700g card", price: 2.29 },
-      { image: './cards/knoppers-card.png', alt: "Knoppers MILK WAFERS 200g card", price: 4.99 },
-      { image: './cards/niveamendeodorant-card.png', alt: "Nivea Men BLACK & WHITE DEODORANT 200ml card", price: 4.99 },
-      { image: './cards/nongshinramyun-card.png', alt: "Nongshim SHIN RAMYUN 480g card", price: 4.99 },
-      { image: './cards/oceanroyaleprawns-card.png', alt: "Ocean Royale RAW PRAWN CUTLETS 500g card", price: 14.99 },
-      { image: './cards/oceanroyalesalmon-card.png', alt: "Ocean Royale SALMON 1kg card", price: 27.49 },
-      { image: './cards/oceanroyalewhiting-card.png', alt: "Ocean Royale WHITING 1kg card", price: 9.99 },
-      { image: './cards/powerforcegarbagebag-card.png', alt: "Powerforce GARBAGE BAGS 20 pack card", price: 3.59 },
-      { image: './cards/quiltontoiletpaper-card.png', alt: "Quilton 3 PLY TOILET PAPER 18 rolls card", price: 9.89 },
-      { image: './cards/readysetcookbeef-card.png', alt: "Ready Set Cook BUTTERFLIED BEEF  card", price: 19.99 },
-      { image: './cards/readysetcookteriyaki-card.png', alt: "Ready Set Cook CHICKEN KEBABS TERIYAKI 375g card", price: 6.49 },
-      { image: './cards/readysetcooksausages-card.png', alt: "Ready Set Cook THIN SAUSAGES 1.8kg card", price: 9.99 },
-      { image: './cards/pappardelle-card.png', alt: "Remano EGG LINGUINE 375g card", price: 4.49 },
-      { image: './cards/remanomac-card.png', alt: "Remano MACARONI 500g card", price: 0.99 },
-      { image: './cards/remanognocchi-card.png', alt: "Remano POTATO GNOCCHI 500g card", price: 2.99 },
-      { image: './cards/remanosauce-card.png', alt: "Remano TOMATO PASTA SAUCE 500g card", price: 1.69 },
-      { image: './cards/shapesbarbecue-card.png', alt: "Shapes Originals BARBECUE 250g card", price: 3.99 },
-      { image: './cards/simpleecarbonara-card.png', alt: "Simplee CARBONARA SAUCE 125g card", price: 1.69 },
-      { image: './cards/simpleemac-card.png', alt: "Simplee MACARONI & CHEESE 130g card", price: 1.69 },
-      { image: './cards/quincepaste-card.png', alt: "Specially Selected QUINCE PASTE 100g card", price: 2.89 },
-      { image: './cards/sprinterspopcorn-card.png', alt: "Sprinters POPCORN 120g card", price: 1.75 },
-      { image: './cards/werthers-card.png', alt: "Storck WERTHER'S ORIGINAL CREAM CANDIES 42g card", price: 2.49 },
-      { image: './cards/fishmonger-card.png', alt: "The Fishmonger SMOKED SALMON 200g card", price: 9.99 },
-      { image: './cards/tricaresoap-card.png', alt: "Tricare ANTIBACTERIAL SOAP 250ml card", price: 1.99 },
-      { image: './cards/cottagecheese-card.png', alt: "Westacre COTTAGE CHEESE 500g card", price: 5.49 },
-      { image: './cards/tastycheese-card.png', alt: "Westacre TASTY CHEESE 1kg card", price: 8.99 },
-      { image: './cards/wisdomtoothbrush-card.png', alt: "Wisdom TOOTHBRUSH 2 pack card", price: 1.89 }
-    ];
-
-    const shuffledDeck = seededShuffle(deckCards);
-
-    const basketSlots = [...document.querySelectorAll('.basket-slot')];
-    const flopSlots = [...document.querySelectorAll('.flop-slot')];
-    const flopLabel = document.getElementById('flopLabel');
-    const deckCount = document.getElementById('deckCount');
-    const dealBtn = document.getElementById('dealBtn');
-    const lockBtn = document.getElementById('lockBtn');
-    const statusText = document.getElementById('statusText');
-    const totalText = document.getElementById('totalText');
-    const awayText = document.getElementById('awayText');
-    const hintText = document.getElementById('hintText');
-    const shareBtn = document.getElementById('shareBtn');
-    const bustOverlay = document.getElementById('bustOverlay');
-    const rulesBtn = document.getElementById('rulesBtn');
-    const rulesModal = document.getElementById('rulesModal');
-    const rulesClose = document.getElementById('rulesClose');
-    const revealOverlay = document.getElementById('revealOverlay');
-    const revealUnder = document.getElementById('revealUnder');
-    const revealBust = document.getElementById('revealBust');
-    const revealTotal = document.getElementById('revealTotal');
-    const bustAmount = document.getElementById('bustAmount');
-    const resultPin = document.getElementById('resultPin');
-    const resultVerdict = document.getElementById('resultVerdict');
-    const fireworks = document.getElementById('fireworks');
-
-    let deckIndex = 0;
-    let basketIndex = 0;
-    let locked = false;
-    let dealing = false;
-    let currentFlop = [];
-    let selectedFlop = new Set();
-    const keptCards = [];
-
-    function playSfx() {}
-
-    function wait(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function triggerBust() {
-      bustOverlay.classList.remove('show');
-      void bustOverlay.offsetWidth;
-      bustOverlay.classList.add('show');
-    }
-
-    function playCardSound() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const buf = ctx.createBuffer(1, ctx.sampleRate * 0.12, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < data.length; i++) {
-          const t = i / ctx.sampleRate;
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 40) * 0.8
-                  + (Math.random() * 2 - 1) * Math.exp(-t * 80) * 0.4;
+      function seededRng(seed) {
+        let s = seed;
+        return function() {
+          s = (s * 1664525 + 1013904223) & 0xffffffff;
+          return (s >>> 0) / 0xffffffff;
+        };
+      }
+      const dateSeed = bYear * 10000 + (bMonth + 1) * 100 + bDay;
+      const rng = seededRng(dateSeed);
+      function seededShuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(rng() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
         }
-        const src = ctx.createBufferSource();
-        src.buffer = buf;
-        const gain = ctx.createGain();
-        gain.gain.setValueAtTime(0.7, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-        src.connect(gain);
-        gain.connect(ctx.destination);
-        src.start();
-      } catch(e) {}
-    }
+        return a;
+      }
 
-    function playFireworkSound() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        [0, 0.08, 0.18].forEach(delay => {
-          const buf = ctx.createBuffer(1, ctx.sampleRate * 1.2, ctx.sampleRate);
+      const deckCards = [
+        { image: './cards/atlasflyspray-card.png', alt: "Atlas FLY SPRAY 300g card", price: 2.79 },
+        { image: './cards/begamacandcheese-card.png', alt: "Bega MAC & CHEESE 280g card", price: 4.69 },
+        { image: './cards/bergdeliprosciutto-card.png', alt: "Berg Deli PROSCIUTTO 100g card", price: 4.99 },
+        { image: './cards/bergdelibacon-card.png', alt: "Berg Deli RINDLESS MIDDLE BACON 500g card", price: 7.99 },
+        { image: './cards/bergdelisalami-card.png', alt: "Berg Deli SALAMI 100g card", price: 3.79 },
+        { image: './cards/bergdeliselections-card.png', alt: "Berg Deli SELECTIONS 150g card", price: 8.99 },
+        { image: './cards/blackstonechips-card.png', alt: "Blackstone SEA SALT CHIPS 175g card", price: 2.99 },
+        { image: './cards/briochebuns-card.png', alt: "Bon Appetit BRIOCHE BURGER BUNS 200g card", price: 3.4 },
+        { image: './cards/broadoakchicken-card.png', alt: "Broadoak Farms WHOLE CHICKEN card", price: 7.58 },
+        { image: './cards/delibabypeppers-card.png', alt: "Deli Originals BABY PEPPERS 130g card", price: 3.00 },
+        { image: './cards/delicornrelish-card.png', alt: "Deli Originals CORN RELISH DIP 200g card", price: 2.49 },
+        { image: './cards/delihommus-card.png', alt: "Deli Originals HOMMUS 1kg card", price: 5.99 },
+        { image: './cards/delifetadip-card.png', alt: "Deli Originals PERSIANFETA DIP 150g card", price: 2.99 },
+        { image: './cards/deliolives-card.png', alt: "Deli Originals STUFFED GREEN OLIVES 450g card", price: 2.25 },
+        { image: './cards/doritos-card.png', alt: "Doritos CHEESE SUPREME PARTY SIZE 500g card", price: 5.59 },
+        { image: './cards/elmsburysausagerolls-card.png', alt: "Elmsbury PARTY SAUSAGE ROLLS 900g card", price: 8.99 },
+        { image: './cards/eltorafajitakit-card.png', alt: "El Tora FAJITA KIT card", price: 5.49 },
+        { image: './cards/eltorafajitaseasoning-card.png', alt: "El Tora FAJITA SEASONING 40g card", price: 1.29 },
+        { image: './cards/emporiumgoats-card.png', alt: "Emporium GOAT'S CHEESE 350g card", price: 10.99 },
+        { image: './cards/emporiumgranapadano-card.png', alt: "Emporium GRANA PADANO CHEESE 250g card", price: 8.2 },
+        { image: './cards/halloumi-card.png', alt: "Emporium HALLOUMI 225g card", price: 4.99 },
+        { image: './cards/emporiumblue-card.png', alt: "Emporium SELECTION BLUE CHEESE 200g card", price: 5.99 },
+        { image: './cards/farmdalemilk-card.png', alt: "Farmdale FULL CREAM MILK 2L card", price: 3.55 },
+        { image: './cards/farmwoodwings-card.png', alt: "Farmwood BUFFALO STYLE CHICKEN WINGS 1kg card", price: 9.99 },
+        { image: './cards/farmwoodkyiv-card.png', alt: "Farmwood CHICKEN KYIV 350g card", price: 6.99 },
+        { image: './cards/farmwoodschnitzel-card.png', alt: "Farmwood CHICKEN SCHNITZEL 400g card", price: 4.99 },
+        { image: './cards/goldenvale-card.png', alt: "Golden Vale HONEY PECAN GRANOLA 300g card", price: 7.99 },
+        { image: './cards/hillcrestbran-card.png', alt: "Hillcrest BRAN & SULTANAS 580g card", price: 3.99 },
+        { image: './cards/hillcrestbubbles-card.png', alt: "Hillcrest BREAKFAST BUBBLES 450g card", price: 3.49 },
+        { image: './cards/hillcrestchocorice-card.png', alt: "Hillcrest CHOCO RICE 650g card", price: 5.99 },
+        { image: './cards/hillcrestpeanutbars-card.png', alt: "Hillcrest CHOC PEANUT BARS 210g card", price: 2.99 },
+        { image: './cards/hillcresthoneynut-card.png', alt: "Hillcrest HONEY NUT CORNFLAKES 670g card", price: 4.7 },
+        { image: './cards/hillcrestmuesli-card.png', alt: "Hillcrest MUESLI 500g card", price: 4.69 },
+        { image: './cards/colwayworcestershire-card.png', alt: "Colway WORCESTERSHIRE SAUCE 250ml card", price: 1.89 },
+        { image: './cards/imperialgrain-card.png', alt: "Imperial Grain LONG GRAIN WHITE RICE 250g card", price: 1.65 },
+        { image: './cards/intlcuisinepizzasnacks-card.png', alt: "International Cuisine PIZZA SNACKS 400g card", price: 5.99 },
+        { image: './cards/ironbarkporkmince-card.png', alt: "Ironbark PORK MINCE 500g card", price: 4.99 },
+        { image: './cards/jindurrabeef-card.png', alt: "Jindurra Station 5 STAR BEEF MINCE 500g card", price: 10.49 },
+        { image: './cards/julius-card.png', alt: "Julius HOME STYLE DOG FOOD 700g card", price: 2.29 },
+        { image: './cards/knoppers-card.png', alt: "Knoppers MILK WAFERS 200g card", price: 4.99 },
+        { image: './cards/niveamendeodorant-card.png', alt: "Nivea Men BLACK & WHITE DEODORANT 200ml card", price: 4.99 },
+        { image: './cards/nongshinramyun-card.png', alt: "Nongshim SHIN RAMYUN 480g card", price: 4.99 },
+        { image: './cards/oceanroyaleprawns-card.png', alt: "Ocean Royale RAW PRAWN CUTLETS 500g card", price: 14.99 },
+        { image: './cards/oceanroyalesalmon-card.png', alt: "Ocean Royale SALMON 1kg card", price: 27.49 },
+        { image: './cards/oceanroyalewhiting-card.png', alt: "Ocean Royale WHITING 1kg card", price: 9.99 },
+        { image: './cards/powerforcegarbagebag-card.png', alt: "Powerforce GARBAGE BAGS 20 pack card", price: 3.59 },
+        { image: './cards/quiltontoiletpaper-card.png', alt: "Quilton 3 PLY TOILET PAPER 18 rolls card", price: 9.89 },
+        { image: './cards/readysetcookbeef-card.png', alt: "Ready Set Cook BUTTERFLIED BEEF card", price: 19.99 },
+        { image: './cards/readysetcookteriyaki-card.png', alt: "Ready Set Cook CHICKEN KEBABS TERIYAKI 375g card", price: 6.49 },
+        { image: './cards/readysetcooksausages-card.png', alt: "Ready Set Cook THIN SAUSAGES 1.8kg card", price: 9.99 },
+        { image: './cards/pappardelle-card.png', alt: "Remano EGG LINGUINE 375g card", price: 4.49 },
+        { image: './cards/remanomac-card.png', alt: "Remano MACARONI 500g card", price: 0.99 },
+        { image: './cards/remanognocchi-card.png', alt: "Remano POTATO GNOCCHI 500g card", price: 2.99 },
+        { image: './cards/remanosauce-card.png', alt: "Remano TOMATO PASTA SAUCE 500g card", price: 1.69 },
+        { image: './cards/shapesbarbecue-card.png', alt: "Shapes Originals BARBECUE 250g card", price: 3.99 },
+        { image: './cards/simpleecarbonara-card.png', alt: "Simplee CARBONARA SAUCE 125g card", price: 1.69 },
+        { image: './cards/simpleemac-card.png', alt: "Simplee MACARONI & CHEESE 130g card", price: 1.69 },
+        { image: './cards/quincepaste-card.png', alt: "Specially Selected QUINCE PASTE 100g card", price: 2.89 },
+        { image: './cards/sprinterspopcorn-card.png', alt: "Sprinters POPCORN 120g card", price: 1.75 },
+        { image: './cards/werthers-card.png', alt: "Storck WERTHER'S ORIGINAL CREAM CANDIES 42g card", price: 2.49 },
+        { image: './cards/fishmonger-card.png', alt: "The Fishmonger SMOKED SALMON 200g card", price: 9.99 },
+        { image: './cards/tricaresoap-card.png', alt: "Tricare ANTIBACTERIAL SOAP 250ml card", price: 1.99 },
+        { image: './cards/cottagecheese-card.png', alt: "Westacre COTTAGE CHEESE 500g card", price: 5.49 },
+        { image: './cards/tastycheese-card.png', alt: "Westacre TASTY CHEESE 1kg card", price: 8.99 },
+        { image: './cards/wisdomtoothbrush-card.png', alt: "Wisdom TOOTHBRUSH 2 pack card", price: 1.89 }
+      ];
+
+      const shuffledDeck = seededShuffle(deckCards);
+
+      const basketSlots = [...document.querySelectorAll('.basket-slot')];
+      const flopSlots = [...document.querySelectorAll('.flop-slot')];
+      const flopLabel = document.getElementById('flopLabel');
+      const deckCount = document.getElementById('deckCount');
+      const dealBtn = document.getElementById('dealBtn');
+      const lockBtn = document.getElementById('lockBtn');
+      const statusText = document.getElementById('statusText');
+      const totalText = document.getElementById('totalText');
+      const awayText = document.getElementById('awayText');
+      const hintText = document.getElementById('hintText');
+      const shareBtn = document.getElementById('shareBtn');
+      const bustOverlay = document.getElementById('bustOverlay');
+      const rulesBtn = document.getElementById('rulesBtn');
+      const rulesModal = document.getElementById('rulesModal');
+      const rulesClose = document.getElementById('rulesClose');
+      const revealOverlay = document.getElementById('revealOverlay');
+      const revealUnder = document.getElementById('revealUnder');
+      const revealBust = document.getElementById('revealBust');
+      const revealTotal = document.getElementById('revealTotal');
+      const bustAmount = document.getElementById('bustAmount');
+      const resultPin = document.getElementById('resultPin');
+      const resultVerdict = document.getElementById('resultVerdict');
+      const fireworks = document.getElementById('fireworks');
+
+      let deckIndex = 0;
+      let basketIndex = 0;
+      let locked = false;
+      let dealing = false;
+      let currentFlop = [];
+      let selectedFlop = new Set();
+      const keptCards = [];
+
+      function playSfx() {}
+
+      function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function triggerBust() {
+        bustOverlay.classList.remove('show');
+        void bustOverlay.offsetWidth;
+        bustOverlay.classList.add('show');
+      }
+
+      function playCardSound() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const buf = ctx.createBuffer(1, ctx.sampleRate * 0.12, ctx.sampleRate);
           const data = buf.getChannelData(0);
           for (let i = 0; i < data.length; i++) {
             const t = i / ctx.sampleRate;
-            data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 8) * 0.9
-                    + (Math.random() * 2 - 1) * Math.exp(-t * 3) * 0.4;
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 40) * 0.8
+                    + (Math.random() * 2 - 1) * Math.exp(-t * 80) * 0.4;
           }
           const src = ctx.createBufferSource();
           src.buffer = buf;
           const gain = ctx.createGain();
-          gain.gain.setValueAtTime(1, ctx.currentTime + delay);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 1.2);
+          gain.gain.setValueAtTime(0.7, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
           src.connect(gain);
           gain.connect(ctx.destination);
-          src.start(ctx.currentTime + delay);
-        });
-      } catch(e) {}
-    }
-
-    function launchFireworks() {
-      if (!fireworks) return;
-      playFireworkSound();
-      const colors = ['#ffd978', '#ff5f45', '#7cf1ff', '#ffffff', '#9cff57', '#ff7edb'];
-
-      for (let wave = 0; wave < 4; wave++) {
-        setTimeout(() => {
-          for (let i = 0; i < 8; i++) {
-            const burst = document.createElement('div');
-            burst.className = 'firework-burst';
-            burst.style.left = `${8 + Math.random() * 84}%`;
-            burst.style.top = `${8 + Math.random() * 45}%`;
-            burst.style.color = colors[Math.floor(Math.random() * colors.length)];
-            fireworks.appendChild(burst);
-            requestAnimationFrame(() => burst.classList.add('go'));
-            setTimeout(() => burst.remove(), 1300);
-          }
-        }, wave * 220);
-      }
-    }
-
-    function keptTotal() {
-      return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
-    }
-
-    function slotsLeft() {
-      return Math.max(0, maxBasket - basketIndex);
-    }
-
-    function maxSelectable() {
-      return Math.min(3, slotsLeft());
-    }
-
-    function cardsLeft() {
-      return Math.max(0, startingDeck - deckIndex);
-    }
-
-    function getUrgencyStage() {
-      const left = cardsLeft();
-      if (left <= 11) return 5;
-      if (left <= 23) return 4;
-      if (left <= 35) return 3;
-      if (left <= 47) return 2;
-      if (left <= 59) return 1;
-      return 0;
-    }
-
-    function updateDeckDrama() {
-      const left = cardsLeft();
-      deckCount.textContent = `${left} left`;
-      deckCount.classList.remove('deck-stage-0','deck-stage-1','deck-stage-2','deck-stage-3','deck-stage-4','deck-stage-5');
-      deckCount.classList.add(`deck-stage-${getUrgencyStage()}`);
-    }
-
-    function updateLockDrama() {
-      lockBtn.classList.remove('lock-stage-0','lock-stage-1','lock-stage-2','lock-stage-3','lock-stage-4','lock-stage-5');
-
-      let stage = getUrgencyStage();
-
-      if (basketIndex >= 4) stage = Math.max(stage, 4);
-      else if (basketIndex >= 3) stage = Math.max(stage, 3);
-      else if (basketIndex >= 2) stage = Math.max(stage, 2);
-
-      if (currentFlop.length && selectedFlop.size > 0) {
-        stage = Math.max(stage, 2);
+          src.start();
+        } catch(e) {}
       }
 
-      lockBtn.classList.add(`lock-stage-${stage}`);
-    }
+      function playFireworkSound() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          [0, 0.08, 0.18].forEach(delay => {
+            const buf = ctx.createBuffer(1, ctx.sampleRate * 1.2, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) {
+              const t = i / ctx.sampleRate;
+              data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 8) * 0.9
+                      + (Math.random() * 2 - 1) * Math.exp(-t * 3) * 0.4;
+            }
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(1, ctx.currentTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 1.2);
+            src.connect(gain);
+            gain.connect(ctx.destination);
+            src.start(ctx.currentTime + delay);
+          });
+        } catch(e) {}
+      }
 
-    function updateDeckCount() {
-      updateDeckDrama();
-    }
+      function launchFireworks() {
+        if (!fireworks) return;
+        playFireworkSound();
+        const colors = ['#ffd978', '#ff5f45', '#7cf1ff', '#ffffff', '#9cff57', '#ff7edb'];
+        for (let wave = 0; wave < 4; wave++) {
+          setTimeout(() => {
+            for (let i = 0; i < 8; i++) {
+              const burst = document.createElement('div');
+              burst.className = 'firework-burst';
+              burst.style.left = `${8 + Math.random() * 84}%`;
+              burst.style.top = `${8 + Math.random() * 45}%`;
+              burst.style.color = colors[Math.floor(Math.random() * colors.length)];
+              fireworks.appendChild(burst);
+              requestAnimationFrame(() => burst.classList.add('go'));
+              setTimeout(() => burst.remove(), 1300);
+            }
+          }, wave * 220);
+        }
+      }
 
-    function makeCardMarkup(cardData, revealPrice = false) {
-      const wrap = document.createElement('div');
-      wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
-      wrap.innerHTML = `
-        <div class="card">
-          <div class="card-face front">
-            <img src="${cardData.image}" alt="${cardData.alt}">
+      function keptTotal() {
+        return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
+      }
+
+      function slotsLeft() {
+        return Math.max(0, maxBasket - basketIndex);
+      }
+
+      function maxSelectable() {
+        return Math.min(3, slotsLeft());
+      }
+
+      function cardsLeft() {
+        return Math.max(0, startingDeck - deckIndex);
+      }
+
+      function getUrgencyStage() {
+        const left = cardsLeft();
+        if (left <= 11) return 5;
+        if (left <= 23) return 4;
+        if (left <= 35) return 3;
+        if (left <= 47) return 2;
+        if (left <= 59) return 1;
+        return 0;
+      }
+
+      function updateDeckDrama() {
+        const left = cardsLeft();
+        deckCount.textContent = `${left} left`;
+        deckCount.classList.remove('deck-stage-0','deck-stage-1','deck-stage-2','deck-stage-3','deck-stage-4','deck-stage-5');
+        deckCount.classList.add(`deck-stage-${getUrgencyStage()}`);
+      }
+
+      function updateLockDrama() {
+        lockBtn.classList.remove('lock-stage-0','lock-stage-1','lock-stage-2','lock-stage-3','lock-stage-4','lock-stage-5');
+        let stage = getUrgencyStage();
+        if (basketIndex >= 4) stage = Math.max(stage, 4);
+        else if (basketIndex >= 3) stage = Math.max(stage, 3);
+        else if (basketIndex >= 2) stage = Math.max(stage, 2);
+        if (currentFlop.length && selectedFlop.size > 0) stage = Math.max(stage, 2);
+        lockBtn.classList.add(`lock-stage-${stage}`);
+      }
+
+      function updateDeckCount() { updateDeckDrama(); }
+
+      function makeCardMarkup(cardData, revealPrice = false) {
+        const wrap = document.createElement('div');
+        wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
+        wrap.innerHTML = `
+          <div class="card">
+            <div class="card-face front">
+              <img src="${cardData.image}" alt="${cardData.alt}">
+            </div>
+            <div class="price-badge">$${cardData.price.toFixed(2)}</div>
           </div>
-          <div class="price-badge">$${cardData.price.toFixed(2)}</div>
-        </div>
-      `;
-      return wrap;
-    }
-
-    function clearFlop() {
-      flopSlots.forEach(slot => {
-        slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
-        slot.onclick = null;
-      });
-      currentFlop = [];
-      selectedFlop = new Set();
-      flopLabel.textContent = `Select up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'}`;
-    }
-
-    function setKeepersStatus() {
-      statusText.textContent = 'Choose your KEEPERS';
-      statusText.classList.add('keepers-callout');
-    }
-
-    function updateTexts() {
-      if (locked) return;
-      statusText.textContent = 'Deal cards. Guess Prices.';
-      statusText.classList.remove('keepers-callout');
-      if (currentFlop.length) {
-        hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
-        hintText.classList.remove('hint-throb');
-      } else {
-        hintText.textContent = 'Find the perfect combo to $21.';
-        hintText.classList.add('hint-throb');
-      }
-      totalText.textContent = '';
-      awayText.textContent = '';
-      updateLockDrama();
-    }
-
-    function syncFlopStates() {
-      const limit = maxSelectable();
-      flopLabel.textContent = `Select up to ${limit} card${limit === 1 ? '' : 's'}`;
-      flopSlots.forEach((slot, i) => {
-        const hasCard = !!currentFlop[i];
-        const selected = selectedFlop.has(i);
-        slot.classList.toggle('selected', selected);
-        slot.classList.toggle('selectable', hasCard);
-        slot.classList.toggle('disabled', hasCard && !selected && selectedFlop.size >= limit && limit > 0);
-      });
-      updateLockDrama();
-    }
-
-    function toggleSelect(index) {
-      if (locked || !currentFlop[index]) return;
-      const limit = maxSelectable();
-
-      if (selectedFlop.has(index)) {
-        selectedFlop.delete(index);
-      } else {
-        if (selectedFlop.size >= limit) return;
-        selectedFlop.add(index);
+        `;
+        return wrap;
       }
 
-      syncFlopStates();
+      function clearFlop() {
+        flopSlots.forEach(slot => {
+          slot.innerHTML = '';
+          slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
+          slot.onclick = null;
+        });
+        currentFlop = [];
+        selectedFlop = new Set();
+        flopLabel.textContent = `Select up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'}`;
+      }
 
-      if (selectedFlop.size) {
-        setKeepersStatus();
-        hintText.classList.remove('hint-throb'); hintText.textContent = 'Press Deal to bank them, or Locknload to risk it all.';
-      } else {
+      function setKeepersStatus() {
         statusText.textContent = 'Choose your KEEPERS';
         statusText.classList.add('keepers-callout');
-        hintText.textContent = `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
       }
 
-      updateLockDrama();
-    }
+      function fmtTarget(t) {
+        return t % 1 === 0 ? '$' + t : '$' + t.toFixed(2);
+      }
 
-    function bankSelectedCards() {
-      if (!selectedFlop.size) return;
+      function updateTexts() {
+        if (locked) return;
+        statusText.textContent = 'Deal cards. Guess Prices.';
+        statusText.classList.remove('keepers-callout');
+        if (currentFlop.length) {
+          hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+          hintText.classList.remove('hint-throb');
+        } else {
+          hintText.innerHTML = `Find the perfect combo to ${fmtTarget(target)}.`;
+          hintText.classList.add('hint-throb');
+        }
+        totalText.textContent = '';
+        awayText.textContent = '';
+        updateLockDrama();
+      }
 
-      [...selectedFlop].sort((a, b) => a - b).forEach(index => {
-        if (basketIndex >= maxBasket || !currentFlop[index]) return;
-        const cardData = currentFlop[index];
-        const slot = basketSlots[basketIndex++];
-        slot.classList.add('filled');
-        slot.innerHTML = '';
-        slot.appendChild(makeCardMarkup(cardData, false));
-        keptCards.push(cardData);
-      });
+      function syncFlopStates() {
+        const limit = maxSelectable();
+        flopLabel.textContent = `Select up to ${limit} card${limit === 1 ? '' : 's'}`;
+        flopSlots.forEach((slot, i) => {
+          const hasCard = !!currentFlop[i];
+          const selected = selectedFlop.has(i);
+          slot.classList.toggle('selected', selected);
+          slot.classList.toggle('selectable', hasCard);
+          slot.classList.toggle('disabled', hasCard && !selected && selectedFlop.size >= limit && limit > 0);
+        });
+        updateLockDrama();
+      }
 
-      clearFlop();
-      updateTexts();
-      updateLockDrama();
-    }
+      function toggleSelect(index) {
+        if (locked || !currentFlop[index]) return;
+        const limit = maxSelectable();
+        if (selectedFlop.has(index)) {
+          selectedFlop.delete(index);
+        } else {
+          if (selectedFlop.size >= limit) return;
+          selectedFlop.add(index);
+        }
+        syncFlopStates();
+        if (selectedFlop.size) {
+          setKeepersStatus();
+          hintText.classList.remove('hint-throb');
+          hintText.textContent = 'Press Deal to bank them, or Locknload to risk it all.';
+        } else {
+          statusText.textContent = 'Choose your KEEPERS';
+          statusText.classList.add('keepers-callout');
+          hintText.textContent = `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
+        }
+        updateLockDrama();
+      }
 
-    async function flopThree() {
-      if (locked || dealing || basketIndex >= maxBasket) return;
+      function bankSelectedCards() {
+        if (!selectedFlop.size) return;
+        [...selectedFlop].sort((a, b) => a - b).forEach(index => {
+          if (basketIndex >= maxBasket || !currentFlop[index]) return;
+          const cardData = currentFlop[index];
+          const slot = basketSlots[basketIndex++];
+          slot.classList.add('filled');
+          slot.innerHTML = '';
+          slot.appendChild(makeCardMarkup(cardData, false));
+          keptCards.push(cardData);
+        });
+        clearFlop();
+        updateTexts();
+        updateLockDrama();
+      }
 
-      if (currentFlop.length) {
-        bankSelectedCards();
-        if (basketIndex >= maxBasket) {
+      async function flopThree() {
+        if (locked || dealing || basketIndex >= maxBasket) return;
+        if (currentFlop.length) {
+          bankSelectedCards();
+          if (basketIndex >= maxBasket) {
+            dealBtn.disabled = true;
+            statusText.textContent = 'Basket full.';
+            statusText.classList.remove('keepers-callout');
+            hintText.classList.remove('hint-throb');
+            hintText.textContent = 'Lock it in.';
+            updateLockDrama();
+            return;
+          }
+        }
+
+        const nextCards = [];
+        for (let i = 0; i < flopSize && deckIndex < shuffledDeck.length; i++) {
+          nextCards.push(shuffledDeck[deckIndex++]);
+        }
+
+        if (!nextCards.length) {
           dealBtn.disabled = true;
-          statusText.textContent = 'Basket full.';
+          statusText.textContent = 'No cards left.';
           statusText.classList.remove('keepers-callout');
           hintText.classList.remove('hint-throb');
           hintText.textContent = 'Lock it in.';
+          clearFlop();
           updateLockDrama();
           return;
         }
-      }
 
-      const nextCards = [];
-      for (let i = 0; i < flopSize && deckIndex < shuffledDeck.length; i++) {
-        nextCards.push(shuffledDeck[deckIndex++]);
-      }
-
-      if (!nextCards.length) {
+        dealing = true;
         dealBtn.disabled = true;
-        statusText.textContent = 'No cards left.';
-        statusText.classList.remove('keepers-callout');
-        hintText.classList.remove('hint-throb');
-        hintText.textContent = 'Lock it in.';
-        clearFlop();
+        lockBtn.disabled = true;
+        currentFlop = [];
+        selectedFlop = new Set();
+
+        flopSlots.forEach(slot => {
+          slot.innerHTML = '';
+          slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
+          slot.onclick = null;
+        });
+
+        updateDeckCount();
+
+        for (let i = 0; i < nextCards.length; i++) {
+          const card = nextCards[i];
+          currentFlop[i] = card;
+          const slot = flopSlots[i];
+          slot.innerHTML = '';
+          slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'show');
+          slot.classList.add('filled', 'selectable', 'deal-enter');
+          slot.appendChild(makeCardMarkup(card, false));
+          const badge = document.createElement('div');
+          badge.className = 'select-badge';
+          badge.textContent = '✓';
+          slot.appendChild(badge);
+          slot.onclick = () => toggleSelect(i);
+          await wait(80);
+          slot.classList.add('show');
+          playCardSound();
+          updateDeckCount();
+          await wait(320);
+        }
+
+        selectedFlop = new Set();
+        syncFlopStates();
+        setKeepersStatus();
+        hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+        dealing = false;
+        dealBtn.disabled = false;
+        lockBtn.disabled = false;
         updateLockDrama();
-        return;
       }
 
-      dealing = true;
-      dealBtn.disabled = true;
-      lockBtn.disabled = true;
-      currentFlop = [];
-      selectedFlop = new Set();
+      function resetReveal() {
+        revealOverlay.classList.remove('show');
+        revealUnder.classList.remove('show');
+        revealBust.classList.remove('show');
+        resultVerdict.textContent = '';
+        resultPin.style.left = '50%';
+      }
 
-      flopSlots.forEach(slot => {
-        slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
-        slot.onclick = null;
+      function runReveal({ total, distance, bust }) {
+        resetReveal();
+        playSfx('lock');
+        setTimeout(() => {
+          playSfx('slam');
+          revealOverlay.classList.add('show');
+          revealOverlay.setAttribute('aria-hidden', 'false');
+          if (!bust) {
+            revealUnder.classList.add('show');
+            revealTotal.textContent = `$${total.toFixed(2)}`;
+            let pinLeft = 50;
+            let verdict = '';
+            if (distance === 0) {
+              pinLeft = 88;
+              verdict = 'PERFECT HIT. FILTHY WORK.';
+              launchFireworks();
+            } else if (distance <= 1) {
+              pinLeft = 72 + ((1 - distance) * 12);
+              verdict = `$${distance.toFixed(2)} short — ridiculously close.`;
+            } else if (distance <= 3) {
+              pinLeft = 50 + ((3 - distance) / 2) * 20;
+              verdict = `$${distance.toFixed(2)} short — decent, but no cigar.`;
+            } else if (distance <= 7) {
+              pinLeft = 26 + ((7 - distance) / 4) * 22;
+              verdict = `$${distance.toFixed(2)} short — you were wandering.`;
+            } else {
+              pinLeft = 10;
+              verdict = `$${distance.toFixed(2)} short — nowhere near it.`;
+            }
+            resultPin.style.left = `${pinLeft}%`;
+            resultVerdict.textContent = verdict;
+          } else {
+            triggerBust();
+            revealBust.classList.add('show');
+            bustAmount.textContent = `Over by $${distance.toFixed(2)}`;
+            playSfx('bust');
+          }
+        }, 500);
+      }
+
+      function lockAndReveal() {
+        if (locked || keptCards.length === 0) return;
+        if (currentFlop.length) bankSelectedCards();
+        locked = true;
+        dealBtn.disabled = true;
+        lockBtn.disabled = true;
+        clearFlop();
+        basketSlots.forEach(slot => {
+          const wrap = slot.querySelector('.card-wrap');
+          if (wrap) wrap.classList.add('revealed');
+        });
+        const total = keptTotal();
+        const bust = total > target;
+        const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+        statusText.textContent = '';
+        statusText.classList.remove('keepers-callout');
+        hintText.textContent = '';
+        totalText.textContent = '';
+        awayText.textContent = '';
+        runReveal({ total, distance: away, bust });
+        dealBtn.style.display = 'none';
+        lockBtn.style.display = 'none';
+        deckCount.style.display = 'none';
+        shareBtn.style.display = 'inline-block';
+        shareBtn.classList.add('throb');
+      }
+
+      function buildShareText() {
+        const total = keptTotal();
+        const bust = total > target;
+        const rawAway = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+        const away = rawAway;
+        const t = target.toFixed(2);
+        const tot = total.toFixed(2);
+        const a = away.toFixed(2);
+        let lines = [];
+        if (bust) {
+          if (away <= 1) {
+            lines.push(`🤯 YOU BUSTED at $${tot}.`, `$${a} over — so close!`, `One less reckless grab and you'd be a genius.`);
+          } else if (away <= 5) {
+            lines.push(`🤯 YOU BUSTED at $${tot}.`, `That's $${a} over.`, `Maybe watch your supermarket bill,`, `not the hot checkout operator.`);
+          } else {
+            lines.push(`🔥 CATASTROPHIC BUST: $${tot}.`, `$${a} over.`, `Are you shopping or just financially self-harming?`);
+          }
+        } else {
+          if (away === 0) {
+            lines.push(`🎯 PERFECT $${tot} on the nose.`, `You absolutely bullied $${t}.`, `Send this to someone who still thinks they're "good with money".`);
+          } else if (away <= 1) {
+            lines.push(`😏 $${tot} — only $${a} shy of $${t}.`, `You actually look like you read the receipt.`);
+          } else if (away <= 5) {
+            lines.push(`👍 $${tot}, just $${a} under.`, `Not bad… but don't start calling yourself a checkout sniper.`);
+          } else if (away <= 10) {
+            lines.push(`🤨 $${tot}, a soft $${a} miss.`, `You shop like every aisle is a sightseeing tour.`);
+          } else {
+            lines.push(`💸 $${tot}, a lazy $${a} short.`, `You were nowhere near it, but thanks for participating.`);
+          }
+        }
+        lines.push('', `Play ALDIQ: ${shareUrl}`);
+        return lines.join('\n');
+      }
+
+      dealBtn.addEventListener('click', flopThree);
+      lockBtn.addEventListener('click', lockAndReveal);
+
+      shareBtn.addEventListener('click', async () => {
+        const text = buildShareText();
+        if (navigator.share) {
+          try { await navigator.share({ title: `ALDIQ Game #${gameNumber}`, text }); return; } catch (e) {}
+        }
+        try {
+          await navigator.clipboard.writeText(text);
+          shareBtn.textContent = 'Copied!';
+          setTimeout(() => { shareBtn.textContent = 'Share'; }, 1400);
+        } catch (e) { alert(text); }
       });
 
+      rulesBtn.addEventListener('click', () => {
+        rulesModal.classList.add('show');
+        rulesModal.setAttribute('aria-hidden', 'false');
+      });
+      rulesClose.addEventListener('click', () => {
+        rulesModal.classList.remove('show');
+        rulesModal.setAttribute('aria-hidden', 'true');
+      });
+      rulesModal.addEventListener('click', (e) => {
+        if (e.target === rulesModal) {
+          rulesModal.classList.remove('show');
+          rulesModal.setAttribute('aria-hidden', 'true');
+        }
+      });
+      revealOverlay.addEventListener('click', () => {
+        revealOverlay.classList.remove('show');
+        revealOverlay.setAttribute('aria-hidden', 'true');
+      });
+
+      // ── Set all target display elements ──
+      document.getElementById('gameNoEl').textContent = 'Game #' + gameNumber;
+      document.getElementById('gameDateEl').textContent = gameDate;
+      const tDisplay = target % 1 === 0 ? target : target.toFixed(2);
+      document.getElementById('targetCircleEl').textContent = '$' + tDisplay;
+      const hintTargetEl = document.getElementById('hintTarget');
+      if (hintTargetEl) hintTargetEl.textContent = tDisplay;
+      document.querySelectorAll('.rules-target').forEach(el => el.textContent = tDisplay);
+
       updateDeckCount();
-
-      for (let i = 0; i < nextCards.length; i++) {
-        const card = nextCards[i];
-        currentFlop[i] = card;
-
-        const slot = flopSlots[i];
-        slot.innerHTML = '';
-        slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'show');
-        slot.classList.add('filled', 'selectable', 'deal-enter');
-        slot.appendChild(makeCardMarkup(card, false));
-        const badge = document.createElement('div');
-        badge.className = 'select-badge';
-        badge.textContent = '✓';
-        slot.appendChild(badge);
-        slot.onclick = () => toggleSelect(i);
-
-        await wait(80);
-        slot.classList.add('show');
-        playCardSound();
-        updateDeckCount();
-        await wait(320);
-      }
-
-      selectedFlop = new Set();
-      syncFlopStates();
-      setKeepersStatus();
-      hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
-      dealing = false;
-      dealBtn.disabled = false;
-      lockBtn.disabled = false;
+      updateTexts();
+      clearFlop();
       updateLockDrama();
     }
 
-    function resetReveal() {
-      revealOverlay.classList.remove('show');
-      revealUnder.classList.remove('show');
-      revealBust.classList.remove('show');
-      resultVerdict.textContent = '';
-      resultPin.style.left = '50%';
-    }
-
-    function runReveal({ total, distance, bust }) {
-      resetReveal();
-      playSfx('lock');
-
-      setTimeout(() => {
-        playSfx('slam');
-        revealOverlay.classList.add('show');
-        revealOverlay.setAttribute('aria-hidden', 'false');
-
-        if (!bust) {
-          revealUnder.classList.add('show');
-          revealTotal.textContent = `$${total.toFixed(2)}`;
-
-          let pinLeft = 50;
-          let verdict = '';
-
-          if (distance === 0) {
-            pinLeft = 88;
-            verdict = 'PERFECT HIT. FILTHY WORK.';
-            launchFireworks();
-          } else if (distance <= 1) {
-            pinLeft = 72 + ((1 - distance) * 12);
-            verdict = `$${distance.toFixed(2)} short — ridiculously close.`;
-          } else if (distance <= 3) {
-            pinLeft = 50 + ((3 - distance) / 2) * 20;
-            verdict = `$${distance.toFixed(2)} short — decent, but no cigar.`;
-          } else if (distance <= 7) {
-            pinLeft = 26 + ((7 - distance) / 4) * 22;
-            verdict = `$${distance.toFixed(2)} short — you were wandering.`;
-          } else {
-            pinLeft = 10;
-            verdict = `$${distance.toFixed(2)} short — nowhere near it.`;
-          }
-
-          resultPin.style.left = `${pinLeft}%`;
-          resultVerdict.textContent = verdict;
-        } else {
-          triggerBust();
-          revealBust.classList.add('show');
-          bustAmount.textContent = `Over by $${distance.toFixed(2)}`;
-          playSfx('bust');
-        }
-      }, 500);
-    }
-
-    function lockAndReveal() {
-      if (locked || keptCards.length === 0) return;
-      if (currentFlop.length) bankSelectedCards();
-
-      locked = true;
-      dealBtn.disabled = true;
-      lockBtn.disabled = true;
-      clearFlop();
-
-      basketSlots.forEach(slot => {
-        const wrap = slot.querySelector('.card-wrap');
-        if (wrap) wrap.classList.add('revealed');
-      });
-
-      const total = keptTotal();
-      const bust = total > target;
-      const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
-
-      statusText.textContent = '';
-      statusText.classList.remove('keepers-callout');
-      hintText.textContent = '';
-      totalText.textContent = '';
-      awayText.textContent = '';
-
-      runReveal({ total, distance: away, bust });
-      dealBtn.style.display = 'none';
-      lockBtn.style.display = 'none';
-      deckCount.style.display = 'none';
-      shareBtn.style.display = 'inline-block';
-      shareBtn.classList.add('throb');
-    }
-
-    function buildShareText() {
-      const total = keptTotal();
-      const bust = total > target;
-      const rawAway = bust
-        ? +(total - target).toFixed(2)
-        : +(target - total).toFixed(2);
-
-      const away = rawAway;
-      const t = target.toFixed(2);
-      const tot = total.toFixed(2);
-      const a = away.toFixed(2);
-
-      let lines = [];
-
-      if (bust) {
-        if (away <= 1) {
-          lines.push(
-            `🤯 YOU BUSTED at $${tot}.`,
-            `$${a} over — so close!`,
-            `One less reckless grab and you'd be a genius.`
-          );
-        } else if (away <= 5) {
-          lines.push(
-            `🤯 YOU BUSTED at $${tot}.`,
-            `That's $${a} over.`,
-            `Maybe watch your supermarket bill,`,
-            `not the hot checkout operator.`
-          );
-        } else {
-          lines.push(
-            `🔥 CATASTROPHIC BUST: $${tot}.`,
-            `$${a} over.`,
-            `Are you shopping or just financially self-harming?`
-          );
-        }
-      } else {
-        if (away === 0) {
-          lines.push(
-            `🎯 PERFECT $${tot} on the nose.`,
-            `You absolutely bullied $${t}.`,
-            `Send this to someone who still thinks they're “good with money”.`
-          );
-        } else if (away <= 1) {
-          lines.push(
-            `😏 $${tot} — only $${a} shy of $${t}.`,
-            `You actually look like you read the receipt.`
-          );
-        } else if (away <= 5) {
-          lines.push(
-            `👍 $${tot}, just $${a} under.`,
-            `Not bad… but don't start calling yourself a checkout sniper.`
-          );
-        } else if (away <= 10) {
-          lines.push(
-            `🤨 $${tot}, a soft $${a} miss.`,
-            `You shop like every aisle is a sightseeing tour.`
-          );
-        } else {
-          lines.push(
-            `💸 $${tot}, a lazy $${a} short.`,
-            `You were nowhere near it, but thanks for participating.`
-          );
-        }
-      }
-
-      lines.push('', `Play ALDI21: ${shareUrl}`);
-      return lines.join('\n');
-    }
-
-    dealBtn.addEventListener('click', flopThree);
-    lockBtn.addEventListener('click', lockAndReveal);
-
-    shareBtn.addEventListener('click', async () => {
-      const text = buildShareText();
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: `ALDI21 Game #${gameNumber}`,
-            text
-          });
-          return;
-        } catch (e) {}
-      }
-
-      try {
-        await navigator.clipboard.writeText(text);
-        shareBtn.textContent = 'Copied!';
-        setTimeout(() => { shareBtn.textContent = 'Share'; }, 1400);
-      } catch (e) {
-        alert(text);
-      }
-    });
-
-    rulesBtn.addEventListener('click', () => {
-      rulesModal.classList.add('show');
-      rulesModal.setAttribute('aria-hidden', 'false');
-    });
-
-    rulesClose.addEventListener('click', () => {
-      rulesModal.classList.remove('show');
-      rulesModal.setAttribute('aria-hidden', 'true');
-    });
-
-    rulesModal.addEventListener('click', (e) => {
-      if (e.target === rulesModal) {
-        rulesModal.classList.remove('show');
-        rulesModal.setAttribute('aria-hidden', 'true');
-      }
-    });
-
-    revealOverlay.addEventListener('click', () => {
-      revealOverlay.classList.remove('show');
-      revealOverlay.setAttribute('aria-hidden', 'true');
-    });
-
-    document.getElementById('gameNoEl').textContent = 'Game #' + gameNumber;
-    document.getElementById('gameDateEl').textContent = gameDate;
-    document.getElementById('targetCircleEl').textContent = '$' + target.toFixed(2).replace('.00','');
-    const hintTargetEl = document.getElementById('hintTarget');
-    if (hintTargetEl) hintTargetEl.textContent = target.toFixed(2).replace('.00','');
-    document.querySelectorAll('.rules-target').forEach(el => el.textContent = target.toFixed(2).replace('.00',''));
-    updateDeckCount();
-    updateTexts();
-    clearFlop();
-    updateLockDrama();
+    // ── Boot: fetch target from API, then start game ──────────────────────
+    fetch('/api/target')
+      .then(r => r.json())
+      .then(data => { if (data.target) target = parseFloat(data.target); })
+      .catch(() => {})
+      .finally(() => initGame());
   </script>
-
 </body>
 </html>

@@ -33,146 +33,77 @@
       flex-direction:column;
       gap:22px;
     }
-    .card-head {
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
+    .card-head { display:flex; align-items:center; gap:14px; }
     .target-badge {
-      width:56px;
-      height:56px;
-      border-radius:50%;
-      background:#fff;
-      border:5px solid var(--red);
-      display:grid;
-      place-items:center;
-      flex-shrink:0;
+      width:56px; height:56px; border-radius:50%;
+      background:#fff; border:5px solid var(--red);
+      display:grid; place-items:center; flex-shrink:0;
     }
     .target-badge span {
-      font-weight:900;
-      font-size:13px;
-      color:var(--red);
-      line-height:1;
-      text-align:center;
-      padding:2px;
+      font-weight:900; font-size:13px; color:var(--red);
+      line-height:1; text-align:center; padding:2px;
     }
-    h1 {
-      margin:0;
-      font-size:22px;
-      font-weight:900;
-      line-height:1.15;
-    }
-    h1 small {
-      display:block;
-      font-size:13px;
-      font-weight:700;
-      color:rgba(255,255,255,.6);
-      margin-top:3px;
-    }
-    label {
-      font-size:13px;
-      font-weight:800;
-      color:rgba(255,255,255,.78);
-      display:block;
-      margin-bottom:8px;
-    }
+    h1 { margin:0; font-size:22px; font-weight:900; line-height:1.15; }
+    h1 small { display:block; font-size:13px; font-weight:700; color:rgba(255,255,255,.6); margin-top:3px; }
+    label { font-size:13px; font-weight:800; color:rgba(255,255,255,.78); display:block; margin-bottom:8px; }
     .input-row {
-      display:flex;
-      align-items:center;
-      gap:0;
-      background:rgba(0,0,0,.38);
-      border:2px solid rgba(255,255,255,.22);
-      border-radius:14px;
-      overflow:hidden;
+      display:flex; align-items:center;
+      background:rgba(0,0,0,.38); border:2px solid rgba(255,255,255,.22);
+      border-radius:14px; overflow:hidden;
     }
-    .input-prefix {
-      padding:0 14px;
-      font-size:26px;
-      font-weight:900;
-      color:rgba(255,255,255,.5);
-      user-select:none;
+    .input-prefix { padding:0 14px; font-size:26px; font-weight:900; color:rgba(255,255,255,.5); user-select:none; }
+    input[type="password"] {
+      flex:1; border:0; background:transparent; color:#fff;
+      font-size:20px; font-weight:900; padding:14px 10px 14px 0;
+      outline:none; min-width:0;
     }
     input[type="number"] {
-      flex:1;
-      border:0;
-      background:transparent;
-      color:#fff;
-      font-size:32px;
-      font-weight:900;
-      padding:14px 10px 14px 0;
-      outline:none;
-      min-width:0;
-      -moz-appearance:textfield;
+      flex:1; border:0; background:transparent; color:#fff;
+      font-size:32px; font-weight:900; padding:14px 10px 14px 0;
+      outline:none; min-width:0; -moz-appearance:textfield;
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; }
     .preview {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding:14px;
-      background:rgba(0,0,0,.28);
-      border-radius:14px;
-      font-size:14px;
-      font-weight:800;
-      color:rgba(255,255,255,.7);
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      padding:14px; background:rgba(0,0,0,.28); border-radius:14px;
+      font-size:14px; font-weight:800; color:rgba(255,255,255,.7);
     }
     .preview-circle {
-      width:52px;
-      height:52px;
-      border-radius:50%;
-      background:#fff;
-      border:5px solid var(--red);
-      display:grid;
-      place-items:center;
-      flex-shrink:0;
+      width:52px; height:52px; border-radius:50%;
+      background:#fff; border:5px solid var(--red);
+      display:grid; place-items:center; flex-shrink:0;
     }
-    .preview-circle span {
-      font-weight:900;
-      font-size:12px;
-      color:var(--red);
-      text-align:center;
-    }
+    .preview-circle span { font-weight:900; font-size:12px; color:var(--red); text-align:center; }
     .btn-save {
-      border:0;
-      border-radius:999px;
-      padding:15px 24px;
-      font-size:18px;
-      font-weight:900;
-      background:var(--gold);
-      color:#172033;
-      cursor:pointer;
-      box-shadow:0 8px 22px rgba(0,0,0,.28);
-      transition:transform .18s ease, box-shadow .18s ease;
-      width:100%;
+      border:0; border-radius:999px; padding:15px 24px;
+      font-size:18px; font-weight:900; background:var(--gold);
+      color:#172033; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,.28);
+      transition:transform .18s ease; width:100%;
     }
     .btn-save:hover { transform:scale(1.03); }
     .btn-save:active { transform:scale(.97); }
-    .toast {
-      display:none;
-      background:#2e7d32;
-      color:#fff;
-      border-radius:12px;
-      padding:12px 18px;
-      font-weight:800;
-      font-size:14px;
-      text-align:center;
-    }
+    .btn-save:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+    .toast { display:none; border-radius:12px; padding:12px 18px; font-weight:800; font-size:14px; text-align:center; }
     .toast.show { display:block; }
-    .current-info {
-      font-size:13px;
-      color:rgba(255,255,255,.55);
-      text-align:center;
-      font-weight:700;
-    }
+    .toast.success { background:#2e7d32; }
+    .toast.error { background:#c62828; }
+    .current-info { font-size:13px; color:rgba(255,255,255,.55); text-align:center; font-weight:700; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="card-head">
       <div class="target-badge"><span id="badgeText">$21</span></div>
-      <h1>ALDI21 Admin<small>Set today's target figure</small></h1>
+      <h1>ALDIQ Admin<small>Set today's target figure</small></h1>
+    </div>
+
+    <div>
+      <label for="passwordInput">Admin Password</label>
+      <div class="input-row">
+        <span class="input-prefix">🔒</span>
+        <input type="password" id="passwordInput" placeholder="password">
+      </div>
     </div>
 
     <div>
@@ -185,11 +116,11 @@
 
     <div class="preview">
       <div class="preview-circle"><span id="previewText">$21</span></div>
-      <span>This is what players will see in the header</span>
+      <span>This is what all players will see</span>
     </div>
 
-    <button class="btn-save" onclick="saveTarget()">Save Target</button>
-    <div class="toast" id="toast">✓ Target saved! Players will now see this figure.</div>
+    <button class="btn-save" id="saveBtn" onclick="saveTarget()">Save Target</button>
+    <div class="toast" id="toast"></div>
     <div class="current-info" id="currentInfo">Current target: loading…</div>
   </div>
 
@@ -198,11 +129,19 @@
     const badgeText = document.getElementById('badgeText');
     const previewText = document.getElementById('previewText');
     const currentInfo = document.getElementById('currentInfo');
+    const toast = document.getElementById('toast');
+    const saveBtn = document.getElementById('saveBtn');
 
     function fmt(v) {
       if (!v || isNaN(v)) return '?';
       const n = parseFloat(v);
       return n % 1 === 0 ? '$' + n : '$' + n.toFixed(2);
+    }
+
+    function showToast(msg, type) {
+      toast.textContent = msg;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => toast.className = 'toast', 3500);
     }
 
     function updatePreview() {
@@ -214,30 +153,48 @@
 
     input.addEventListener('input', updatePreview);
 
-    function saveTarget() {
+    async function saveTarget() {
       const val = parseFloat(input.value);
-      if (isNaN(val) || val <= 0) {
-        alert('Enter a valid dollar amount.');
-        return;
+      const password = document.getElementById('passwordInput').value;
+      if (!password) { showToast('Enter the admin password.', 'error'); return; }
+      if (isNaN(val) || val <= 0) { showToast('Enter a valid dollar amount.', 'error'); return; }
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving…';
+
+      try {
+        const res = await fetch('/api/target', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target: val, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast('❌ ' + (data.error || 'Failed'), 'error');
+        } else {
+          showToast('✓ Target saved! All players will now see ' + fmt(val), 'success');
+          currentInfo.textContent = 'Current target: ' + fmt(val);
+        }
+      } catch (e) {
+        showToast('❌ Network error', 'error');
       }
-      localStorage.setItem('aldi21_target', val.toFixed(2));
-      const toast = document.getElementById('toast');
-      toast.classList.add('show');
-      currentInfo.textContent = 'Current target: ' + fmt(val);
-      setTimeout(() => toast.classList.remove('show'), 3000);
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Target';
     }
 
-    // Load existing on mount
-    window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('aldi21_target');
-      if (saved) {
-        input.value = parseFloat(saved).toFixed(2);
-        currentInfo.textContent = 'Current target: ' + fmt(saved);
-        updatePreview();
-      } else {
-        input.value = '21.00';
-        currentInfo.textContent = 'Current target: $21 (default)';
-        updatePreview();
+    // Load current target from server on mount
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/target');
+        const data = await res.json();
+        if (data.target) {
+          input.value = parseFloat(data.target).toFixed(2);
+          currentInfo.textContent = 'Current target: ' + fmt(data.target);
+          updatePreview();
+        }
+      } catch (e) {
+        currentInfo.textContent = 'Could not load current target.';
       }
     });
   </script>
