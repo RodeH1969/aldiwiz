@@ -434,6 +434,7 @@
       align-items:center;
       justify-content:center;
       flex-shrink:0;
+      gap:2px;
     }
     .perfect-solutions-number {
       font-size:26px;
@@ -445,6 +446,34 @@
       font-size:8px;
       font-weight:700;
       color:#555;
+      text-align:center;
+      line-height:1.2;
+    }
+    .billion-card {
+      height:66px;
+      width:66px;
+      border-radius:8px;
+      background:#fff;
+      border:3px solid #add8e6;
+      box-shadow:0 6px 16px rgba(0,0,0,.35);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+      gap:2px;
+    }
+    .billion-top {
+      font-size:13px;
+      font-weight:900;
+      color:#155724;
+      line-height:1;
+      text-align:center;
+    }
+    .billion-bot {
+      font-size:7.5px;
+      font-weight:400;
+      color:#111;
       text-align:center;
       line-height:1.2;
     }
@@ -935,10 +964,13 @@
         <div class="target-circle">
           <div class="target-circle-inner" id="targetCircleEl">$21</div>
         </div>
-        <img src="./1billioncombos.png" alt="1 Billion Combinations" class="facecard-thumb">
         <div class="perfect-solutions-card">
           <div class="perfect-solutions-number" id="perfectSolutionsEl">76</div>
           <div class="perfect-solutions-label">perfect solutions</div>
+        </div>
+        <div class="billion-card">
+          <div class="billion-top">1 Billion</div>
+          <div class="billion-bot">possible combos</div>
         </div>
         <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
       </div>
