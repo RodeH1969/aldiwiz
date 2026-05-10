@@ -74,7 +74,7 @@
     "name": "Bon Appetit",
     "line": "BRIOCHE BURGER BUNS",
     "size": "200g",
-    "price": "$3.4",
+    "price": "$3.40",
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\briochebuns-card.png"
@@ -194,7 +194,7 @@
     "name": "Emporium",
     "line": "GRANA PADANO CHEESE",
     "size": "250g",
-    "price": "$8.2",
+    "price": "$8.20",
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\emporiumgranapadano-card.png"
@@ -328,16 +328,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\hillcrestmuesli-card.png"
-  },
-  {
-    "image": "products\\colwayworcestshiresauce250ml.jpeg",
-    "name": "Colway",
-    "line": "WORCESTERSHIRE SAUCE",
-    "size": "250ml",
-    "price": "$1.89",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\colwayworcestershire-card.png"
   },
   {
     "image": "products\\imperialgrainlonggrainwhiterice250g.jpeg",
@@ -648,5 +638,345 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\wisdomtoothbrush-card.png"
+  },
+  {
+    "image": "products\\activenergyAAbatteries10pack.jpeg",
+    "name": "Active Energy",
+    "line": "AA BATTERIES",
+    "size": "10 pack",
+    "price": "$5.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\activenergyAAbatteries-card.png"
+  },
+  {
+    "image": "products\\almatlaudrypowder4kg.jpeg",
+    "name": "Almat",
+    "line": "LAUNDRY POWDER",
+    "size": "4kg",
+    "price": "$4.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\almatlaudrypowder-card.png"
+  },
+  {
+    "image": "products\\almatlaundryliuid4l.jpeg",
+    "name": "Almat",
+    "line": "LAUNDRY LIQUID",
+    "size": "4L",
+    "price": "$9.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\almatlaundryliuid-card.png"
+  },
+  {
+    "image": "products\\ancosoftfabricsoftener2l.jpeg",
+    "name": "Anco Soft",
+    "line": "FABRIC SOFTENER",
+    "size": "2L",
+    "price": "$2.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\ancosoftfabricsoftener-card.png"
+  },
+  {
+    "image": "products\\bebetoloveheartgummies400g.jpeg",
+    "name": "Bebeto",
+    "line": "LOVE HEART GUMMIES",
+    "size": "400g",
+    "price": "$5.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\bebetogummies-card.png"
+  },
+  {
+    "image": "products\\blackstonesweetchilliandsourcreamchips175g.jpeg",
+    "name": "Blackstone",
+    "line": "SWEET CHILLI & SOUR CREAM CHIPS",
+    "size": "175g",
+    "price": "$2.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\blackstonesweetchilli-card.png"
+  },
+  {
+    "image": "products\\colwayworcestshiresauce250ml.jpeg",
+    "name": "Colway",
+    "line": "WORCESTERSHIRE SAUCE",
+    "size": "250ml",
+    "price": "$1.89",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\colwayworcestershire-card.png"
+  },
+  {
+    "image": "products\\confidenceantibacterialwipes15pack.jpeg",
+    "name": "Confidence",
+    "line": "ANTIBACTERIAL WIPES",
+    "size": "15 pack",
+    "price": "$1.39",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\confidencewipes-card.png"
+  },
+  {
+    "image": "products\\disanprooxylaundrysoaker1kg.jpeg",
+    "name": "Disan Prooxy",
+    "line": "LAUNDRY SOAKER",
+    "size": "1kg",
+    "price": "$3.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\disanprooxysoaker-card.png"
+  },
+  {
+    "image": "products\\eltorahotandsweetjalapenos440g.jpeg",
+    "name": "El Tora",
+    "line": "HOT & SWEET JALAPENOS",
+    "size": "440g",
+    "price": "$2.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\eltorajalapenos-card.png"
+  },
+  {
+    "image": "products\\greenactionmultipurposecleaner600ml.jpeg",
+    "name": "Green Action",
+    "line": "MULTIPURPOSE CLEANER",
+    "size": "600ml",
+    "price": "$2.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\greenactioncleaner-card.png"
+  },
+  {
+    "image": "products\\haribotwinsnakes280g.jpeg",
+    "name": "Haribo",
+    "line": "TWIN SNAKES",
+    "size": "280g",
+    "price": "$3.69",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\haribotwinsnakes-card.png"
+  },
+  {
+    "image": "products\\logixdishwashertablets45pack.jpeg",
+    "name": "Logix",
+    "line": "DISHWASHER TABLETS",
+    "size": "45 pack",
+    "price": "$6.00",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\logixdishwashertablets-card.png"
+  },
+  {
+    "image": "products\\logixplatinumdishwashercapsules46pack.jpeg",
+    "name": "Logix",
+    "line": "PLATINUM DISHWASHER CAPSULES",
+    "size": "46 pack",
+    "price": "$11.69",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\logixplatinumcapsules-card.png"
+  },
+  {
+    "image": "products\\portviewtuna95g.jpeg",
+    "name": "Portview",
+    "line": "TUNA",
+    "size": "95g",
+    "price": "$1.09",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\portviewtuna-card.png"
+  },
+  {
+    "image": "products\\portviewtunatreatswithcrackers112g.jpeg",
+    "name": "Portview",
+    "line": "TUNA TREATS WITH CRACKERS",
+    "size": "112g",
+    "price": "$1.79",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\portviewtunatreats-card.png"
+  },
+  {
+    "image": "products\\powerforcealuminiumfoil30m.jpeg",
+    "name": "Powerforce",
+    "line": "ALUMINIUM FOIL",
+    "size": "30m",
+    "price": "$3.69",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcealuminiumfoil-card.png"
+  },
+  {
+    "image": "products\\powerforcebathandshowercleaner750ml.jpeg",
+    "name": "Powerforce",
+    "line": "BATH & SHOWER CLEANER",
+    "size": "750ml",
+    "price": "$2.69",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcebathandshower-card.png"
+  },
+  {
+    "image": "products\\powerforcebathroomcleaningwipes50pack.jpeg",
+    "name": "Powerforce",
+    "line": "BATHROOM CLEANING WIPES",
+    "size": "50 pack",
+    "price": "$1.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcebathroomwipes-card.png"
+  },
+  {
+    "image": "products\\powerforcecremecleanserlemon500ml.jpeg",
+    "name": "Powerforce",
+    "line": "CREME CLEANSER LEMON",
+    "size": "500ml",
+    "price": "$2.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcecremecleanser-card.png"
+  },
+  {
+    "image": "products\\powerforcedishwasherpowder1kg.jpeg",
+    "name": "Powerforce",
+    "line": "DISHWASHER POWDER",
+    "size": "1kg",
+    "price": "$3.69",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcedishwasherpowder-card.png"
+  },
+  {
+    "image": "products\\powerforceheavydutyspongescourer3pack.jpeg",
+    "name": "Powerforce",
+    "line": "HEAVY DUTY SPONGE SCOURER",
+    "size": "3 pack",
+    "price": "$1.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforceheavydutyscourer-card.png"
+  },
+  {
+    "image": "products\\powerforcemeshspongescourer5pack.jpeg",
+    "name": "Powerforce",
+    "line": "MESH SPONGE SCOURER",
+    "size": "5 pack",
+    "price": "$2.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcemeshscourer-card.png"
+  },
+  {
+    "image": "products\\powerforcetoiletrimblocks2x50g.jpeg",
+    "name": "Powerforce",
+    "line": "TOILET RIM BLOCKS",
+    "size": "2x50g",
+    "price": "$3.29",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\powerforcerimblocks-card.png"
+  },
+  {
+    "image": "products\\seethavenappleandblackberrypies500g.jpeg",
+    "name": "Seethaaven",
+    "line": "APPLE & BLACKBERRY PIES",
+    "size": "500g",
+    "price": "$3.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\seethavenpies-card.png"
+  },
+  {
+    "image": "products\\sweethavenstrudel600g.jpeg",
+    "name": "Sweet Haven",
+    "line": "STRUDEL",
+    "size": "600g",
+    "price": "$5.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\sweethavenstrudel-card.png"
+  },
+  {
+    "image": "products\\sweetsensationsnougatbliss45g.jpeg",
+    "name": "Sweet Sensations",
+    "line": "NOUGAT BLISS",
+    "size": "45g",
+    "price": "$1.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\sweetsensationsnougat-card.png"
+  },
+  {
+    "image": "products\\sweetvinebluberries13g.jpeg",
+    "name": "Sweet Vine",
+    "line": "BLUEBERRIES",
+    "size": "130g",
+    "price": "$3.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\sweetvineblueberries-card.png"
+  },
+  {
+    "image": "products\\sweetvinedriedappleslices200g.jpeg",
+    "name": "Sweet Vine",
+    "line": "DRIED APPLE SLICES",
+    "size": "200g",
+    "price": "$3.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\sweetvineappleslices-card.png"
+  },
+  {
+    "image": "products\\sweetvinesultanas240g.jpeg",
+    "name": "Sweet Vine",
+    "line": "SULTANAS",
+    "size": "240g",
+    "price": "$2.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\sweetvinesultanas-card.png"
+  },
+  {
+    "image": "products\\tandildishwashingliquid950ml.jpeg",
+    "name": "Tandil",
+    "line": "DISHWASHING LIQUID",
+    "size": "950ml",
+    "price": "$2.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\tandildishwashingliquid-card.png"
+  },
+  {
+    "image": "products\\trimatadvancedlaundrypowder2kg.jpeg",
+    "name": "Trimat",
+    "line": "ADVANCED LAUNDRY POWDER",
+    "size": "2kg",
+    "price": "$10.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\trimatlaundrypowder-card.png"
+  },
+  {
+    "image": "products\\trimatdavancedlaundryliquid4l.jpeg",
+    "name": "Trimat",
+    "line": "ADVANCED LAUNDRY LIQUID",
+    "size": "4L",
+    "price": "$10.49",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\trimatlaundyliquid-card.png"
+  },
+  {
+    "image": "products\\whittakerschocolatepods125g.jpeg",
+    "name": "Whittaker's",
+    "line": "CHOCOLATE PODS",
+    "size": "125g",
+    "price": "$12.99",
+    "special": false,
+    "supermarket": "Aldi",
+    "out": "cards\\whittakerschocpods-card.png"
   }
 ]
