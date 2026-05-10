@@ -114,6 +114,14 @@
       </div>
     </div>
 
+    <div>
+      <label for="solutionsInput">Perfect Solutions (today's count)</label>
+      <div class="input-row">
+        <span class="input-prefix">🎯</span>
+        <input type="number" id="solutionsInput" min="0" max="9999" step="1" placeholder="76">
+      </div>
+    </div>
+
     <div class="preview">
       <div class="preview-circle"><span id="previewText">$21</span></div>
       <span>This is what all players will see</span>
@@ -155,6 +163,7 @@
 
     async function saveTarget() {
       const val = parseFloat(input.value);
+      const solVal = parseInt(document.getElementById('solutionsInput').value);
       const password = document.getElementById('passwordInput').value;
       if (!password) { showToast('Enter the admin password.', 'error'); return; }
       if (isNaN(val) || val <= 0) { showToast('Enter a valid dollar amount.', 'error'); return; }
@@ -163,17 +172,24 @@
       saveBtn.textContent = 'Saving…';
 
       try {
-        const res = await fetch('/api/target', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ target: val, password })
-        });
-        const data = await res.json();
-        if (!res.ok) {
+        const [res1, res2] = await Promise.all([
+          fetch('/api/target', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ target: val, password })
+          }),
+          isNaN(solVal) ? Promise.resolve({ ok: true }) : fetch('/api/solutions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ solutions: solVal, password })
+          })
+        ]);
+        const data = await res1.json();
+        if (!res1.ok) {
           showToast('❌ ' + (data.error || 'Failed'), 'error');
         } else {
-          showToast('✓ Target saved! All players will now see ' + fmt(val), 'success');
-          currentInfo.textContent = 'Current target: ' + fmt(val);
+          showToast('✓ Saved! Target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal), 'success');
+          currentInfo.textContent = 'Current target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal);
         }
       } catch (e) {
         showToast('❌ Network error', 'error');
@@ -186,15 +202,23 @@
     // Load current target from server on mount
     window.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch('/api/target');
-        const data = await res.json();
-        if (data.target) {
-          input.value = parseFloat(data.target).toFixed(2);
-          currentInfo.textContent = 'Current target: ' + fmt(data.target);
+        const [tRes, sRes] = await Promise.all([
+          fetch('/api/target'),
+          fetch('/api/solutions')
+        ]);
+        const tData = await tRes.json();
+        const sData = await sRes.json().catch(() => ({}));
+        if (tData.target) {
+          input.value = parseFloat(tData.target).toFixed(2);
           updatePreview();
         }
+        if (sData.solutions) {
+          document.getElementById('solutionsInput').value = sData.solutions;
+        }
+        currentInfo.textContent = 'Current target: ' + fmt(tData.target) +
+          (sData.solutions ? ' | Solutions: ' + sData.solutions : '');
       } catch (e) {
-        currentInfo.textContent = 'Could not load current target.';
+        currentInfo.textContent = 'Could not load current settings.';
       }
     });
   </script>

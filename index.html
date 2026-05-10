@@ -1003,8 +1003,8 @@
   <li>Press <strong>DEAL</strong> to reveal 3 new cards.</li>
   <li>From each flop, you may keep 1, 2 or 3 cards.</li>
   <li>Kept cards go into your basket. You have 6 basket spots max.</li>
-  <li>Only 76 perfect combos exist for Today's Target.</li>
-  <li>The 1st to text/Whatsapp 0459754708 wins a $20 Aldi gift card.</li>
+  <li>Only <span id="rulesSolutionsEl">76</span> perfect combos exist for Today's Target.</li>
+  <li>The 1st to Text/Whatsapp 0459754708 wins the products in your basket from Today's Target.</li>
   <li>Press <strong>LOCKNLOAD</strong> when your basket is final and find out if you nailed the target... or busted by a cent.</li>
 </ol>
 </div>
@@ -1244,16 +1244,9 @@
         bustOverlay.classList.add('show');
       }
 
-      let _audioCtx = null;
-      function getAudioCtx() {
-        if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (_audioCtx.state === 'suspended') _audioCtx.resume();
-        return _audioCtx;
-      }
-
       function playCardSound() {
         try {
-          const ctx = getAudioCtx();
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
           const buf = ctx.createBuffer(1, ctx.sampleRate * 0.12, ctx.sampleRate);
           const data = buf.getChannelData(0);
           for (let i = 0; i < data.length; i++) {
@@ -1274,7 +1267,7 @@
 
       function playFireworkSound() {
         try {
-          const ctx = getAudioCtx();
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
           [0, 0.08, 0.18].forEach(delay => {
             const buf = ctx.createBuffer(1, ctx.sampleRate * 1.2, ctx.sampleRate);
             const data = buf.getChannelData(0);
@@ -1769,12 +1762,20 @@
       updateLockDrama();
     }
 
-    // ── Boot: fetch target from API, then start game ──────────────────────
-    fetch('/api/target')
-      .then(r => r.json())
-      .then(data => { if (data.target) target = parseFloat(data.target); })
-      .catch(() => {})
-      .finally(() => initGame());
+    // ── Boot: fetch target + solutions from API, then start game ──────────────────────
+    Promise.all([
+      fetch('/api/target').then(r => r.json()).catch(() => ({})),
+      fetch('/api/solutions').then(r => r.json()).catch(() => ({}))
+    ]).then(([tData, sData]) => {
+      if (tData.target) target = parseFloat(tData.target);
+      if (sData.solutions) {
+        const n = parseInt(sData.solutions);
+        const el = document.getElementById('perfectSolutionsEl');
+        const el2 = document.getElementById('rulesSolutionsEl');
+        if (el) el.textContent = n;
+        if (el2) el2.textContent = n;
+      }
+    }).finally(() => initGame());
   </script>
 </body>
 </html>
