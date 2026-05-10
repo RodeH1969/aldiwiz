@@ -422,6 +422,32 @@
       0%,100% { transform:scale(1);    opacity:1; }
       50%      { transform:scale(1.15); opacity:.75; }
     }
+    .perfect-solutions-card {
+      height:66px;
+      width:66px;
+      border-radius:8px;
+      background:#fff;
+      border:3px solid #ff69b4;
+      box-shadow:0 6px 16px rgba(0,0,0,.35);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+    }
+    .perfect-solutions-number {
+      font-size:26px;
+      font-weight:900;
+      color:#1565c0;
+      line-height:1;
+    }
+    .perfect-solutions-label {
+      font-size:8px;
+      font-weight:700;
+      color:#555;
+      text-align:center;
+      line-height:1.2;
+    }
     @keyframes shareThrob {
       0%,100% { transform:scale(1);   box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28); }
       50%      { transform:scale(1.08); box-shadow:0 0 34px rgba(255,105,180,.9), 0 10px 26px rgba(0,0,0,.32); }
@@ -909,8 +935,11 @@
         <div class="target-circle">
           <div class="target-circle-inner" id="targetCircleEl">$21</div>
         </div>
-        <img src="./bullseyecard.png" alt="Bullseye Card" class="facecard-thumb">
         <img src="./1billioncombos.png" alt="1 Billion Combinations" class="facecard-thumb">
+        <div class="perfect-solutions-card">
+          <div class="perfect-solutions-number" id="perfectSolutionsEl">76</div>
+          <div class="perfect-solutions-label">perfect solutions</div>
+        </div>
         <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
       </div>
 
@@ -1033,7 +1062,7 @@
     let target = 21;
 
     function initGame() {
-      const startingDeck = 65;
+      const startingDeck = 98;
       const maxBasket = 6;
       const flopSize = 3;
       const shareUrl = 'https://aldiwiz.onrender.com';
