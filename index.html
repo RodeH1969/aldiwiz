@@ -418,6 +418,10 @@
       animation:shareThrob .9s ease-in-out infinite;
       box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28);
     }
+    @keyframes throb {
+      0%,100% { transform:scale(1);    opacity:1; }
+      50%      { transform:scale(1.15); opacity:.75; }
+    }
     @keyframes shareThrob {
       0%,100% { transform:scale(1);   box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28); }
       50%      { transform:scale(1.08); box-shadow:0 0 34px rgba(255,105,180,.9), 0 10px 26px rgba(0,0,0,.32); }
@@ -901,7 +905,7 @@
 
       <div class="target-wrap">
         <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
-        <div class="target-label" style="font-size:13px;font-weight:900;color:#fff;line-height:1.2;text-align:center;white-space:nowrap;">Today's<br>Target</div>
+        <div class="target-label" style="font-size:13px;font-weight:900;color:#ff69b4;line-height:1.2;text-align:center;white-space:nowrap;animation:throb 1.2s ease-in-out infinite;">Today's<br>Target</div>
         <div class="target-circle">
           <div class="target-circle-inner" id="targetCircleEl">$21</div>
         </div>
