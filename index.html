@@ -423,60 +423,21 @@
       50%      { transform:scale(1.15); opacity:.75; }
     }
     .perfect-solutions-card {
-      height:66px;
-      width:66px;
-      border-radius:8px;
-      background:#fff;
-      border:3px solid #ff69b4;
-      box-shadow:0 6px 16px rgba(0,0,0,.35);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      flex-shrink:0;
-      gap:2px;
+      height:66px; width:66px; border-radius:8px; background:#fff;
+      border:3px solid #ff69b4; box-shadow:0 6px 16px rgba(0,0,0,.35);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; flex-shrink:0; gap:2px;
     }
-    .perfect-solutions-number {
-      font-size:26px;
-      font-weight:900;
-      color:#1565c0;
-      line-height:1;
-    }
-    .perfect-solutions-label {
-      font-size:8px;
-      font-weight:700;
-      color:#555;
-      text-align:center;
-      line-height:1.2;
-    }
+    .perfect-solutions-number { font-size:26px; font-weight:900; color:#1565c0; line-height:1; }
+    .perfect-solutions-label { font-size:8px; font-weight:700; color:#555; text-align:center; line-height:1.2; }
     .billion-card {
-      height:66px;
-      width:66px;
-      border-radius:8px;
-      background:#fff;
-      border:3px solid #add8e6;
-      box-shadow:0 6px 16px rgba(0,0,0,.35);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      flex-shrink:0;
-      gap:2px;
+      height:66px; width:66px; border-radius:8px; background:#fff;
+      border:3px solid #add8e6; box-shadow:0 6px 16px rgba(0,0,0,.35);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; flex-shrink:0; gap:2px;
     }
-    .billion-top {
-      font-size:13px;
-      font-weight:900;
-      color:#155724;
-      line-height:1;
-      text-align:center;
-    }
-    .billion-bot {
-      font-size:7.5px;
-      font-weight:400;
-      color:#111;
-      text-align:center;
-      line-height:1.2;
-    }
+    .billion-top { font-size:13px; font-weight:900; color:#155724; line-height:1; text-align:center; }
+    .billion-bot { font-size:7.5px; font-weight:400; color:#111; text-align:center; line-height:1.2; }
     @keyframes shareThrob {
       0%,100% { transform:scale(1);   box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28); }
       50%      { transform:scale(1.08); box-shadow:0 0 34px rgba(255,105,180,.9), 0 10px 26px rgba(0,0,0,.32); }
@@ -1646,34 +1607,109 @@
       function buildShareText() {
         const total = keptTotal();
         const bust = total > target;
-        const rawAway = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+        const rawAway = +(Math.abs(total - target)).toFixed(2);
         const away = rawAway;
-        const t = target.toFixed(2);
-        const tot = total.toFixed(2);
         const a = away.toFixed(2);
-        let lines = [];
-        if (bust) {
-          if (away <= 1) {
-            lines.push(`🤯 YOU BUSTED at $${tot}.`, `$${a} over — so close!`, `One less reckless grab and you'd be a genius.`);
-          } else if (away <= 5) {
-            lines.push(`🤯 YOU BUSTED at $${tot}.`, `That's $${a} over.`, `Maybe watch your supermarket bill,`, `not the hot checkout operator.`);
-          } else {
-            lines.push(`🔥 CATASTROPHIC BUST: $${tot}.`, `$${a} over.`, `Are you shopping or just financially self-harming?`);
+        const keptCount = keptCards.length;
+
+        // Emoji bar — 6 slots
+        function emojiBar(greens, yellows) {
+          const g = '🟩', y = '🟨', r = '🟥', o = '🟧', w = '⬜';
+          let bar = '';
+          for (let i = 0; i < 6; i++) {
+            if (i < greens) bar += g;
+            else if (i < greens + yellows) bar += y;
+            else bar += w;
           }
-        } else {
-          if (away === 0) {
-            lines.push(`🎯 PERFECT $${tot} on the nose.`, `You absolutely bullied $${t}.`, `Send this to someone who still thinks they're "good with money".`);
-          } else if (away <= 1) {
-            lines.push(`😏 $${tot} — only $${a} shy of $${t}.`, `You actually look like you read the receipt.`);
-          } else if (away <= 5) {
-            lines.push(`👍 $${tot}, just $${a} under.`, `Not bad… but don't start calling yourself a checkout sniper.`);
-          } else if (away <= 10) {
-            lines.push(`🤨 $${tot}, a soft $${a} miss.`, `You shop like every aisle is a sightseeing tour.`);
-          } else {
-            lines.push(`💸 $${tot}, a lazy $${a} short.`, `You were nowhere near it, but thanks for participating.`);
-          }
+          return bar;
         }
-        lines.push('', `Play ALDI21: ${shareUrl}`);
+
+        // Difficulty tag (based on perfectSolutionsEl if available)
+        const perfEl = document.getElementById('perfectSolutionsEl');
+        const perfCount = perfEl ? parseInt(perfEl.textContent) : 76;
+        let difficulty = 'HARD';
+        if (perfCount >= 200)      difficulty = 'EASY';
+        else if (perfCount >= 100) difficulty = 'HARD';
+        else if (perfCount >= 30)  difficulty = 'EXTREME';
+        else                       difficulty = 'NIGHTMARE';
+        const diffLine = `⚠️ TODAY'S CART: ${difficulty}`;
+
+        let lines = [];
+        lines.push(`🛒 ALDI21 — DAILY CART`);
+
+        if (bust) {
+          if (away > 5) {
+            // Tier 2: Large Bust
+            lines.push(`💀 BUSTED`);
+            lines.push(`📈 Went Over By: $${a}`);
+            lines.push(`🟧🟧🟥🟥🟥🟥`);
+            lines.push(`"One item too greedy.`);
+            lines.push(`Cart destroyed."`);
+            lines.push(`Only a handful of perfect carts exist daily.`);
+          } else {
+            // Still busted but close — treat as near miss over
+            lines.push(`💀 BUSTED`);
+            lines.push(`📈 Went Over By: $${a}`);
+            lines.push(`🟧🟨🟥🟥🟥🟥`);
+            lines.push(`"One item too greedy.`);
+            lines.push(`Cart destroyed."`);
+            lines.push(`Only a handful of perfect carts exist daily.`);
+          }
+        } else if (away === 0) {
+          // Tier 7: Perfect Cart
+          lines.push(`🏆 PERFECT CART`);
+          lines.push(`✅ EXACT MATCH`);
+          lines.push(`🟩🟩🟩🟩🟩🟩`);
+          lines.push(`"Out of billions of possible baskets…`);
+          lines.push(`I found one of today's exact carts."`);
+          lines.push(`FIRST TO CRACK IT WINS.`);
+        } else if (away <= 0.09) {
+          // Tier 6: Legendary Near Miss (1¢–9¢)
+          const quotes = [
+            `"One cent from greatness."`,
+            `"The cart cracked me first."`,
+            `"Somewhere out there was a perfect basket.\nThis almost was it."`
+          ];
+          const q = quotes[Math.floor(Math.random() * quotes.length)];
+          lines.push(`🤏 DEVASTATING`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟩🟩🟩🟩🟩⬜`);
+          lines.push(q);
+        } else if (away <= 0.49) {
+          // Tier 5: Brutal Near Miss (10¢–49¢)
+          lines.push(`😵 SO CLOSE`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟩🟩🟨⬜⬜⬜`);
+          lines.push(`"There were perfect carts today.`);
+          lines.push(`This wasn't one of them."`);
+        } else if (away <= 2.00) {
+          // Tier 4: Getting Close (50¢–$2)
+          lines.push(`🔥 CLOSE`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟩🟨🟨⬜⬜⬜`);
+          lines.push(`"Someone solved today's cart.`);
+          lines.push(`I wasn't close enough."`);
+          lines.push(`98 products. 6 picks. Tiny number of exact solutions.`);
+        } else if (away <= 8.00) {
+          // Tier 3: Standard Miss ($2–$8)
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟨🟨🟨⬜⬜⬜`);
+          lines.push(`"Looks easy.`);
+          lines.push(`Then the prices appear."`);
+          lines.push(`Billions of combinations. Almost none are perfect.`);
+        } else {
+          // Tier 1: Catastrophic Miss (>$8 under)
+          lines.push(`📉 WAY UNDER`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟥🟥🟥🟥🟥🟥`);
+          lines.push(`"Billions of possible carts.`);
+          lines.push(`Today I picked the wrong universe."`);
+          lines.push(`98 products. 6 picks max.`);
+        }
+
+        lines.push('');
+        lines.push(diffLine);
+        lines.push(shareUrl);
         return lines.join('\n');
       }
 
