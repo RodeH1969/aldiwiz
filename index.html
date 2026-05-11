@@ -161,6 +161,92 @@
       background:transparent;
     }
 
+    /* ── Thermometer gauge ── */
+    .thermo-wrap {
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+      margin-top:2px;
+      padding:0 2px;
+    }
+    .thermo-bar-outer {
+      position:relative;
+      width:100%;
+      height:22px;
+      border-radius:999px;
+      background:rgba(0,0,0,.55);
+      border:2px solid rgba(255,255,255,.18);
+      overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .thermo-fill {
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg, #1a78ff 0%, #00cfff 20%, #4eff91 40%, #ffe740 65%, #ff8c00 82%, #ff2d2d 100%);
+      background-size:200% 100%;
+      transition:width .55s cubic-bezier(.22,1,.36,1);
+      box-shadow:0 0 12px rgba(255,255,255,.18);
+    }
+    .thermo-fill.bust {
+      background:linear-gradient(90deg,#ff2d2d,#ff0000);
+      animation:thermoFlash .45s ease-in-out 3;
+    }
+    @keyframes thermoFlash {
+      0%,100% { opacity:1; } 50% { opacity:.35; }
+    }
+    .thermo-glow {
+      position:absolute;
+      right:0; top:0; bottom:0;
+      width:28px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.28));
+      border-radius:0 999px 999px 0;
+      pointer-events:none;
+    }
+    .thermo-labels {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      font-weight:800;
+      color:rgba(255,255,255,.58);
+      padding:0 3px;
+    }
+    .thermo-total {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-size:12px;
+      font-weight:900;
+      color:#fff;
+      text-shadow:0 1px 4px rgba(0,0,0,.8);
+      pointer-events:none;
+      white-space:nowrap;
+      z-index:5;
+    }
+    .thermo-target-tick {
+      position:absolute;
+      top:-3px; bottom:-3px;
+      width:3px;
+      background:#fff;
+      border-radius:2px;
+      box-shadow:0 0 6px #fff, 0 0 12px rgba(255,255,255,.5);
+      pointer-events:none;
+    }
+    .thermo-target-label {
+      position:absolute;
+      top:-18px;
+      transform:translateX(-50%);
+      font-size:10px;
+      font-weight:900;
+      color:#ffd978;
+      white-space:nowrap;
+      text-shadow:0 1px 4px rgba(0,0,0,.8);
+    }
+
     .deal-stage {
       width:100%;
       display:flex;
@@ -418,18 +504,101 @@
       animation:shareThrob .9s ease-in-out infinite;
       box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28);
     }
+
+    /* ── Casino card DEAL button ── */
+    .deal-card-btn {
+      position:relative;
+      width:80px;
+      aspect-ratio:2.5/3.7;
+      border-radius:12px;
+      border:3px solid rgba(255,255,255,.9);
+      background:linear-gradient(145deg,#1a4a8a 0%,#0d2a52 50%,#061628 100%);
+      cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1) inset;
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      overflow:hidden;
+    }
+    .deal-card-btn::before {
+      content:'';
+      position:absolute;
+      inset:5px;
+      border-radius:8px;
+      border:1.5px solid rgba(255,215,120,.35);
+      background:
+        repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(255,255,255,.025) 6px,rgba(255,255,255,.025) 7px),
+        repeating-linear-gradient(-45deg,transparent,transparent 6px,rgba(255,255,255,.025) 6px,rgba(255,255,255,.025) 7px);
+      pointer-events:none;
+    }
+    .deal-card-btn .deal-suit-tl {
+      position:absolute;
+      top:8px; left:9px;
+      font-size:13px;
+      color:var(--gold);
+      line-height:1;
+      text-shadow:0 0 8px rgba(255,217,120,.6);
+    }
+    .deal-card-btn .deal-suit-br {
+      position:absolute;
+      bottom:8px; right:9px;
+      font-size:13px;
+      color:var(--gold);
+      line-height:1;
+      transform:rotate(180deg);
+      text-shadow:0 0 8px rgba(255,217,120,.6);
+    }
+    .deal-card-btn .deal-label {
+      font-size:17px;
+      font-weight:900;
+      color:#fff;
+      letter-spacing:.06em;
+      text-shadow:0 2px 8px rgba(0,0,0,.8), 0 0 14px rgba(255,217,120,.3);
+      position:relative;
+      z-index:2;
+    }
+    .deal-card-btn .deal-sub {
+      font-size:9px;
+      font-weight:700;
+      color:rgba(255,215,120,.7);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      position:relative;
+      z-index:2;
+    }
+    .deal-card-btn:not(:disabled):hover {
+      transform:translateY(-3px);
+      box-shadow:0 16px 36px rgba(0,0,0,.6), 0 0 18px rgba(255,217,120,.2);
+    }
+    .deal-card-btn:not(:disabled):active {
+      transform:translateY(1px) scale(.97);
+    }
+    .deal-card-btn:disabled {
+      opacity:.45;
+      cursor:default;
+    }
+    .deal-card-btn.throb-deal {
+      animation:dealCardThrob 1s ease-in-out infinite;
+    }
+    @keyframes dealCardThrob {
+      0%,100% { transform:scale(1); box-shadow:0 10px 28px rgba(0,0,0,.55); }
+      50% { transform:scale(1.04); box-shadow:0 14px 36px rgba(255,217,120,.3), 0 10px 28px rgba(0,0,0,.55); }
+    }
     @keyframes throb {
       0%,100% { transform:scale(1);    opacity:1; }
       50%      { transform:scale(1.15); opacity:.75; }
     }
     .perfect-solutions-card {
-      height:66px; width:66px; border-radius:8px; background:#fff;
-      border:3px solid #ff69b4; box-shadow:0 6px 16px rgba(0,0,0,.35);
+      height:66px; width:90px; border-radius:10px; background:#fff;
+      border:4px solid #ff69b4; box-shadow:0 6px 16px rgba(0,0,0,.35), 0 0 0 1px rgba(255,105,180,.2);
       display:flex; flex-direction:column; align-items:center;
-      justify-content:center; flex-shrink:0; gap:2px;
+      justify-content:center; flex-shrink:0; gap:1px;
     }
-    .perfect-solutions-number { font-size:26px; font-weight:900; color:#1565c0; line-height:1; }
-    .perfect-solutions-label { font-size:8px; font-weight:700; color:#555; text-align:center; line-height:1.2; }
+    .perfect-solutions-number { font-size:34px; font-weight:900; color:#1565c0; line-height:1; }
+    .perfect-solutions-label { font-size:7.5px; font-weight:800; color:#555; text-align:center; line-height:1.2; text-transform:uppercase; letter-spacing:.04em; }
     .billion-card {
       height:66px; width:66px; border-radius:8px; background:#fff;
       border:3px solid #add8e6; box-shadow:0 6px 16px rgba(0,0,0,.35);
@@ -927,11 +1096,7 @@
         </div>
         <div class="perfect-solutions-card">
           <div class="perfect-solutions-number" id="perfectSolutionsEl">76</div>
-          <div class="perfect-solutions-label">perfect solutions</div>
-        </div>
-        <div class="billion-card">
-          <div class="billion-top">1 Billion</div>
-          <div class="billion-bot">possible combos</div>
+          <div class="perfect-solutions-label">perfect solutions today</div>
         </div>
         <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
       </div>
@@ -948,6 +1113,21 @@
       <div class="basket-slot" data-slot="4"></div>
       <div class="basket-slot" data-slot="5"></div>
     </section>
+
+    <div class="thermo-wrap" id="thermoWrap">
+      <div class="thermo-bar-outer">
+        <div class="thermo-fill" id="thermoFill"></div>
+        <div class="thermo-target-tick" id="thermoTick"></div>
+        <div class="thermo-target-label" id="thermoTickLabel"></div>
+        <div class="thermo-glow" id="thermoGlow" style="display:none"></div>
+        <div class="thermo-total" id="thermoTotal"></div>
+      </div>
+      <div class="thermo-labels">
+        <span>$0</span>
+        <span id="thermoTargetLabel" style="color:#ffd978;font-weight:900;">TARGET</span>
+        <span id="thermoBust" style="color:#ff6b6b;">BUST</span>
+      </div>
+    </div>
 
     <section class="deal-stage">
       <div class="deck-column">
@@ -973,8 +1153,12 @@
     </section>
 
     <div class="controls">
-      <button class="btn btn-secondary" id="dealBtn" type="button">Deal</button>
-      <button class="btn btn-primary" id="lockBtn" type="button">Locknload</button>
+      <button class="deal-card-btn" id="dealBtn" type="button">
+        <span class="deal-suit-tl">♠</span>
+        <span class="deal-label">DEAL</span>
+        <span class="deal-sub">3 cards</span>
+        <span class="deal-suit-br">♠</span>
+      </button>
     </div>
 
     <section class="scoreboard" aria-live="polite">
@@ -1000,12 +1184,12 @@
   <li>Build a basket to Today's Target without going over.</li>
   <li>The deck starts with 98 product cards (over 1 BILLION combos).</li>
   <li>You get ONE look at each card. Pass on it and it's gone forever.</li>
-  <li>Press <strong>DEAL</strong> to reveal 3 new cards.</li>
-  <li>From each flop, you may keep 1, 2 or 3 cards.</li>
+  <li>Press <strong>DEAL</strong> to reveal 3 new cards. Tap any card to instantly add it to your basket.</li>
+  <li>From each flop, tap 1, 2 or all 3 cards one at a time — the others stay until you Deal again.</li>
   <li>Kept cards go into your basket. You have 6 basket spots max.</li>
   <li>Only <span id="rulesSolutionsEl">76</span> perfect combos exist for Today's Target.</li>
   <li>The 1st to Text/Whatsapp 0459754708 wins the products in your basket from Today's Target.</li>
-  <li>Press <strong>LOCKNLOAD</strong> when your basket is final and find out if you nailed the target... or busted by a cent.</li>
+  <li>When your basket is full (or you're ready), press <strong>DEAL</strong> to bank any selected cards and see your result.</li>
 </ol>
 </div>
 </div>
@@ -1205,7 +1389,6 @@
       const flopLabel = document.getElementById('flopLabel');
       const deckCount = document.getElementById('deckCount');
       const dealBtn = document.getElementById('dealBtn');
-      const lockBtn = document.getElementById('lockBtn');
       const statusText = document.getElementById('statusText');
       const totalText = document.getElementById('totalText');
       const awayText = document.getElementById('awayText');
@@ -1342,13 +1525,10 @@
       }
 
       function updateLockDrama() {
-        lockBtn.classList.remove('lock-stage-0','lock-stage-1','lock-stage-2','lock-stage-3','lock-stage-4','lock-stage-5');
-        let stage = getUrgencyStage();
-        if (basketIndex >= 4) stage = Math.max(stage, 4);
-        else if (basketIndex >= 3) stage = Math.max(stage, 3);
-        else if (basketIndex >= 2) stage = Math.max(stage, 2);
-        if (currentFlop.length && selectedFlop.size > 0) stage = Math.max(stage, 2);
-        lockBtn.classList.add(`lock-stage-${stage}`);
+        // deal card button urgency glow as basket fills
+        if (!dealBtn) return;
+        const stage = getUrgencyStage();
+        dealBtn.classList.toggle('throb-deal', basketIndex >= 4 || stage >= 3);
       }
 
       function updateDeckCount() { updateDeckDrama(); }
@@ -1373,9 +1553,9 @@
           slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
           slot.onclick = null;
         });
-        currentFlop = [];
+        currentFlop = [null, null, null];
         selectedFlop = new Set();
-        flopLabel.textContent = `Select up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'}`;
+        flopLabel.textContent = 'Press DEAL to reveal 3 cards';
       }
 
       function setKeepersStatus() {
@@ -1389,12 +1569,20 @@
 
       function updateTexts() {
         if (locked) return;
-        statusText.textContent = 'Deal cards. Guess Prices.';
-        statusText.classList.remove('keepers-callout');
-        if (currentFlop.length) {
-          hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
+        const activeFlop = currentFlop.filter(Boolean).length;
+        if (activeFlop > 0) {
+          statusText.textContent = 'Tap a card to add it to your basket';
+          statusText.classList.remove('keepers-callout');
           hintText.classList.remove('hint-throb');
+          hintText.textContent = `${slotsLeft()} spot${slotsLeft()===1?'':'s'} left — tap a card or DEAL to skip`;
+        } else if (basketIndex > 0) {
+          statusText.textContent = `$${keptTotal().toFixed(2)} in basket`;
+          statusText.classList.remove('keepers-callout');
+          hintText.innerHTML = `Target: ${fmtTarget(target)} — ${slotsLeft()} spot${slotsLeft()===1?'':'s'} left`;
+          hintText.classList.add('hint-throb');
         } else {
+          statusText.textContent = 'Deal cards. Guess Prices.';
+          statusText.classList.remove('keepers-callout');
           hintText.innerHTML = `Find the perfect combo to ${fmtTarget(target)}.`;
           hintText.classList.add('hint-throb');
         }
@@ -1403,71 +1591,131 @@
         updateLockDrama();
       }
 
+      // ── Thermometer gauge ──────────────────────────────────────────────
+      const thermoFill   = document.getElementById('thermoFill');
+      const thermoTotal  = document.getElementById('thermoTotal');
+      const thermoTick   = document.getElementById('thermoTick');
+      const thermoTickLbl= document.getElementById('thermoTickLabel');
+      const thermoGlow   = document.getElementById('thermoGlow');
+
+      // Max displayed on gauge = target * 1.35 so bust is visible past the tick
+      function updateThermo() {
+        const total   = keptTotal();
+        const maxDisp = target * 1.35;
+        const pct     = Math.min(total / maxDisp * 100, 100);
+        const tickPct = Math.min(target / maxDisp * 100, 100);
+
+        // Position target tick
+        thermoTick.style.left    = tickPct + '%';
+        thermoTickLbl.style.left = tickPct + '%';
+        thermoTickLbl.textContent= '$' + (target % 1 === 0 ? target : target.toFixed(2));
+
+        thermoFill.style.width = pct + '%';
+        thermoFill.classList.remove('bust');
+
+        if (total === 0) {
+          thermoTotal.textContent = '';
+          thermoGlow.style.display = 'none';
+        } else {
+          thermoTotal.textContent = '$' + total.toFixed(2);
+          thermoGlow.style.display = 'block';
+          if (total > target) {
+            thermoFill.classList.add('bust');
+          }
+        }
+      }
+
       function syncFlopStates() {
-        const limit = maxSelectable();
-        flopLabel.textContent = `Select up to ${limit} card${limit === 1 ? '' : 's'}`;
+        const remaining = currentFlop.filter(Boolean).length;
+        flopLabel.textContent = remaining
+          ? `Tap a card to add it — ${slotsLeft()} basket spot${slotsLeft()===1?'':'s'} left`
+          : `Press DEAL for new cards`;
         flopSlots.forEach((slot, i) => {
           const hasCard = !!currentFlop[i];
-          const selected = selectedFlop.has(i);
-          slot.classList.toggle('selected', selected);
-          slot.classList.toggle('selectable', hasCard);
-          slot.classList.toggle('disabled', hasCard && !selected && selectedFlop.size >= limit && limit > 0);
+          slot.classList.toggle('selectable', hasCard && !locked && slotsLeft() > 0);
+          slot.classList.remove('selected','disabled');
         });
         updateLockDrama();
       }
 
-      function toggleSelect(index) {
-        if (locked || !currentFlop[index]) return;
-        const limit = maxSelectable();
-        if (selectedFlop.has(index)) {
-          selectedFlop.delete(index);
-        } else {
-          if (selectedFlop.size >= limit) return;
-          selectedFlop.add(index);
-        }
-        syncFlopStates();
-        if (selectedFlop.size) {
-          setKeepersStatus();
-          hintText.classList.remove('hint-throb');
-          hintText.textContent = 'Press Deal to bank them, or Locknload to risk it all.';
-        } else {
-          statusText.textContent = 'Choose your KEEPERS';
-          statusText.classList.add('keepers-callout');
-          hintText.textContent = `You can keep up to ${limit} card${limit === 1 ? '' : 's'} from this flop.`;
-        }
-        updateLockDrama();
-      }
+      function bankOneCard(index) {
+        // Instantly bank a single tapped card
+        if (locked || !currentFlop[index] || basketIndex >= maxBasket) return;
+        const cardData = currentFlop[index];
+        currentFlop[index] = null;
 
-      function bankSelectedCards() {
-        if (!selectedFlop.size) return;
-        [...selectedFlop].sort((a, b) => a - b).forEach(index => {
-          if (basketIndex >= maxBasket || !currentFlop[index]) return;
-          const cardData = currentFlop[index];
-          const slot = basketSlots[basketIndex++];
-          slot.classList.add('filled');
-          slot.innerHTML = '';
-          slot.appendChild(makeCardMarkup(cardData, false));
-          keptCards.push(cardData);
-        });
-        clearFlop();
+        const slot = basketSlots[basketIndex++];
+        slot.classList.add('filled');
+        slot.innerHTML = '';
+        slot.appendChild(makeCardMarkup(cardData, true)); // price shown immediately
+        keptCards.push(cardData);
+
+        // Animate the flop slot out
+        const fslot = flopSlots[index];
+        fslot.style.transition = 'transform .22s ease, opacity .22s ease';
+        fslot.style.transform  = 'translateY(-12px) scale(.92)';
+        fslot.style.opacity    = '0';
+        setTimeout(() => {
+          fslot.innerHTML = '';
+          fslot.style.transform = '';
+          fslot.style.opacity   = '';
+          fslot.classList.remove('filled','selected','selectable','deal-enter','show');
+          fslot.onclick = null;
+        }, 220);
+
+        playCardSound();
+        updateThermo();
         updateTexts();
-        updateLockDrama();
+        updateDeckCount();
+        syncFlopStates();
+
+        const total = keptTotal();
+
+        // ── INSTANT BUST: fired the moment total exceeds target ──
+        if (total > target) {
+          locked = true;
+          dealBtn.disabled = true;
+          // Freeze remaining flop cards — can't tap them now
+          flopSlots.forEach(s => { s.classList.remove('selectable'); s.onclick = null; });
+          setTimeout(() => {
+            triggerBust();
+            const away = +(total - target).toFixed(2);
+            runReveal({ total, distance: away, bust: true });
+            dealBtn.style.display = 'none';
+            deckCount.style.display = 'none';
+            shareBtn.style.display = 'inline-block';
+            shareBtn.classList.add('throb');
+          }, 320);
+          return;
+        }
+
+        // ── INSTANT BULLSEYE: exact hit fires immediately ──
+        if (total === target) {
+          locked = true;
+          dealBtn.disabled = true;
+          flopSlots.forEach(s => { s.classList.remove('selectable'); s.onclick = null; });
+          setTimeout(() => {
+            runReveal({ total, distance: 0, bust: false });
+            dealBtn.style.display = 'none';
+            deckCount.style.display = 'none';
+            shareBtn.style.display = 'inline-block';
+            shareBtn.classList.add('throb');
+          }, 320);
+          return;
+        }
+
+        // If basket is full, auto-trigger reveal
+        if (basketIndex >= maxBasket) {
+          setTimeout(() => lockAndReveal(), 600);
+        }
       }
 
       async function flopThree() {
         if (locked || dealing || basketIndex >= maxBasket) return;
-        if (currentFlop.length) {
-          bankSelectedCards();
-          if (basketIndex >= maxBasket) {
-            dealBtn.disabled = true;
-            statusText.textContent = 'Basket full.';
-            statusText.classList.remove('keepers-callout');
-            hintText.classList.remove('hint-throb');
-            hintText.textContent = 'Lock it in.';
-            updateLockDrama();
-            return;
-          }
-        }
+
+        // Clear any remaining flop cards (player chose not to take them)
+        currentFlop = [null, null, null];
+        selectedFlop = new Set();
 
         const nextCards = [];
         for (let i = 0; i < flopSize && deckIndex < shuffledDeck.length; i++) {
@@ -1480,20 +1728,21 @@
           statusText.classList.remove('keepers-callout');
           hintText.classList.remove('hint-throb');
           hintText.textContent = 'Lock it in.';
-          clearFlop();
+          flopSlots.forEach(slot => {
+            slot.innerHTML = '';
+            slot.classList.remove('filled','selected','selectable','deal-enter','show');
+            slot.onclick = null;
+          });
           updateLockDrama();
           return;
         }
 
         dealing = true;
         dealBtn.disabled = true;
-        lockBtn.disabled = true;
-        currentFlop = [];
-        selectedFlop = new Set();
 
         flopSlots.forEach(slot => {
           slot.innerHTML = '';
-          slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
+          slot.classList.remove('filled','selected','disabled','selectable','deal-enter','show');
           slot.onclick = null;
         });
 
@@ -1504,14 +1753,11 @@
           currentFlop[i] = card;
           const slot = flopSlots[i];
           slot.innerHTML = '';
-          slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'show');
-          slot.classList.add('filled', 'selectable', 'deal-enter');
+          slot.classList.remove('filled','selected','disabled','selectable','show');
+          slot.classList.add('filled','selectable','deal-enter');
           slot.appendChild(makeCardMarkup(card, false));
-          const badge = document.createElement('div');
-          badge.className = 'select-badge';
-          badge.textContent = '✓';
-          slot.appendChild(badge);
-          slot.onclick = () => toggleSelect(i);
+          // tap = instantly bank this one card
+          slot.onclick = ((idx) => () => bankOneCard(idx))(i);
           await wait(80);
           slot.classList.add('show');
           playCardSound();
@@ -1519,14 +1765,13 @@
           await wait(320);
         }
 
-        selectedFlop = new Set();
-        syncFlopStates();
-        setKeepersStatus();
-        hintText.textContent = `You can keep up to ${maxSelectable()} card${maxSelectable() === 1 ? '' : 's'} from this flop.`;
         dealing = false;
         dealBtn.disabled = false;
-        lockBtn.disabled = false;
-        updateLockDrama();
+        syncFlopStates();
+        statusText.textContent = 'Tap a card to add it to your basket';
+        statusText.classList.remove('keepers-callout');
+        hintText.classList.remove('hint-throb');
+        hintText.textContent = `${slotsLeft()} basket spot${slotsLeft()===1?'':'s'} left — or Deal to skip these`;
       }
 
       function resetReveal() {
@@ -1574,16 +1819,13 @@
             bustAmount.textContent = `Over by $${distance.toFixed(2)}`;
             playSfx('bust');
           }
-        }, 500);
+        }, 280);
       }
 
       function lockAndReveal() {
         if (locked || keptCards.length === 0) return;
-        if (currentFlop.length) bankSelectedCards();
         locked = true;
         dealBtn.disabled = true;
-        lockBtn.disabled = true;
-        clearFlop();
         basketSlots.forEach(slot => {
           const wrap = slot.querySelector('.card-wrap');
           if (wrap) wrap.classList.add('revealed');
@@ -1596,9 +1838,9 @@
         hintText.textContent = '';
         totalText.textContent = '';
         awayText.textContent = '';
+        // Fire immediately — no waiting
         runReveal({ total, distance: away, bust });
         dealBtn.style.display = 'none';
-        lockBtn.style.display = 'none';
         deckCount.style.display = 'none';
         shareBtn.style.display = 'inline-block';
         shareBtn.classList.add('throb');
@@ -1714,7 +1956,6 @@
       }
 
       dealBtn.addEventListener('click', flopThree);
-      lockBtn.addEventListener('click', lockAndReveal);
 
       shareBtn.addEventListener('click', async () => {
         const text = buildShareText();
@@ -1757,6 +1998,7 @@
       document.querySelectorAll('.rules-target').forEach(el => el.textContent = tDisplay);
 
       updateDeckCount();
+      updateThermo();
       updateTexts();
       clearFlop();
       updateLockDrama();
