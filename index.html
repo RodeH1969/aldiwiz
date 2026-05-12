@@ -1117,7 +1117,7 @@
       </div>
 
       <div class="target-wrap">
-        <img src="./facecard.png" alt="BasketBullseye" class="facecard-thumb">
+        <img src="./facecard.png" alt="BasketBullseye" class="facecard-thumb" id="facecardThumb" style="cursor:pointer;">
         <div class="target-label" style="font-size:13px;font-weight:900;color:#ff69b4;line-height:1.2;text-align:center;white-space:nowrap;animation:throb 1.2s ease-in-out infinite;">Today's<br>Target</div>
         <div class="target-circle">
           <div class="target-circle-inner" id="targetCircleEl">$21</div>
@@ -2012,6 +2012,23 @@
           rulesModal.setAttribute('aria-hidden', 'true');
         }
       });
+
+      const facecardModal = document.getElementById('facecardModal');
+      const facecardClose = document.getElementById('facecardClose');
+      document.getElementById('facecardThumb').addEventListener('click', () => {
+        facecardModal.classList.add('show');
+        facecardModal.setAttribute('aria-hidden', 'false');
+      });
+      facecardClose.addEventListener('click', () => {
+        facecardModal.classList.remove('show');
+        facecardModal.setAttribute('aria-hidden', 'true');
+      });
+      facecardModal.addEventListener('click', (e) => {
+        if (e.target === facecardModal) {
+          facecardModal.classList.remove('show');
+          facecardModal.setAttribute('aria-hidden', 'true');
+        }
+      });
       revealOverlay.addEventListener('click', () => {
         revealOverlay.classList.remove('show');
         revealOverlay.setAttribute('aria-hidden', 'true');
@@ -2054,5 +2071,12 @@
       }
     }).finally(() => initGame());
   </script>
+  <div class="rules-modal" id="facecardModal" aria-hidden="true">
+    <div class="rules-card" role="dialog" aria-modal="true" style="max-width:min(100%,420px);padding:0;background:#111;border-radius:16px;overflow:hidden;" onclick="event.stopPropagation()">
+      <button class="rules-close" id="facecardClose" type="button" style="position:absolute;top:8px;right:8px;z-index:10;">×</button>
+      <img src="./facecard.png" alt="BasketBullseye" style="width:100%;display:block;">
+    </div>
+  </div>
+
 </body>
 </html>
