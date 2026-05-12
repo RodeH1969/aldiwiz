@@ -3,245 +3,2074 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALDI21 Admin</title>
+  <title>BasketBullseye</title>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
   <style>
     :root {
       --bg1:#07224d;
       --bg2:#021226;
       --gold:#ffd978;
       --red:#d61e24;
+      --slotBorder:rgba(255,255,255,.18);
+      --panel:rgba(255,255,255,.10);
+      --panelBorder:rgba(255,255,255,.18);
+      --darkChip:#091a38;
     }
+
     * { box-sizing:border-box; }
+
     body {
       margin:0;
       min-height:100vh;
       font-family:Arial,sans-serif;
       color:#fff;
       background:radial-gradient(circle at 50% 10%, #0a3773 0%, var(--bg1) 40%, var(--bg2) 100%);
+      overflow-x:hidden;
+    }
+
+    .wrap {
+      width:min(100%,430px);
+      margin:0 auto;
+      min-height:100vh;
+      padding:14px 10px 28px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      position:relative;
+    }
+
+    .topbar {
+      width:100%;
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      gap:8px;
+    }
+
+    .game-meta { justify-self:start; line-height:1.15; }
+    .game-no { font-size:13px; font-weight:800; color:rgba(255,255,255,.92); }
+    .game-date { font-size:13px; font-weight:700; color:rgba(255,255,255,.74); margin-top:3px; }
+
+    .target-wrap {
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:20px;
+      gap:6px;
+      font-weight:900;
     }
-    .card {
-      width:min(100%,400px);
-      background:rgba(255,255,255,.10);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:22px;
-      padding:32px 28px 28px;
+
+    .target-label { font-size:18px; white-space:nowrap; }
+
+    .target-circle {
+      width:66px;
+      height:66px;
+      border-radius:50%;
+      background:#fff;
+      border:5px solid var(--red);
+      display:grid;
+      place-items:center;
+      box-shadow:0 6px 16px rgba(0,0,0,.35);
+      flex-shrink:0;
+    }
+
+    .target-circle-inner {
+      font-weight:900;
+      font-size:15px;
+      color:#d61e24;
+      line-height:1;
+      text-align:center;
+    }
+
+    .facecard-thumb {
+      height:66px;
+      width:auto;
+      display:block;
+    }
+
+    .chip {
+      width:66px;
+      height:66px;
+      border-radius:50%;
+      background:var(--red);
+      padding:6px;
+      display:grid;
+      place-items:center;
+      box-shadow:0 10px 24px rgba(0,0,0,.35);
+    }
+
+    .chip-inner {
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background:#fff;
+      color:#111;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:24px;
+      border:3px solid rgba(0,0,0,.08);
+    }
+
+    .rules-btn {
+      justify-self:end;
+      border:0;
+      border-radius:999px;
+      padding:10px 16px;
+      font-weight:900;
+      font-size:15px;
+      background:#fff;
+      color:#041a3c;
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+      cursor:pointer;
+    }
+
+    .basket-label {
+      width:100%;
+      text-align:center;
+      font-size:13px;
+      font-weight:800;
+      color:rgba(255,255,255,.78);
+      margin-top:2px;
+    }
+
+    .basket-row {
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(6, 1fr);
+      gap:8px;
+      justify-items:center;
+    }
+
+    .basket-slot {
+      width:100%;
+      max-width:72px;
+      aspect-ratio:2.5/3.7;
+      border-radius:14px;
+      border:1px dashed var(--slotBorder);
+      background:rgba(4,17,41,.58);
+      position:relative;
+      overflow:visible;
+    }
+
+    .basket-slot.filled {
+      border-color:transparent;
+      background:transparent;
+    }
+
+    /* ── Thermometer gauge ── */
+    .thermo-wrap {
+      width:100%;
       display:flex;
       flex-direction:column;
-      gap:22px;
+      gap:5px;
+      margin-top:2px;
+      padding:0 2px;
     }
-    .card-head { display:flex; align-items:center; gap:14px; }
-    .target-badge {
-      width:56px; height:56px; border-radius:50%;
-      background:#fff; border:5px solid var(--red);
-      display:grid; place-items:center; flex-shrink:0;
+    .thermo-bar-outer {
+      position:relative;
+      width:100%;
+      height:22px;
+      border-radius:999px;
+      background:rgba(0,0,0,.55);
+      border:2px solid rgba(255,255,255,.18);
+      overflow:hidden;
+      box-shadow:0 4px 12px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.06);
     }
-    .target-badge span {
-      font-weight:900; font-size:13px; color:var(--red);
-      line-height:1; text-align:center; padding:2px;
+    .thermo-fill {
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg, #1a78ff 0%, #00cfff 20%, #4eff91 40%, #ffe740 65%, #ff8c00 82%, #ff2d2d 100%);
+      background-size:200% 100%;
+      transition:width .55s cubic-bezier(.22,1,.36,1);
+      box-shadow:0 0 12px rgba(255,255,255,.18);
     }
-    h1 { margin:0; font-size:22px; font-weight:900; line-height:1.15; }
-    h1 small { display:block; font-size:13px; font-weight:700; color:rgba(255,255,255,.6); margin-top:3px; }
-    label { font-size:13px; font-weight:800; color:rgba(255,255,255,.78); display:block; margin-bottom:8px; }
-    .input-row {
-      display:flex; align-items:center;
-      background:rgba(0,0,0,.38); border:2px solid rgba(255,255,255,.22);
-      border-radius:14px; overflow:hidden;
+    .thermo-fill.bust {
+      background:linear-gradient(90deg,#ff2d2d,#ff0000);
+      animation:thermoFlash .45s ease-in-out 3;
     }
-    .input-prefix { padding:0 14px; font-size:26px; font-weight:900; color:rgba(255,255,255,.5); user-select:none; }
-    input[type="password"] {
-      flex:1; border:0; background:transparent; color:#fff;
-      font-size:20px; font-weight:900; padding:14px 10px 14px 0;
-      outline:none; min-width:0;
+    @keyframes thermoFlash {
+      0%,100% { opacity:1; } 50% { opacity:.35; }
     }
-    input[type="number"] {
-      flex:1; border:0; background:transparent; color:#fff;
-      font-size:32px; font-weight:900; padding:14px 10px 14px 0;
-      outline:none; min-width:0; -moz-appearance:textfield;
+    .thermo-glow {
+      position:absolute;
+      right:0; top:0; bottom:0;
+      width:28px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.28));
+      border-radius:0 999px 999px 0;
+      pointer-events:none;
     }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; }
-    .preview {
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      padding:14px; background:rgba(0,0,0,.28); border-radius:14px;
-      font-size:14px; font-weight:800; color:rgba(255,255,255,.7);
+    .thermo-labels {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:11px;
+      font-weight:800;
+      color:rgba(255,255,255,.58);
+      padding:0 3px;
     }
-    .preview-circle {
-      width:52px; height:52px; border-radius:50%;
-      background:#fff; border:5px solid var(--red);
-      display:grid; place-items:center; flex-shrink:0;
+    .thermo-total {
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      font-size:12px;
+      font-weight:900;
+      color:#fff;
+      text-shadow:0 1px 4px rgba(0,0,0,.8);
+      pointer-events:none;
+      white-space:nowrap;
+      z-index:5;
     }
-    .preview-circle span { font-weight:900; font-size:12px; color:var(--red); text-align:center; }
-    .btn-save {
-      border:0; border-radius:999px; padding:15px 24px;
-      font-size:18px; font-weight:900; background:var(--gold);
-      color:#172033; cursor:pointer; box-shadow:0 8px 22px rgba(0,0,0,.28);
-      transition:transform .18s ease; width:100%;
+    .thermo-target-tick {
+      position:absolute;
+      top:-3px; bottom:-3px;
+      width:3px;
+      background:#fff;
+      border-radius:2px;
+      box-shadow:0 0 6px #fff, 0 0 12px rgba(255,255,255,.5);
+      pointer-events:none;
     }
-    .btn-save:hover { transform:scale(1.03); }
-    .btn-save:active { transform:scale(.97); }
-    .btn-save:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-    .toast { display:none; border-radius:12px; padding:12px 18px; font-weight:800; font-size:14px; text-align:center; }
-    .toast.show { display:block; }
-    .toast.success { background:#2e7d32; }
-    .toast.error { background:#c62828; }
-    .current-info { font-size:13px; color:rgba(255,255,255,.55); text-align:center; font-weight:700; }
+    .thermo-target-label {
+      position:absolute;
+      top:-18px;
+      transform:translateX(-50%);
+      font-size:10px;
+      font-weight:900;
+      color:#ffd978;
+      white-space:nowrap;
+      text-shadow:0 1px 4px rgba(0,0,0,.8);
+    }
+
+    .deal-stage {
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      padding:6px 0 2px;
+    }
+
+    .deck-column {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      min-width:88px;
+    }
+
+    .deck-count {
+      min-width:58px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.72);
+      color:#fff;
+      font-size:14px;
+      font-weight:900;
+      text-align:center;
+      border:2px solid rgba(255,255,255,.9);
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        color .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        letter-spacing .22s ease;
+    }
+
+    .deck-stage-0 { transform:scale(1); }
+    .deck-stage-1 {
+      transform:scale(1.04);
+      color:#ffe7a8;
+      border-color:#ffd978;
+      box-shadow:0 0 12px rgba(255,217,120,.25);
+    }
+    .deck-stage-2 {
+      transform:scale(1.08);
+      color:#ffd4a6;
+      border-color:#ffb347;
+      background:rgba(42,15,0,.76);
+      box-shadow:0 0 16px rgba(255,179,71,.35);
+    }
+    .deck-stage-3 {
+      transform:scale(1.12);
+      color:#ffc1a1;
+      border-color:#ff8a47;
+      background:rgba(56,10,0,.82);
+      box-shadow:0 0 20px rgba(255,138,71,.42);
+      animation:deckThrob 1.2s ease-in-out infinite;
+    }
+    .deck-stage-4 {
+      transform:scale(1.16);
+      color:#ffb0b0;
+      border-color:#ff5a47;
+      background:rgba(74,7,7,.88);
+      box-shadow:0 0 24px rgba(255,90,71,.5);
+      animation:deckThrob 1s ease-in-out infinite;
+      letter-spacing:.03em;
+    }
+    .deck-stage-5 {
+      transform:scale(1.22);
+      color:#fff0f0;
+      border-color:#ff2d2d;
+      background:rgba(95,0,0,.95);
+      box-shadow:0 0 30px rgba(255,45,45,.7);
+      animation:deckFreakout .72s ease-in-out infinite;
+      letter-spacing:.05em;
+    }
+
+    .deck-stack {
+      width:88px;
+      aspect-ratio:2.5/3.7;
+      position:relative;
+      filter:drop-shadow(0 10px 16px rgba(0,0,0,.28));
+    }
+
+    .deck-shadow,.deck-shadow-2,.deck-shadow-3 {
+      position:absolute;
+      inset:0;
+      border-radius:14px;
+      background:rgba(255,255,255,.12);
+      border:2px solid rgba(255,255,255,.18);
+    }
+
+    .deck-shadow { transform:translate(0,0); }
+    .deck-shadow-2 { transform:translate(4px,4px); }
+    .deck-shadow-3 { transform:translate(8px,8px); }
+
+    .deck-top {
+      position:absolute;
+      inset:0;
+      border-radius:14px;
+      overflow:hidden;
+      border:2px solid rgba(255,255,255,.9);
+      background:#fff;
+      z-index:4;
+    }
+
+    .deck-top img,
+    .card-face img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .flop-column {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+      flex:1;
+    }
+
+    .flop-label {
+      font-size:13px;
+      font-weight:800;
+      color:rgba(255,255,255,.78);
+      text-align:center;
+    }
+
+    .flop-row {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:10px;
+      width:100%;
+      justify-items:center;
+    }
+
+    .flop-slot {
+      width:100%;
+      max-width:88px;
+      aspect-ratio:2.5/3.7;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.24);
+      background:rgba(4,17,41,.42);
+      position:relative;
+      overflow:visible;
+      transition:transform .18s ease, opacity .18s ease;
+    }
+
+    .flop-slot.selectable { cursor:pointer; }
+    .flop-slot.selected { transform:translateY(-4px); }
+    .flop-slot.selected .card-face { border-color:var(--gold); box-shadow:0 0 0 3px rgba(255,217,120,.28) inset; }
+    .flop-slot.disabled { opacity:.44; }
+    .flop-slot.filled {
+      border-color:transparent;
+      background:transparent;
+    }
+
+    .card-wrap { width:100%; height:100%; position:relative; }
+
+    .card {
+      width:100%;
+      height:100%;
+      position:relative;
+      box-shadow:0 9px 10px rgba(0,0,0,.28);
+      border-radius:14px;
+    }
+
+    .card-face {
+      position:absolute;
+      inset:0;
+      border-radius:14px;
+      overflow:hidden;
+      border:2px solid rgba(255,255,255,.9);
+      background:#fff;
+    }
+
+    .price-badge {
+      position:absolute;
+      left:50%;
+      bottom:8px;
+      transform:translateX(-50%);
+      min-width:56px;
+      padding:6px 8px;
+      border-radius:999px;
+      background:rgba(0,0,0,.84);
+      color:#fff;
+      text-align:center;
+      font-weight:900;
+      font-size:14px;
+      z-index:8;
+      opacity:0;
+      transition:opacity .35s ease, transform .35s ease;
+      border:2px solid rgba(255,255,255,.88);
+      line-height:1;
+    }
+
+    .revealed .price-badge { opacity:1; transform:translateX(-50%) translateY(-1px); }
+
+    .select-badge {
+      position:absolute;
+      right:-6px;
+      top:-6px;
+      width:28px;
+      height:28px;
+      border-radius:50%;
+      background:#fff;
+      color:#0f223f;
+      border:2px solid var(--gold);
+      display:grid;
+      place-items:center;
+      font-size:16px;
+      font-weight:900;
+      box-shadow:0 6px 14px rgba(0,0,0,.25);
+      z-index:20;
+      opacity:0;
+      transform:scale(.85);
+      transition:opacity .18s ease, transform .18s ease;
+    }
+
+    .flop-slot.selected .select-badge { opacity:1; transform:scale(1); }
+
+    .controls {
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      width:100%;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+
+    .btn {
+      border:0;
+      border-radius:999px;
+      padding:11px 18px;
+      font-weight:900;
+      font-size:16px;
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+      cursor:pointer;
+      transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        background .22s ease,
+        filter .22s ease,
+        letter-spacing .22s ease;
+    }
+
+    .btn:disabled { opacity:.45; cursor:default; }
+    .btn-primary { background:var(--gold); color:#172033; }
+    .btn-secondary { background:#fff; color:#041a3c; }
+    .btn-share { background:#e9f3ff; color:#062a54; display:none; }
+    .btn-share.throb {
+      background:#ff69b4;
+      color:#fff;
+      animation:shareThrob .9s ease-in-out infinite;
+      box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28);
+    }
+
+    /* ── Casino card DEAL button ── */
+    .deal-card-btn {
+      position:relative;
+      width:80px;
+      aspect-ratio:2.5/3.7;
+      border-radius:12px;
+      border:3px solid rgba(255,255,255,.9);
+      background:linear-gradient(145deg,#1a4a8a 0%,#0d2a52 50%,#061628 100%);
+      cursor:pointer;
+      box-shadow:0 10px 28px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1) inset;
+      transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      overflow:hidden;
+    }
+    .deal-card-btn::before {
+      content:'';
+      position:absolute;
+      inset:5px;
+      border-radius:8px;
+      border:1.5px solid rgba(255,215,120,.35);
+      background:
+        repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(255,255,255,.025) 6px,rgba(255,255,255,.025) 7px),
+        repeating-linear-gradient(-45deg,transparent,transparent 6px,rgba(255,255,255,.025) 6px,rgba(255,255,255,.025) 7px);
+      pointer-events:none;
+    }
+    .deal-card-btn .deal-suit-tl {
+      position:absolute;
+      top:8px; left:9px;
+      font-size:13px;
+      color:var(--gold);
+      line-height:1;
+      text-shadow:0 0 8px rgba(255,217,120,.6);
+    }
+    .deal-card-btn .deal-suit-br {
+      position:absolute;
+      bottom:8px; right:9px;
+      font-size:13px;
+      color:var(--gold);
+      line-height:1;
+      transform:rotate(180deg);
+      text-shadow:0 0 8px rgba(255,217,120,.6);
+    }
+    .deal-card-btn .deal-label {
+      font-size:17px;
+      font-weight:900;
+      color:#fff;
+      letter-spacing:.06em;
+      text-shadow:0 2px 8px rgba(0,0,0,.8), 0 0 14px rgba(255,217,120,.3);
+      position:relative;
+      z-index:2;
+    }
+    .deal-card-btn .deal-sub {
+      font-size:9px;
+      font-weight:700;
+      color:rgba(255,215,120,.7);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      position:relative;
+      z-index:2;
+    }
+    .deal-card-btn:not(:disabled):hover {
+      transform:translateY(-3px);
+      box-shadow:0 16px 36px rgba(0,0,0,.6), 0 0 18px rgba(255,217,120,.2);
+    }
+    .deal-card-btn:not(:disabled):active {
+      transform:translateY(1px) scale(.97);
+    }
+    .deal-card-btn:disabled {
+      opacity:.45;
+      cursor:default;
+    }
+    .deal-card-btn.throb-deal {
+      animation:dealCardThrob 1s ease-in-out infinite;
+    }
+    @keyframes dealCardThrob {
+      0%,100% { transform:scale(1); box-shadow:0 10px 28px rgba(0,0,0,.55); }
+      50% { transform:scale(1.04); box-shadow:0 14px 36px rgba(255,217,120,.3), 0 10px 28px rgba(0,0,0,.55); }
+    }
+    @keyframes throb {
+      0%,100% { transform:scale(1);    opacity:1; }
+      50%      { transform:scale(1.15); opacity:.75; }
+    }
+    .perfect-solutions-card {
+      height:66px; width:90px; border-radius:10px; background:#fff;
+      border:4px solid #ff69b4; box-shadow:0 6px 16px rgba(0,0,0,.35), 0 0 0 1px rgba(255,105,180,.2);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; flex-shrink:0; gap:1px;
+    }
+    .perfect-solutions-number { font-size:17px; font-weight:900; color:#1565c0; line-height:1; }
+    .perfect-solutions-label { font-size:7.5px; font-weight:800; color:#555; text-align:center; line-height:1.2; text-transform:uppercase; letter-spacing:.04em; }
+
+    /* ── Today's Winner circle ── */
+    .winner-circle {
+      width:66px; height:66px; border-radius:50%;
+      background:#fff;
+      border:4px solid #1a5e20;
+      box-shadow:0 6px 16px rgba(0,0,0,.35), 0 0 0 2px rgba(26,94,32,.15);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      flex-shrink:0; gap:2px;
+      padding:4px;
+    }
+    .winner-title {
+      font-size:7px; font-weight:900; color:#1a5e20;
+      text-transform:uppercase; letter-spacing:.04em;
+      text-align:center; line-height:1.2;
+    }
+    .winner-name {
+      font-size:9px; font-weight:900; color:#888;
+      text-align:center; line-height:1.2;
+      max-width:56px; overflow:hidden;
+      text-overflow:ellipsis; white-space:nowrap;
+      font-style:italic;
+    }
+    .winner-name.has-winner {
+      font-size:10px; color:#1a5e20; font-style:normal;
+      animation:winnerPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes winnerPulse {
+      0%,100% { opacity:1; } 50% { opacity:.65; }
+    }
+    .billion-card {
+      height:66px; width:66px; border-radius:8px; background:#fff;
+      border:3px solid #add8e6; box-shadow:0 6px 16px rgba(0,0,0,.35);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; flex-shrink:0; gap:2px;
+    }
+    .billion-top { font-size:13px; font-weight:900; color:#155724; line-height:1; text-align:center; }
+    .billion-bot { font-size:7.5px; font-weight:400; color:#111; text-align:center; line-height:1.2; }
+    @keyframes shareThrob {
+      0%,100% { transform:scale(1);   box-shadow:0 0 22px rgba(255,105,180,.6), 0 8px 22px rgba(0,0,0,.28); }
+      50%      { transform:scale(1.08); box-shadow:0 0 34px rgba(255,105,180,.9), 0 10px 26px rgba(0,0,0,.32); }
+    }
+
+    .lock-stage-0 {}
+    .lock-stage-1 {
+      transform:scale(1.03);
+      box-shadow:0 0 14px rgba(255,217,120,.22), 0 8px 22px rgba(0,0,0,.28);
+    }
+    .lock-stage-2 {
+      transform:scale(1.06);
+      background:#ffcf5c;
+      box-shadow:0 0 18px rgba(255,196,88,.35), 0 10px 24px rgba(0,0,0,.3);
+    }
+    .lock-stage-3 {
+      transform:scale(1.1);
+      background:#ffba47;
+      box-shadow:0 0 24px rgba(255,138,71,.45), 0 10px 24px rgba(0,0,0,.32);
+      animation:lockHeartbeat 1s ease-in-out infinite;
+      letter-spacing:.02em;
+    }
+    .lock-stage-4 {
+      transform:scale(1.14);
+      background:#ff8d3a;
+      color:#fff;
+      box-shadow:0 0 28px rgba(255,90,71,.58), 0 10px 24px rgba(0,0,0,.34);
+      animation:lockHeartbeat .78s ease-in-out infinite;
+      letter-spacing:.04em;
+    }
+    .lock-stage-5 {
+      transform:scale(1.2);
+      background:#ff3b30;
+      color:#fff;
+      box-shadow:0 0 34px rgba(255,45,45,.78), 0 10px 24px rgba(0,0,0,.36);
+      animation:lockFreakout .55s ease-in-out infinite;
+      letter-spacing:.06em;
+    }
+
+    .scoreboard {
+      width:100%;
+      background:var(--panel);
+      border:1px solid var(--panelBorder);
+      border-radius:18px;
+      padding:14px 14px;
+      display:grid;
+      gap:6px;
+      text-align:center;
+      min-height:82px;
+      place-items:center;
+    }
+
+    .scoreboard .line1 {
+      font-size:16px;
+      font-weight:900;
+      transition:
+        transform .25s ease,
+        color .25s ease,
+        text-shadow .25s ease,
+        letter-spacing .25s ease;
+    }
+
+    .scoreboard .line2,
+    .scoreboard .line3 { display:none; }
+
+    .scoreboard .line4 {
+      font-size:13px;
+      color:rgba(255,255,255,.8);
+      font-weight:900;
+    }
+    .hint-throb {
+      color:#ff69b4;
+      text-shadow:0 0 10px rgba(255,105,180,.5);
+      animation:hintThrob 1.1s ease-in-out infinite;
+    }
+    @keyframes hintThrob {
+      0%,100% { color:#ff69b4; text-shadow:0 0 10px rgba(255,105,180,.5); }
+      50%      { color:#ffb6da; text-shadow:0 0 18px rgba(255,105,180,.9); }
+    }
+
+    .keepers-callout {
+      color:#ffe9a8;
+      text-shadow:0 0 10px rgba(255,217,120,.45), 0 0 18px rgba(255,217,120,.22);
+      letter-spacing:.08em;
+      animation:keepersPulse .9s ease-in-out infinite;
+      transform:scale(1.06);
+    }
+
+    .rules-modal {
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.56);
+      z-index:9999;
+      padding:18px;
+    }
+
+    .rules-modal.show { display:flex; }
+
+    .rules-card {
+      width:min(100%, 380px);
+      background:#fff8ea;
+      color:#18233d;
+      border-radius:20px;
+      padding:18px 16px 16px;
+      box-shadow:0 22px 60px rgba(0,0,0,.36);
+    }
+
+    .rules-head {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    .rules-title { font-size:24px; font-weight:900; }
+
+    .rules-close {
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      border:0;
+      background:var(--darkChip);
+      color:#fff;
+      font-size:20px;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .rules-list {
+      margin:0;
+      padding-left:18px;
+      display:grid;
+      gap:8px;
+      font-size:14px;
+      font-weight:700;
+      line-height:1.35;
+    }
+
+    .reveal-overlay {
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:2147483646;
+      pointer-events:none;
+    }
+
+    .reveal-overlay.show {
+      display:flex;
+      pointer-events:auto;
+    }
+
+    .reveal-dim {
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,.32);
+      opacity:0;
+      animation:dimIn .32s ease forwards;
+      backdrop-filter:blur(2px);
+    }
+
+    @keyframes dimIn {
+      from { opacity:0; }
+      to { opacity:1; }
+    }
+
+    .reveal-content {
+      position:relative;
+      z-index:2;
+      display:none;
+      flex-direction:column;
+      align-items:center;
+      gap:16px;
+    }
+
+    .reveal-content.show { display:flex; }
+
+    .reveal-total {
+      font-size:clamp(46px, 14vw, 72px);
+      font-weight:900;
+      text-shadow:0 8px 22px rgba(0,0,0,.6);
+      animation:totalPop .7s cubic-bezier(.18,1.2,.26,1) forwards;
+      color:#fff;
+    }
+
+    @keyframes totalPop {
+      0% { transform:scale(.3); opacity:0; }
+      55% { transform:scale(1.12); opacity:1; }
+      100% { transform:scale(1); opacity:1; }
+    }
+
+    .result-meter-wrap {
+      width:min(92vw, 320px);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+
+    .result-meter-labels {
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      font-size:12px;
+      font-weight:800;
+      color:rgba(255,255,255,.82);
+    }
+
+    .result-meter {
+      position:relative;
+      width:100%;
+      height:32px;
+      border-radius:999px;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:28% 24% 24% 24%;
+      box-shadow:0 10px 24px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.18);
+      background:#111;
+    }
+
+    .meter-band { height:100%; }
+    .band-bad { background:linear-gradient(90deg,#d61e24,#f15a24); }
+    .band-mid { background:linear-gradient(90deg,#f3a93b,#ffd978); }
+    .band-good { background:linear-gradient(90deg,#7fd15c,#3db65d); }
+    .band-perfect { background:linear-gradient(90deg,#ffe48a,#fff2b8); }
+
+    .meter-pin {
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#fff;
+      border:3px solid #091a38;
+      transform:translate(-50%, -50%) scale(0);
+      box-shadow:0 0 0 4px rgba(255,255,255,.2), 0 8px 18px rgba(0,0,0,.4);
+      animation:pinPop .35s ease-out forwards;
+    }
+
+    .meter-pin::after {
+      content:'';
+      position:absolute;
+      left:50%;
+      top:-11px;
+      transform:translateX(-50%);
+      border-left:7px solid transparent;
+      border-right:7px solid transparent;
+      border-bottom:12px solid #fff;
+    }
+
+    .result-verdict {
+      min-height:24px;
+      font-size:18px;
+      font-weight:900;
+      text-align:center;
+      color:#fff4c4;
+      text-shadow:0 4px 14px rgba(0,0,0,.45);
+    }
+
+    @keyframes pinPop {
+      0% { transform:translate(-50%, -50%) scale(0); opacity:0; }
+      70% { transform:translate(-50%, -50%) scale(1.18); opacity:1; }
+      100% { transform:translate(-50%, -50%) scale(1); opacity:1; }
+    }
+
+    .reveal-bust .bust-stamp {
+      font-size:clamp(36px, 11vw, 58px);
+      font-weight:900;
+      color:#ff4e50;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      padding:14px 22px;
+      border-radius:8px;
+      border:4px solid rgba(255,78,80,.94);
+      box-shadow:0 10px 28px rgba(0,0,0,.7);
+      background:rgba(15,3,3,.88);
+      transform:scale(2) rotate(-6deg);
+      opacity:0;
+      animation:bustStamp .34s cubic-bezier(.18,.92,.2,1.01) forwards;
+    }
+
+    .reveal-bust .bust-amount {
+      margin-top:6px;
+      font-size:19px;
+      font-weight:800;
+      color:#ffd1d1;
+      text-shadow:0 3px 10px rgba(0,0,0,.7);
+    }
+
+    @keyframes bustStamp {
+      0% { transform:scale(2.1) rotate(-8deg); filter:blur(3px); opacity:0; }
+      70% { transform:scale(1.03) rotate(-6deg); filter:blur(0); opacity:1; }
+      100% { transform:scale(1) rotate(-6deg); filter:blur(0); opacity:1; }
+    }
+
+    .fireworks {
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:2147483647;
+    }
+
+    .firework-burst {
+      position:absolute;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      opacity:0;
+    }
+
+    .firework-burst::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      background:currentColor;
+      box-shadow:
+        0 -42px 0 0 currentColor,
+        0 42px 0 0 currentColor,
+        42px 0 0 0 currentColor,
+        -42px 0 0 0 currentColor,
+        30px 30px 0 0 currentColor,
+        -30px -30px 0 0 currentColor,
+        30px -30px 0 0 currentColor,
+        -30px 30px 0 0 currentColor,
+        0 -62px 0 -2px currentColor,
+        0 62px 0 -2px currentColor,
+        62px 0 0 -2px currentColor,
+        -62px 0 0 -2px currentColor;
+    }
+
+    .firework-burst.go {
+      animation:fireworkBoom 1.15s ease-out forwards;
+    }
+
+    .flop-slot.deal-enter .card-wrap {
+      opacity:0;
+      transform:translateX(-72px) translateY(-10px) rotate(-10deg) scale(.92);
+    }
+
+    .flop-slot.deal-enter.show .card-wrap {
+      animation:dealerPitch .5s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    @keyframes fireworkBoom {
+      0% { opacity:0; transform:scale(.15); }
+      18% { opacity:1; }
+      100% { opacity:0; transform:scale(1.7); }
+    }
+
+    @keyframes dealerPitch {
+      0% { opacity:0; transform:translateX(-72px) translateY(-10px) rotate(-10deg) scale(.92); }
+      70% { opacity:1; transform:translateX(4px) translateY(0) rotate(1deg) scale(1.02); }
+      100% { opacity:1; transform:translateX(0) translateY(0) rotate(0) scale(1); }
+    }
+
+    .bust-overlay {
+      position:fixed;
+      inset:0;
+      display:grid;
+      place-items:center;
+      pointer-events:none;
+      opacity:0;
+      z-index:2147483647;
+      isolation:isolate;
+    }
+
+    .bust-overlay.show { animation:bustFlash .32s ease forwards; }
+
+    .bust-center {
+      position:fixed;
+      left:50%;
+      top:42%;
+      transform:translate(-50%, -50%);
+      display:grid;
+      place-items:center;
+      z-index:2147483647;
+    }
+
+    .bust-text {
+      font-size:24vw;
+      font-weight:900;
+      color:#fff;
+      letter-spacing:.08em;
+      text-shadow:0 0 10px rgba(255,255,255,.55), 0 0 25px rgba(255,0,0,.85), 0 0 60px rgba(255,0,0,.95);
+      transform:scale(.2) rotate(-8deg);
+      opacity:0;
+      position:relative;
+      z-index:2147483647;
+    }
+
+    .bust-overlay.show .bust-text { animation:bustPop .32s ease forwards; }
+
+    .burst, .burst::before, .burst::after {
+      position:absolute;
+      content:"";
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      border:8px solid rgba(255,60,60,.55);
+    }
+
+    .burst { transform:scale(.2); opacity:0; z-index:2147483646; }
+    .bust-overlay.show .burst { animation:ringBoom .45s ease-out forwards; }
+    .burst::before { inset:-24px; }
+    .burst::after { inset:24px; }
+
+    @keyframes bustFlash { 0% { opacity:0; } 35% { opacity:.75; } 100% { opacity:0; } }
+    @keyframes bustPop { 0% { transform:scale(.15) rotate(-12deg); opacity:0; } 100% { transform:scale(1) rotate(0); opacity:1; } }
+    @keyframes ringBoom { 0% { transform:scale(.1); opacity:0; } 20% { opacity:1; } 100% { transform:scale(1.6); opacity:0; } }
+
+    @keyframes deckThrob {
+      0%,100% { transform:scale(1.12); }
+      50% { transform:scale(1.17); }
+    }
+
+    @keyframes deckFreakout {
+      0%,100% { transform:scale(1.22) rotate(0deg); }
+      25% { transform:scale(1.27) rotate(-1deg); }
+      50% { transform:scale(1.24) rotate(1deg); }
+      75% { transform:scale(1.28) rotate(-1deg); }
+    }
+
+    @keyframes lockHeartbeat {
+      0%,100% { transform:scale(1.1); filter:brightness(1); }
+      50% { transform:scale(1.16); filter:brightness(1.08); }
+    }
+
+    @keyframes lockFreakout {
+      0%,100% { transform:scale(1.2); filter:brightness(1); }
+      25% { transform:scale(1.24) rotate(-.5deg); filter:brightness(1.08); }
+      50% { transform:scale(1.27) rotate(.5deg); filter:brightness(1.14); }
+      75% { transform:scale(1.23) rotate(-.5deg); filter:brightness(1.08); }
+    }
+
+    @keyframes keepersPulse {
+      0%,100% {
+        transform:scale(1.04);
+        letter-spacing:.08em;
+        text-shadow:0 0 10px rgba(255,217,120,.45), 0 0 18px rgba(255,217,120,.22);
+      }
+      50% {
+        transform:scale(1.1);
+        letter-spacing:.12em;
+        text-shadow:0 0 16px rgba(255,217,120,.8), 0 0 30px rgba(255,217,120,.36);
+      }
+    }
+
+    @media (max-width:390px) {
+      .topbar { grid-template-columns:1fr; justify-items:center; gap:10px; }
+      .game-meta { justify-self:center; text-align:center; }
+      .rules-btn { justify-self:center; }
+      .deal-stage { gap:10px; }
+      .deck-stack { width:78px; }
+      .deck-column { min-width:78px; }
+      .deck-count { font-size:13px; min-width:54px; }
+      .flop-slot { max-width:78px; }
+      .basket-slot { max-width:66px; }
+      .target-label { font-size:17px; }
+      .chip { width:60px; height:60px; }
+      .chip-inner { font-size:22px; }
+      .btn { font-size:15px; padding:10px 14px; }
+      .bust-center { top:40%; }
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="card-head">
-      <div class="target-badge"><span id="badgeText">$21</span></div>
-      <h1>ALDIQ Admin<small>Set today's target figure</small></h1>
-    </div>
+  <main class="wrap">
+    <header class="topbar">
+      <div class="game-meta">
+        <div class="game-no" id="gameNoEl">Game #213</div>
+        <div class="game-date" id="gameDateEl">8th May 2026</div>
+      </div>
 
-    <div>
-      <label for="passwordInput">Admin Password</label>
-      <div class="input-row">
-        <span class="input-prefix">🔒</span>
-        <input type="password" id="passwordInput" placeholder="password">
+      <div class="target-wrap">
+        <img src="./facecard.png" alt="BasketBullseye" class="facecard-thumb" id="facecardThumb" style="cursor:pointer;" onclick="document.getElementById('facecardModal').classList.add('show')">
+        <div class="target-label" style="font-size:13px;font-weight:900;color:#ff69b4;line-height:1.2;text-align:center;white-space:nowrap;animation:throb 1.2s ease-in-out infinite;">Today's<br>Target</div>
+        <div class="target-circle">
+          <div class="target-circle-inner" id="targetCircleEl">$21</div>
+        </div>
+        <div class="perfect-solutions-card">
+          <div class="perfect-solutions-number" id="perfectSolutionsEl">76</div>
+          <div class="perfect-solutions-label">perfect solutions today</div>
+        </div>
+        <div class="winner-circle" id="winnerCircle">
+          <div class="winner-title">Today's<br>Winner</div>
+          <div class="winner-name" id="winnerNameEl">———</div>
+        </div>
+
+      <button class="rules-btn" id="rulesBtn" type="button">Rules</button>
+    </header>
+
+    <div class="basket-label">Build Your Basket</div>
+    <section class="basket-row" id="basketRow">
+      <div class="basket-slot" data-slot="0"></div>
+      <div class="basket-slot" data-slot="1"></div>
+      <div class="basket-slot" data-slot="2"></div>
+      <div class="basket-slot" data-slot="3"></div>
+      <div class="basket-slot" data-slot="4"></div>
+      <div class="basket-slot" data-slot="5"></div>
+    </section>
+
+    <div class="thermo-wrap" id="thermoWrap">
+      <div class="thermo-bar-outer">
+        <div class="thermo-fill" id="thermoFill"></div>
+        <div class="thermo-target-tick" id="thermoTick"></div>
+        <div class="thermo-target-label" id="thermoTickLabel"></div>
+        <div class="thermo-glow" id="thermoGlow" style="display:none"></div>
+        <div class="thermo-total" id="thermoTotal"></div>
+      </div>
+      <div class="thermo-labels">
+        <span>$0</span>
+        <span id="thermoTargetLabel" style="color:#ffd978;font-weight:900;">TARGET</span>
+        <span id="thermoBust" style="color:#ff6b6b;">BUST</span>
       </div>
     </div>
 
-    <div>
-      <label for="targetInput">Daily Target ($)</label>
-      <div class="input-row">
-        <span class="input-prefix">$</span>
-        <input type="number" id="targetInput" min="1" max="999" step="0.01" placeholder="21.00">
+    <section class="deal-stage">
+      <div class="deck-column">
+        <div class="deck-count" id="deckCount">27 left</div>
+        <div class="deck-stack">
+          <div class="deck-shadow-3"></div>
+          <div class="deck-shadow-2"></div>
+          <div class="deck-shadow"></div>
+          <div class="deck-top">
+            <img src="./facecard.png" alt="ALDI21 face card" onerror="this.onerror=null;this.src='./facecard.png';">
+          </div>
+        </div>
+      </div>
+
+      <div class="flop-column">
+        <div class="flop-label" id="flopLabel">Select up to 3 cards</div>
+        <div class="flop-row" id="flopRow">
+          <div class="flop-slot" data-flop="0"></div>
+          <div class="flop-slot" data-flop="1"></div>
+          <div class="flop-slot" data-flop="2"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button class="deal-card-btn" id="dealBtn" type="button">
+        <span class="deal-suit-tl">♠</span>
+        <span class="deal-label">DEAL</span>
+        <span class="deal-sub">3 cards</span>
+        <span class="deal-suit-br">♠</span>
+      </button>
+    </div>
+
+    <section class="scoreboard" aria-live="polite">
+      <div class="line1" id="statusText">Deal cards. Guess prices.</div>
+      <div class="line2" id="totalText"></div>
+      <div class="line3" id="awayText"></div>
+      <div class="line4" id="hintText">Find the perfect combo to $<span id="hintTarget">21</span>.</div>
+    </section>
+
+    <div class="controls">
+      <button class="btn btn-share" id="shareBtn" type="button">Share</button>
+    </div>
+  </main>
+
+  <div class="rules-modal" id="rulesModal" aria-hidden="true">
+    <div class="rules-card" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <div class="rules-head">
+        <div class="rules-title" id="rulesTitle">RULES</div>
+        <img src="./facecard.png" alt="BasketBullseye" style="height:48px;width:auto;">
+        <button class="rules-close" id="rulesClose" type="button">×</button>
+      </div>
+     <ol class="rules-list">
+  <li>Build a basket to try to hit Today's Target.</li>
+  <li>The deck starts with 98 product cards (over 1 BILLION combos).</li>
+  <li>You get ONE look at each card. Pass on it and it's gone forever.</li>
+  <li>Press <strong>DEAL</strong> to reveal 3 new cards. Tap any card to instantly add it to your basket.</li>
+  <li>From each flop, tap 1, 2 or all 3 cards one at a time — the others stay until you Deal again.</li>
+  <li>Kept cards go into your basket. You have 6 basket spots max.</li>
+  <li>Only <span id="rulesSolutionsEl">76</span> perfect combos exist for Today's Target.</li>
+  <li>The 1st to Text/Whatsapp 0459754708 wins the products in your basket from Today's Target.</li>
+</ol>
+</div>
+</div>
+
+  <div class="fireworks" id="fireworks"></div>
+
+  <div class="reveal-overlay" id="revealOverlay" aria-hidden="true">
+    <div class="reveal-dim"></div>
+
+    <div class="reveal-content" id="revealUnder">
+      <div class="reveal-total" id="revealTotal">$0.00</div>
+
+      <div class="result-meter-wrap">
+        <div class="result-meter-labels">
+          <span>Missed badly</span>
+          <span>Close</span>
+          <span>Perfect</span>
+        </div>
+
+        <div class="result-meter" id="resultMeter">
+          <div class="meter-band band-bad"></div>
+          <div class="meter-band band-mid"></div>
+          <div class="meter-band band-good"></div>
+          <div class="meter-band band-perfect"></div>
+          <div class="meter-pin" id="resultPin"></div>
+        </div>
+
+        <div class="result-verdict" id="resultVerdict"></div>
       </div>
     </div>
 
-    <div>
-      <label for="solutionsInput">Perfect Solutions (today's count)</label>
-      <div class="input-row">
-        <span class="input-prefix">🎯</span>
-        <input type="number" id="solutionsInput" min="0" max="9999" step="1" placeholder="76">
-      </div>
+    <div class="reveal-content reveal-bust" id="revealBust">
+      <div class="bust-stamp">🤯 BUSTED!!!</div>
+      <div class="bust-amount" id="bustAmount">Over by $0.00</div>
     </div>
+  </div>
 
-    <div>
-      <label for="winnerInput">Today's Winner <span style="font-weight:400;color:rgba(255,255,255,.45)">(leave blank to clear)</span></label>
-      <div class="input-row">
-        <span class="input-prefix">🏆</span>
-        <input type="text" id="winnerInput" placeholder="Winner's name…" style="flex:1;border:0;background:transparent;color:#fff;font-size:22px;font-weight:900;padding:14px 10px 14px 0;outline:none;min-width:0;">
-      </div>
+  <div class="bust-overlay" id="bustOverlay">
+    <div class="bust-center">
+      <div class="burst"></div>
+      <div class="bust-text">BUST</div>
     </div>
-
-    <div class="preview">
-      <div class="preview-circle"><span id="previewText">$21</span></div>
-      <span>This is what all players will see</span>
-    </div>
-
-    <button class="btn-save" id="saveBtn" onclick="saveTarget()">Save Target</button>
-    <div class="toast" id="toast"></div>
-    <div class="current-info" id="currentInfo">Current target: loading…</div>
   </div>
 
   <script>
-    const input = document.getElementById('targetInput');
-    const badgeText = document.getElementById('badgeText');
-    const previewText = document.getElementById('previewText');
-    const currentInfo = document.getElementById('currentInfo');
-    const toast = document.getElementById('toast');
-    const saveBtn = document.getElementById('saveBtn');
+    // ── TARGET: fetch from server, fall back to 21 ──────────────────────────
+    let target = 21;
 
-    function fmt(v) {
-      if (!v || isNaN(v)) return '?';
-      const n = parseFloat(v);
-      return n % 1 === 0 ? '$' + n : '$' + n.toFixed(2);
-    }
+    function initGame() {
+      const startingDeck = 98;
+      const maxBasket = 6;
+      const flopSize = 3;
+      const shareUrl = 'https://aldiwiz.onrender.com';
 
-    function showToast(msg, type) {
-      toast.textContent = msg;
-      toast.className = 'toast show ' + type;
-      setTimeout(() => toast.className = 'toast', 3500);
-    }
+      // Brisbane time (AEST = UTC+10)
+      const nowBrisbane = new Date(Date.now() + 10 * 60 * 60 * 1000);
+      const bYear  = nowBrisbane.getUTCFullYear();
+      const bMonth = nowBrisbane.getUTCMonth();
+      const bDay   = nowBrisbane.getUTCDate();
 
-    function updatePreview() {
-      const val = parseFloat(input.value);
-      const label = isNaN(val) ? '$?' : fmt(val);
-      badgeText.textContent = label;
-      previewText.textContent = label;
-    }
+      const baseDate = new Date(Date.UTC(2026, 4, 8) - 10 * 60 * 60 * 1000);
+      const todayMidnight = new Date(Date.UTC(bYear, bMonth, bDay) - 10 * 60 * 60 * 1000);
+      const daysSinceBase = Math.round((todayMidnight - baseDate) / 86400000);
+      const gameNumber = 213 + daysSinceBase;
 
-    input.addEventListener('input', updatePreview);
+      const monthNames = ['January','February','March','April','May','June',
+                          'July','August','September','October','November','December'];
+      function ordinal(n) {
+        const s = ['th','st','nd','rd'], v = n % 100;
+        return n + (s[(v-20)%10] || s[v] || s[0]);
+      }
+      const gameDate = ordinal(bDay) + ' ' + monthNames[bMonth] + ' ' + bYear;
 
-    async function saveTarget() {
-      const val = parseFloat(input.value);
-      const solVal = parseInt(document.getElementById('solutionsInput').value);
-      const winnerVal = document.getElementById('winnerInput').value.trim();
-      const password = document.getElementById('passwordInput').value;
-      if (!password) { showToast('Enter the admin password.', 'error'); return; }
-      if (isNaN(val) || val <= 0) { showToast('Enter a valid dollar amount.', 'error'); return; }
+      function seededRng(seed) {
+        let s = seed;
+        return function() {
+          s = (s * 1664525 + 1013904223) & 0xffffffff;
+          return (s >>> 0) / 0xffffffff;
+        };
+      }
+      const dateSeed = bYear * 10000 + (bMonth + 1) * 100 + bDay;
+      const rng = seededRng(dateSeed);
+      function seededShuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(rng() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
 
-      saveBtn.disabled = true;
-      saveBtn.textContent = 'Saving…';
+      const deckCards = [
+        { image: './cards/atlasflyspray-card.png', alt: "Atlas FLY SPRAY 300g card", price: 2.79 },
+        { image: './cards/begamacandcheese-card.png', alt: "Bega MAC & CHEESE 280g card", price: 4.69 },
+        { image: './cards/bergdeliprosciutto-card.png', alt: "Berg Deli PROSCIUTTO 100g card", price: 4.99 },
+        { image: './cards/bergdelibacon-card.png', alt: "Berg Deli RINDLESS MIDDLE BACON 500g card", price: 7.99 },
+        { image: './cards/bergdelisalami-card.png', alt: "Berg Deli SALAMI 100g card", price: 3.79 },
+        { image: './cards/bergdeliselections-card.png', alt: "Berg Deli SELECTIONS 150g card", price: 8.99 },
+        { image: './cards/blackstonechips-card.png', alt: "Blackstone SEA SALT CHIPS 175g card", price: 2.99 },
+        { image: './cards/briochebuns-card.png', alt: "Bon Appetit BRIOCHE BURGER BUNS 200g card", price: 3.4 },
+        { image: './cards/broadoakchicken-card.png', alt: "Broadoak Farms WHOLE CHICKEN card", price: 7.58 },
+        { image: './cards/delibabypeppers-card.png', alt: "Deli Originals BABY PEPPERS 130g card", price: 3.00 },
+        { image: './cards/delicornrelish-card.png', alt: "Deli Originals CORN RELISH DIP 200g card", price: 2.49 },
+        { image: './cards/delihommus-card.png', alt: "Deli Originals HOMMUS 1kg card", price: 5.99 },
+        { image: './cards/delifetadip-card.png', alt: "Deli Originals PERSIANFETA DIP 150g card", price: 2.99 },
+        { image: './cards/deliolives-card.png', alt: "Deli Originals STUFFED GREEN OLIVES 450g card", price: 2.25 },
+        { image: './cards/doritos-card.png', alt: "Doritos CHEESE SUPREME PARTY SIZE 500g card", price: 5.59 },
+        { image: './cards/elmsburysausagerolls-card.png', alt: "Elmsbury PARTY SAUSAGE ROLLS 900g card", price: 8.99 },
+        { image: './cards/eltorafajitakit-card.png', alt: "El Tora FAJITA KIT card", price: 5.49 },
+        { image: './cards/eltorafajitaseasoning-card.png', alt: "El Tora FAJITA SEASONING 40g card", price: 1.29 },
+        { image: './cards/emporiumgoats-card.png', alt: "Emporium GOAT'S CHEESE 350g card", price: 10.99 },
+        { image: './cards/emporiumgranapadano-card.png', alt: "Emporium GRANA PADANO CHEESE 250g card", price: 8.2 },
+        { image: './cards/halloumi-card.png', alt: "Emporium HALLOUMI 225g card", price: 4.99 },
+        { image: './cards/emporiumblue-card.png', alt: "Emporium SELECTION BLUE CHEESE 200g card", price: 5.99 },
+        { image: './cards/farmdalemilk-card.png', alt: "Farmdale FULL CREAM MILK 2L card", price: 3.55 },
+        { image: './cards/farmwoodwings-card.png', alt: "Farmwood BUFFALO STYLE CHICKEN WINGS 1kg card", price: 9.99 },
+        { image: './cards/farmwoodkyiv-card.png', alt: "Farmwood CHICKEN KYIV 350g card", price: 6.99 },
+        { image: './cards/farmwoodschnitzel-card.png', alt: "Farmwood CHICKEN SCHNITZEL 400g card", price: 4.99 },
+        { image: './cards/goldenvale-card.png', alt: "Golden Vale HONEY PECAN GRANOLA 300g card", price: 7.99 },
+        { image: './cards/hillcrestbran-card.png', alt: "Hillcrest BRAN & SULTANAS 580g card", price: 3.99 },
+        { image: './cards/hillcrestbubbles-card.png', alt: "Hillcrest BREAKFAST BUBBLES 450g card", price: 3.49 },
+        { image: './cards/hillcrestchocorice-card.png', alt: "Hillcrest CHOCO RICE 650g card", price: 5.99 },
+        { image: './cards/hillcrestpeanutbars-card.png', alt: "Hillcrest CHOC PEANUT BARS 210g card", price: 2.99 },
+        { image: './cards/hillcresthoneynut-card.png', alt: "Hillcrest HONEY NUT CORNFLAKES 670g card", price: 4.7 },
+        { image: './cards/hillcrestmuesli-card.png', alt: "Hillcrest MUESLI 500g card", price: 4.69 },
+        { image: './cards/colwayworcestershire-card.png', alt: "Colway WORCESTERSHIRE SAUCE 250ml card", price: 1.89 },
+        { image: './cards/imperialgrain-card.png', alt: "Imperial Grain LONG GRAIN WHITE RICE 250g card", price: 1.65 },
+        { image: './cards/intlcuisinepizzasnacks-card.png', alt: "International Cuisine PIZZA SNACKS 400g card", price: 5.99 },
+        { image: './cards/ironbarkporkmince-card.png', alt: "Ironbark PORK MINCE 500g card", price: 4.99 },
+        { image: './cards/jindurrabeef-card.png', alt: "Jindurra Station 5 STAR BEEF MINCE 500g card", price: 10.49 },
+        { image: './cards/julius-card.png', alt: "Julius HOME STYLE DOG FOOD 700g card", price: 2.29 },
+        { image: './cards/knoppers-card.png', alt: "Knoppers MILK WAFERS 200g card", price: 4.99 },
+        { image: './cards/niveamendeodorant-card.png', alt: "Nivea Men BLACK & WHITE DEODORANT 200ml card", price: 4.99 },
+        { image: './cards/nongshinramyun-card.png', alt: "Nongshim SHIN RAMYUN 480g card", price: 4.99 },
+        { image: './cards/oceanroyaleprawns-card.png', alt: "Ocean Royale RAW PRAWN CUTLETS 500g card", price: 14.99 },
+        { image: './cards/oceanroyalesalmon-card.png', alt: "Ocean Royale SALMON 1kg card", price: 27.49 },
+        { image: './cards/oceanroyalewhiting-card.png', alt: "Ocean Royale WHITING 1kg card", price: 9.99 },
+        { image: './cards/powerforcegarbagebag-card.png', alt: "Powerforce GARBAGE BAGS 20 pack card", price: 3.59 },
+        { image: './cards/quiltontoiletpaper-card.png', alt: "Quilton 3 PLY TOILET PAPER 18 rolls card", price: 9.89 },
+        { image: './cards/readysetcookbeef-card.png', alt: "Ready Set Cook BUTTERFLIED BEEF card", price: 19.99 },
+        { image: './cards/readysetcookteriyaki-card.png', alt: "Ready Set Cook CHICKEN KEBABS TERIYAKI 375g card", price: 6.49 },
+        { image: './cards/readysetcooksausages-card.png', alt: "Ready Set Cook THIN SAUSAGES 1.8kg card", price: 9.99 },
+        { image: './cards/pappardelle-card.png', alt: "Remano EGG LINGUINE 375g card", price: 4.49 },
+        { image: './cards/remanomac-card.png', alt: "Remano MACARONI 500g card", price: 0.99 },
+        { image: './cards/remanognocchi-card.png', alt: "Remano POTATO GNOCCHI 500g card", price: 2.99 },
+        { image: './cards/remanosauce-card.png', alt: "Remano TOMATO PASTA SAUCE 500g card", price: 1.69 },
+        { image: './cards/shapesbarbecue-card.png', alt: "Shapes Originals BARBECUE 250g card", price: 3.99 },
+        { image: './cards/simpleecarbonara-card.png', alt: "Simplee CARBONARA SAUCE 125g card", price: 1.69 },
+        { image: './cards/simpleemac-card.png', alt: "Simplee MACARONI & CHEESE 130g card", price: 1.69 },
+        { image: './cards/quincepaste-card.png', alt: "Specially Selected QUINCE PASTE 100g card", price: 2.89 },
+        { image: './cards/sprinterspopcorn-card.png', alt: "Sprinters POPCORN 120g card", price: 1.75 },
+        { image: './cards/werthers-card.png', alt: "Storck WERTHER'S ORIGINAL CREAM CANDIES 42g card", price: 2.49 },
+        { image: './cards/fishmonger-card.png', alt: "The Fishmonger SMOKED SALMON 200g card", price: 9.99 },
+        { image: './cards/tricaresoap-card.png', alt: "Tricare ANTIBACTERIAL SOAP 250ml card", price: 1.99 },
+        { image: './cards/cottagecheese-card.png', alt: "Westacre COTTAGE CHEESE 500g card", price: 5.49 },
+        { image: './cards/tastycheese-card.png', alt: "Westacre TASTY CHEESE 1kg card", price: 8.99 },
+        { image: './cards/wisdomtoothbrush-card.png', alt: "Wisdom TOOTHBRUSH 2 pack card", price: 1.89 },
+        { image: './cards/activenergyAAbatteries-card.png', alt: "Active Energy AA BATTERIES 10 pack card", price: 5.49 },
+        { image: './cards/almatlaudrypowder-card.png', alt: "Almat LAUNDRY POWDER 4kg card", price: 4.99 },
+        { image: './cards/almatlaundryliuid-card.png', alt: "Almat LAUNDRY LIQUID 4L card", price: 9.99 },
+        { image: './cards/ancosoftfabricsoftener-card.png', alt: "Anco Soft FABRIC SOFTENER 2L card", price: 2.99 },
+        { image: './cards/bebetogummies-card.png', alt: "Bebeto LOVE HEART GUMMIES 400g card", price: 5.99 },
+        { image: './cards/blackstonesweetchilli-card.png', alt: "Blackstone SWEET CHILLI & SOUR CREAM CHIPS 175g card", price: 2.99 },
+        { image: './cards/confidencewipes-card.png', alt: "Confidence ANTIBACTERIAL WIPES 15 pack card", price: 1.39 },
+        { image: './cards/disanprooxysoaker-card.png', alt: "Disan Prooxy LAUNDRY SOAKER 1kg card", price: 3.49 },
+        { image: './cards/eltorajalapenos-card.png', alt: "El Tora HOT & SWEET JALAPENOS 440g card", price: 2.49 },
+        { image: './cards/greenactioncleaner-card.png', alt: "Green Action MULTIPURPOSE CLEANER 600ml card", price: 2.99 },
+        { image: './cards/haribotwinsnakes-card.png', alt: "Haribo TWIN SNAKES 280g card", price: 3.69 },
+        { image: './cards/logixdishwashertablets-card.png', alt: "Logix DISHWASHER TABLETS 45 pack card", price: 6.00 },
+        { image: './cards/logixplatinumcapsules-card.png', alt: "Logix PLATINUM DISHWASHER CAPSULES 46 pack card", price: 11.69 },
+        { image: './cards/portviewtuna-card.png', alt: "Portview TUNA 95g card", price: 1.09 },
+        { image: './cards/portviewtunatreats-card.png', alt: "Portview TUNA TREATS WITH CRACKERS 112g card", price: 1.79 },
+        { image: './cards/powerforcealuminiumfoil-card.png', alt: "Powerforce ALUMINIUM FOIL 30m card", price: 3.69 },
+        { image: './cards/powerforcebathandshower-card.png', alt: "Powerforce BATH & SHOWER CLEANER 750ml card", price: 2.69 },
+        { image: './cards/powerforcebathroomwipes-card.png', alt: "Powerforce BATHROOM CLEANING WIPES 50 pack card", price: 1.99 },
+        { image: './cards/powerforcecremecleanser-card.png', alt: "Powerforce CREME CLEANSER LEMON 500ml card", price: 2.99 },
+        { image: './cards/powerforcedishwasherpowder-card.png', alt: "Powerforce DISHWASHER POWDER 1kg card", price: 3.69 },
+        { image: './cards/powerforceheavydutyscourer-card.png', alt: "Powerforce HEAVY DUTY SPONGE SCOURER 3 pack card", price: 1.49 },
+        { image: './cards/powerforcemeshscourer-card.png', alt: "Powerforce MESH SPONGE SCOURER 5 pack card", price: 2.49 },
+        { image: './cards/powerforcerimblocks-card.png', alt: "Powerforce TOILET RIM BLOCKS 2x50g card", price: 3.29 },
+        { image: './cards/seethavenpies-card.png', alt: "Seethaaven APPLE & BLACKBERRY PIES 500g card", price: 3.99 },
+        { image: './cards/sweethavenstrudel-card.png', alt: "Sweet Haven STRUDEL 600g card", price: 5.99 },
+        { image: './cards/sweetsensationsnougat-card.png', alt: "Sweet Sensations NOUGAT BLISS 45g card", price: 1.49 },
+        { image: './cards/sweetvineblueberries-card.png', alt: "Sweet Vine BLUEBERRIES 130g card", price: 3.99 },
+        { image: './cards/sweetvineappleslices-card.png', alt: "Sweet Vine DRIED APPLE SLICES 200g card", price: 3.99 },
+        { image: './cards/sweetvinesultanas-card.png', alt: "Sweet Vine SULTANAS 240g card", price: 2.49 },
+        { image: './cards/tandildishwashingliquid-card.png', alt: "Tandil DISHWASHING LIQUID 950ml card", price: 2.99 },
+        { image: './cards/trimatlaundrypowder-card.png', alt: "Trimat ADVANCED LAUNDRY POWDER 2kg card", price: 10.49 },
+        { image: './cards/trimatlaundyliquid-card.png', alt: "Trimat ADVANCED LAUNDRY LIQUID 4L card", price: 10.49 },
+        { image: './cards/whittakerschocpods-card.png', alt: "Whittaker's CHOCOLATE PODS 125g card", price: 12.99 }
+      ];
 
-      try {
-        const [res1, res2, res3] = await Promise.all([
-          fetch('/api/target', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ target: val, password })
-          }),
-          isNaN(solVal) ? Promise.resolve({ ok: true }) : fetch('/api/solutions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ solutions: solVal, password })
-          }),
-          fetch('/api/winner', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ winner: winnerVal || null, password })
-          })
-        ]);
-        const data = await res1.json();
-        if (!res1.ok) {
-          showToast('❌ ' + (data.error || 'Failed'), 'error');
+      const shuffledDeck = seededShuffle(deckCards);
+
+      const basketSlots = [...document.querySelectorAll('.basket-slot')];
+      const flopSlots = [...document.querySelectorAll('.flop-slot')];
+      const flopLabel = document.getElementById('flopLabel');
+      const deckCount = document.getElementById('deckCount');
+      const dealBtn = document.getElementById('dealBtn');
+      const statusText = document.getElementById('statusText');
+      const totalText = document.getElementById('totalText');
+      const awayText = document.getElementById('awayText');
+      const hintText = document.getElementById('hintText');
+      const shareBtn = document.getElementById('shareBtn');
+      const bustOverlay = document.getElementById('bustOverlay');
+      const rulesBtn = document.getElementById('rulesBtn');
+      const rulesModal = document.getElementById('rulesModal');
+      const rulesClose = document.getElementById('rulesClose');
+      const revealOverlay = document.getElementById('revealOverlay');
+      const revealUnder = document.getElementById('revealUnder');
+      const revealBust = document.getElementById('revealBust');
+      const revealTotal = document.getElementById('revealTotal');
+      const bustAmount = document.getElementById('bustAmount');
+      const resultPin = document.getElementById('resultPin');
+      const resultVerdict = document.getElementById('resultVerdict');
+      const fireworks = document.getElementById('fireworks');
+
+      let deckIndex = 0;
+      let basketIndex = 0;
+      let locked = false;
+      let dealing = false;
+      let currentFlop = [];
+      let selectedFlop = new Set();
+      const keptCards = [];
+
+      function playSfx() {}
+
+      function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function triggerBust() {
+        bustOverlay.classList.remove('show');
+        void bustOverlay.offsetWidth;
+        bustOverlay.classList.add('show');
+      }
+
+      function playCardSound() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const buf = ctx.createBuffer(1, ctx.sampleRate * 0.12, ctx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < data.length; i++) {
+            const t = i / ctx.sampleRate;
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 40) * 0.8
+                    + (Math.random() * 2 - 1) * Math.exp(-t * 80) * 0.4;
+          }
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.7, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+          src.connect(gain);
+          gain.connect(ctx.destination);
+          src.start();
+        } catch(e) {}
+      }
+
+      function playFireworkSound() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          [0, 0.08, 0.18].forEach(delay => {
+            const buf = ctx.createBuffer(1, ctx.sampleRate * 1.2, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) {
+              const t = i / ctx.sampleRate;
+              data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 8) * 0.9
+                      + (Math.random() * 2 - 1) * Math.exp(-t * 3) * 0.4;
+            }
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            const gain = ctx.createGain();
+            gain.gain.setValueAtTime(1, ctx.currentTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 1.2);
+            src.connect(gain);
+            gain.connect(ctx.destination);
+            src.start(ctx.currentTime + delay);
+          });
+        } catch(e) {}
+      }
+
+      function launchFireworks() {
+        if (!fireworks) return;
+        playFireworkSound();
+        const colors = ['#ffd978', '#ff5f45', '#7cf1ff', '#ffffff', '#9cff57', '#ff7edb'];
+        for (let wave = 0; wave < 4; wave++) {
+          setTimeout(() => {
+            for (let i = 0; i < 8; i++) {
+              const burst = document.createElement('div');
+              burst.className = 'firework-burst';
+              burst.style.left = `${8 + Math.random() * 84}%`;
+              burst.style.top = `${8 + Math.random() * 45}%`;
+              burst.style.color = colors[Math.floor(Math.random() * colors.length)];
+              fireworks.appendChild(burst);
+              requestAnimationFrame(() => burst.classList.add('go'));
+              setTimeout(() => burst.remove(), 1300);
+            }
+          }, wave * 220);
+        }
+      }
+
+      function keptTotal() {
+        return +keptCards.reduce((sum, c) => sum + c.price, 0).toFixed(2);
+      }
+
+      function slotsLeft() {
+        return Math.max(0, maxBasket - basketIndex);
+      }
+
+      function maxSelectable() {
+        return Math.min(3, slotsLeft());
+      }
+
+      function cardsLeft() {
+        return Math.max(0, startingDeck - deckIndex);
+      }
+
+      function getUrgencyStage() {
+        const left = cardsLeft();
+        if (left <= 11) return 5;
+        if (left <= 23) return 4;
+        if (left <= 35) return 3;
+        if (left <= 47) return 2;
+        if (left <= 59) return 1;
+        return 0;
+      }
+
+      function updateDeckDrama() {
+        const left = cardsLeft();
+        deckCount.textContent = `${left} left`;
+        deckCount.classList.remove('deck-stage-0','deck-stage-1','deck-stage-2','deck-stage-3','deck-stage-4','deck-stage-5');
+        deckCount.classList.add(`deck-stage-${getUrgencyStage()}`);
+      }
+
+      function updateLockDrama() {
+        // deal card button urgency glow as basket fills
+        if (!dealBtn) return;
+        const stage = getUrgencyStage();
+        dealBtn.classList.toggle('throb-deal', basketIndex >= 4 || stage >= 3);
+      }
+
+      function updateDeckCount() { updateDeckDrama(); }
+
+      function makeCardMarkup(cardData, revealPrice = false) {
+        const wrap = document.createElement('div');
+        wrap.className = 'card-wrap' + (revealPrice ? ' revealed' : '');
+        wrap.innerHTML = `
+          <div class="card">
+            <div class="card-face front">
+              <img src="${cardData.image}" alt="${cardData.alt}">
+            </div>
+            <div class="price-badge">$${cardData.price.toFixed(2)}</div>
+          </div>
+        `;
+        return wrap;
+      }
+
+      function clearFlop() {
+        flopSlots.forEach(slot => {
+          slot.innerHTML = '';
+          slot.classList.remove('filled', 'selected', 'disabled', 'selectable', 'deal-enter', 'show');
+          slot.onclick = null;
+        });
+        currentFlop = [null, null, null];
+        selectedFlop = new Set();
+        flopLabel.textContent = 'Press DEAL to reveal 3 cards';
+      }
+
+      function setKeepersStatus() {
+        statusText.textContent = 'Choose your KEEPERS';
+        statusText.classList.add('keepers-callout');
+      }
+
+      function fmtTarget(t) {
+        return t % 1 === 0 ? '$' + t : '$' + t.toFixed(2);
+      }
+
+      function updateTexts() {
+        if (locked) return;
+        const activeFlop = currentFlop.filter(Boolean).length;
+        if (activeFlop > 0) {
+          statusText.textContent = 'Tap a card to add it to your basket';
+          statusText.classList.remove('keepers-callout');
+          hintText.classList.remove('hint-throb');
+          hintText.textContent = `${slotsLeft()} spot${slotsLeft()===1?'':'s'} left — tap a card or DEAL to skip`;
+        } else if (basketIndex > 0) {
+          statusText.textContent = `$${keptTotal().toFixed(2)} in basket`;
+          statusText.classList.remove('keepers-callout');
+          hintText.innerHTML = `Target: ${fmtTarget(target)} — ${slotsLeft()} spot${slotsLeft()===1?'':'s'} left`;
+          hintText.classList.add('hint-throb');
         } else {
-          const winnerMsg = winnerVal ? ' | Winner: ' + winnerVal : ' | Winner cleared';
-          showToast('✓ Saved! Target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal) + winnerMsg, 'success');
-          currentInfo.textContent = 'Current target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal) + (winnerVal ? ' | Winner: ' + winnerVal : '');
+          statusText.textContent = 'Deal cards. Guess Prices.';
+          statusText.classList.remove('keepers-callout');
+          hintText.innerHTML = `Find the perfect combo to ${fmtTarget(target)}.`;
+          hintText.classList.add('hint-throb');
         }
-      } catch (e) {
-        showToast('❌ Network error', 'error');
+        totalText.textContent = '';
+        awayText.textContent = '';
+        updateLockDrama();
       }
 
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Save Target';
+      // ── Thermometer gauge ──────────────────────────────────────────────
+      const thermoFill   = document.getElementById('thermoFill');
+      const thermoTotal  = document.getElementById('thermoTotal');
+      const thermoTick   = document.getElementById('thermoTick');
+      const thermoTickLbl= document.getElementById('thermoTickLabel');
+      const thermoGlow   = document.getElementById('thermoGlow');
+
+      // Max displayed on gauge = target * 1.35 so bust is visible past the tick
+      function updateThermo() {
+        const total   = keptTotal();
+        const maxDisp = target * 1.35;
+        const pct     = Math.min(total / maxDisp * 100, 100);
+        const tickPct = Math.min(target / maxDisp * 100, 100);
+
+        // Position target tick
+        thermoTick.style.left    = tickPct + '%';
+        thermoTickLbl.style.left = tickPct + '%';
+        thermoTickLbl.textContent= '$' + (target % 1 === 0 ? target : target.toFixed(2));
+
+        thermoFill.style.width = pct + '%';
+        thermoFill.classList.remove('bust');
+
+        if (total === 0) {
+          thermoTotal.textContent = '';
+          thermoGlow.style.display = 'none';
+        } else {
+          thermoTotal.textContent = '$' + total.toFixed(2);
+          thermoGlow.style.display = 'block';
+          if (total > target) {
+            thermoFill.classList.add('bust');
+          }
+        }
+      }
+
+      function syncFlopStates() {
+        const remaining = currentFlop.filter(Boolean).length;
+        flopLabel.textContent = remaining
+          ? `Tap a card to add it — ${slotsLeft()} basket spot${slotsLeft()===1?'':'s'} left`
+          : `Press DEAL for new cards`;
+        flopSlots.forEach((slot, i) => {
+          const hasCard = !!currentFlop[i];
+          slot.classList.toggle('selectable', hasCard && !locked && slotsLeft() > 0);
+          slot.classList.remove('selected','disabled');
+        });
+        updateLockDrama();
+      }
+
+      function bankOneCard(index) {
+        // Instantly bank a single tapped card
+        if (locked || !currentFlop[index] || basketIndex >= maxBasket) return;
+        const cardData = currentFlop[index];
+        currentFlop[index] = null;
+
+        const slot = basketSlots[basketIndex++];
+        slot.classList.add('filled');
+        slot.innerHTML = '';
+        slot.appendChild(makeCardMarkup(cardData, true)); // price shown immediately
+        keptCards.push(cardData);
+
+        // Animate the flop slot out
+        const fslot = flopSlots[index];
+        fslot.style.transition = 'transform .22s ease, opacity .22s ease';
+        fslot.style.transform  = 'translateY(-12px) scale(.92)';
+        fslot.style.opacity    = '0';
+        setTimeout(() => {
+          fslot.innerHTML = '';
+          fslot.style.transform = '';
+          fslot.style.opacity   = '';
+          fslot.classList.remove('filled','selected','selectable','deal-enter','show');
+          fslot.onclick = null;
+        }, 220);
+
+        playCardSound();
+        updateThermo();
+        updateTexts();
+        updateDeckCount();
+        syncFlopStates();
+
+        const total = keptTotal();
+
+        // ── INSTANT BUST: fired the moment total exceeds target ──
+        if (total > target) {
+          locked = true;
+          dealBtn.disabled = true;
+          // Freeze remaining flop cards — can't tap them now
+          flopSlots.forEach(s => { s.classList.remove('selectable'); s.onclick = null; });
+          setTimeout(() => {
+            triggerBust();
+            const away = +(total - target).toFixed(2);
+            runReveal({ total, distance: away, bust: true });
+            dealBtn.style.display = 'none';
+            deckCount.style.display = 'none';
+            shareBtn.style.display = 'inline-block';
+            shareBtn.classList.add('throb');
+          }, 320);
+          return;
+        }
+
+        // ── INSTANT BULLSEYE: exact hit fires immediately ──
+        if (total === target) {
+          locked = true;
+          dealBtn.disabled = true;
+          flopSlots.forEach(s => { s.classList.remove('selectable'); s.onclick = null; });
+          setTimeout(() => {
+            runReveal({ total, distance: 0, bust: false });
+            dealBtn.style.display = 'none';
+            deckCount.style.display = 'none';
+            shareBtn.style.display = 'inline-block';
+            shareBtn.classList.add('throb');
+          }, 320);
+          return;
+        }
+
+        // If basket is full, auto-trigger reveal
+        if (basketIndex >= maxBasket) {
+          setTimeout(() => lockAndReveal(), 600);
+        }
+      }
+
+      async function flopThree() {
+        if (locked || dealing || basketIndex >= maxBasket) return;
+
+        // Clear any remaining flop cards (player chose not to take them)
+        currentFlop = [null, null, null];
+        selectedFlop = new Set();
+
+        const nextCards = [];
+        for (let i = 0; i < flopSize && deckIndex < shuffledDeck.length; i++) {
+          nextCards.push(shuffledDeck[deckIndex++]);
+        }
+
+        if (!nextCards.length) {
+          dealBtn.disabled = true;
+          statusText.textContent = 'No cards left.';
+          statusText.classList.remove('keepers-callout');
+          hintText.classList.remove('hint-throb');
+          hintText.textContent = 'Lock it in.';
+          flopSlots.forEach(slot => {
+            slot.innerHTML = '';
+            slot.classList.remove('filled','selected','selectable','deal-enter','show');
+            slot.onclick = null;
+          });
+          updateLockDrama();
+          return;
+        }
+
+        dealing = true;
+        dealBtn.disabled = true;
+
+        flopSlots.forEach(slot => {
+          slot.innerHTML = '';
+          slot.classList.remove('filled','selected','disabled','selectable','deal-enter','show');
+          slot.onclick = null;
+        });
+
+        updateDeckCount();
+
+        for (let i = 0; i < nextCards.length; i++) {
+          const card = nextCards[i];
+          currentFlop[i] = card;
+          const slot = flopSlots[i];
+          slot.innerHTML = '';
+          slot.classList.remove('filled','selected','disabled','selectable','show');
+          slot.classList.add('filled','selectable','deal-enter');
+          slot.appendChild(makeCardMarkup(card, false));
+          // tap = instantly bank this one card
+          slot.onclick = ((idx) => () => bankOneCard(idx))(i);
+          await wait(80);
+          slot.classList.add('show');
+          playCardSound();
+          updateDeckCount();
+          await wait(320);
+        }
+
+        dealing = false;
+        dealBtn.disabled = false;
+        syncFlopStates();
+        statusText.textContent = 'Tap a card to add it to your basket';
+        statusText.classList.remove('keepers-callout');
+        hintText.classList.remove('hint-throb');
+        hintText.textContent = `${slotsLeft()} basket spot${slotsLeft()===1?'':'s'} left — or Deal to skip these`;
+      }
+
+      function resetReveal() {
+        revealOverlay.classList.remove('show');
+        revealUnder.classList.remove('show');
+        revealBust.classList.remove('show');
+        resultVerdict.textContent = '';
+        resultPin.style.left = '50%';
+      }
+
+      function runReveal({ total, distance, bust }) {
+        resetReveal();
+        playSfx('lock');
+        setTimeout(() => {
+          playSfx('slam');
+          revealOverlay.classList.add('show');
+          revealOverlay.setAttribute('aria-hidden', 'false');
+          if (!bust) {
+            revealUnder.classList.add('show');
+            revealTotal.textContent = `$${total.toFixed(2)}`;
+            let pinLeft = 50;
+            let verdict = '';
+            if (distance === 0) {
+              pinLeft = 88;
+              verdict = 'PERFECT HIT. FILTHY WORK.';
+              launchFireworks();
+            } else if (distance <= 1) {
+              pinLeft = 72 + ((1 - distance) * 12);
+              verdict = `$${distance.toFixed(2)} short — ridiculously close.`;
+            } else if (distance <= 3) {
+              pinLeft = 50 + ((3 - distance) / 2) * 20;
+              verdict = `$${distance.toFixed(2)} short — decent, but no cigar.`;
+            } else if (distance <= 7) {
+              pinLeft = 26 + ((7 - distance) / 4) * 22;
+              verdict = `$${distance.toFixed(2)} short — you were wandering.`;
+            } else {
+              pinLeft = 10;
+              verdict = `$${distance.toFixed(2)} short — nowhere near it.`;
+            }
+            resultPin.style.left = `${pinLeft}%`;
+            resultVerdict.textContent = verdict;
+          } else {
+            triggerBust();
+            revealBust.classList.add('show');
+            bustAmount.textContent = `Over by $${distance.toFixed(2)}`;
+            playSfx('bust');
+          }
+        }, 280);
+      }
+
+      function lockAndReveal() {
+        if (locked || keptCards.length === 0) return;
+        locked = true;
+        dealBtn.disabled = true;
+        basketSlots.forEach(slot => {
+          const wrap = slot.querySelector('.card-wrap');
+          if (wrap) wrap.classList.add('revealed');
+        });
+        const total = keptTotal();
+        const bust = total > target;
+        const away = bust ? +(total - target).toFixed(2) : +(target - total).toFixed(2);
+        statusText.textContent = '';
+        statusText.classList.remove('keepers-callout');
+        hintText.textContent = '';
+        totalText.textContent = '';
+        awayText.textContent = '';
+        // Fire immediately — no waiting
+        runReveal({ total, distance: away, bust });
+        dealBtn.style.display = 'none';
+        deckCount.style.display = 'none';
+        shareBtn.style.display = 'inline-block';
+        shareBtn.classList.add('throb');
+      }
+
+      function buildShareText() {
+        const total = keptTotal();
+        const bust = total > target;
+        const rawAway = +(Math.abs(total - target)).toFixed(2);
+        const away = rawAway;
+        const a = away.toFixed(2);
+        const keptCount = keptCards.length;
+
+        // Emoji bar — 6 slots
+        function emojiBar(greens, yellows) {
+          const g = '🟩', y = '🟨', r = '🟥', o = '🟧', w = '⬜';
+          let bar = '';
+          for (let i = 0; i < 6; i++) {
+            if (i < greens) bar += g;
+            else if (i < greens + yellows) bar += y;
+            else bar += w;
+          }
+          return bar;
+        }
+
+        // Difficulty tag (based on perfectSolutionsEl if available)
+        const perfEl = document.getElementById('perfectSolutionsEl');
+        const perfCount = perfEl ? parseInt(perfEl.textContent) : 76;
+        let difficulty = 'HARD';
+        if (perfCount >= 200)      difficulty = 'EASY';
+        else if (perfCount >= 100) difficulty = 'HARD';
+        else if (perfCount >= 30)  difficulty = 'EXTREME';
+        else                       difficulty = 'NIGHTMARE';
+        const diffLine = `⚠️ TODAY'S CART: ${difficulty}`;
+
+        let lines = [];
+        lines.push(`🛒 BasketBullseye — DAILY CART`);
+
+        if (bust) {
+          if (away > 5) {
+            // Tier 2: Large Bust
+            lines.push(`💀 BUSTED`);
+            lines.push(`📈 Went Over By: $${a}`);
+            lines.push(`🟧🟧🟥🟥🟥🟥`);
+            lines.push(`"One item too greedy.`);
+            lines.push(`Cart destroyed."`);
+            lines.push(`Only a handful of perfect carts exist daily.`);
+          } else {
+            // Still busted but close — treat as near miss over
+            lines.push(`💀 BUSTED`);
+            lines.push(`📈 Went Over By: $${a}`);
+            lines.push(`🟧🟨🟥🟥🟥🟥`);
+            lines.push(`"One item too greedy.`);
+            lines.push(`Cart destroyed."`);
+            lines.push(`Only a handful of perfect carts exist daily.`);
+          }
+        } else if (away === 0) {
+          // Tier 7: Perfect Cart
+          lines.push(`🏆 PERFECT CART`);
+          lines.push(`✅ EXACT MATCH`);
+          lines.push(`🟩🟩🟩🟩🟩🟩`);
+          lines.push(`"Out of billions of possible baskets…`);
+          lines.push(`I found one of today's exact carts."`);
+          lines.push(`FIRST TO CRACK IT WINS.`);
+        } else if (away <= 0.09) {
+          // Tier 6: Legendary Near Miss (1¢–9¢)
+          const quotes = [
+            `"One cent from greatness."`,
+            `"The cart cracked me first."`,
+            `"Somewhere out there was a perfect basket.\nThis almost was it."`
+          ];
+          const q = quotes[Math.floor(Math.random() * quotes.length)];
+          lines.push(`🤏 DEVASTATING`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟩🟩🟩🟩🟩⬜`);
+          lines.push(q);
+        } else if (away <= 0.49) {
+          // Tier 5: Brutal Near Miss (10¢–49¢)
+          lines.push(`😵 SO CLOSE`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟩🟩🟨⬜⬜⬜`);
+          lines.push(`"There were perfect carts today.`);
+          lines.push(`This wasn't one of them."`);
+        } else if (away <= 2.00) {
+          // Tier 4: Getting Close (50¢–$2)
+          lines.push(`🔥 CLOSE`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟩🟨🟨⬜⬜⬜`);
+          lines.push(`"Someone solved today's cart.`);
+          lines.push(`I wasn't close enough."`);
+          lines.push(`98 products. 6 picks. Tiny number of exact solutions.`);
+        } else if (away <= 8.00) {
+          // Tier 3: Standard Miss ($2–$8)
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟨🟨🟨⬜⬜⬜`);
+          lines.push(`"Looks easy.`);
+          lines.push(`Then the prices appear."`);
+          lines.push(`Billions of combinations. Almost none are perfect.`);
+        } else {
+          // Tier 1: Catastrophic Miss (>$8 under)
+          lines.push(`📉 WAY UNDER`);
+          lines.push(`🎯 Missed By: $${a}`);
+          lines.push(`🟥🟥🟥🟥🟥🟥`);
+          lines.push(`"Billions of possible carts.`);
+          lines.push(`Today I picked the wrong universe."`);
+          lines.push(`98 products. 6 picks max.`);
+        }
+
+        lines.push('');
+        lines.push(diffLine);
+        lines.push(shareUrl);
+        return lines.join('\n');
+      }
+
+      dealBtn.addEventListener('click', flopThree);
+
+      shareBtn.addEventListener('click', async () => {
+        const text = buildShareText();
+        if (navigator.share) {
+          try { await navigator.share({ title: `BasketBullseye Game #${gameNumber}`, text }); return; } catch (e) {}
+        }
+        try {
+          await navigator.clipboard.writeText(text);
+          shareBtn.textContent = 'Copied!';
+          setTimeout(() => { shareBtn.textContent = 'Share'; }, 1400);
+        } catch (e) { alert(text); }
+      });
+
+      rulesBtn.addEventListener('click', () => {
+        rulesModal.classList.add('show');
+        rulesModal.setAttribute('aria-hidden', 'false');
+      });
+      rulesClose.addEventListener('click', () => {
+        rulesModal.classList.remove('show');
+        rulesModal.setAttribute('aria-hidden', 'true');
+      });
+      rulesModal.addEventListener('click', (e) => {
+        if (e.target === rulesModal) {
+          rulesModal.classList.remove('show');
+          rulesModal.setAttribute('aria-hidden', 'true');
+        }
+      });
+      revealOverlay.addEventListener('click', () => {
+        revealOverlay.classList.remove('show');
+        revealOverlay.setAttribute('aria-hidden', 'true');
+      });
+
+      // ── Set all target display elements ──
+      document.getElementById('gameNoEl').textContent = 'Game #' + gameNumber;
+      document.getElementById('gameDateEl').textContent = gameDate;
+      const tDisplay = target % 1 === 0 ? target : target.toFixed(2);
+      document.getElementById('targetCircleEl').textContent = '$' + tDisplay;
+      const hintTargetEl = document.getElementById('hintTarget');
+      if (hintTargetEl) hintTargetEl.textContent = tDisplay;
+      document.querySelectorAll('.rules-target').forEach(el => el.textContent = tDisplay);
+
+      updateDeckCount();
+      updateThermo();
+      updateTexts();
+      clearFlop();
+      updateLockDrama();
     }
 
-    // Load current target from server on mount
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const [tRes, sRes, wRes] = await Promise.all([
-          fetch('/api/target'),
-          fetch('/api/solutions'),
-          fetch('/api/winner')
-        ]);
-        const tData = await tRes.json();
-        const sData = await sRes.json().catch(() => ({}));
-        const wData = await wRes.json().catch(() => ({}));
-        if (tData.target) {
-          input.value = parseFloat(tData.target).toFixed(2);
-          updatePreview();
-        }
-        if (sData.solutions) {
-          document.getElementById('solutionsInput').value = sData.solutions;
-        }
-        if (wData.winner) {
-          document.getElementById('winnerInput').value = wData.winner;
-        }
-        currentInfo.textContent = 'Current target: ' + fmt(tData.target) +
-          (sData.solutions ? ' | Solutions: ' + sData.solutions : '') +
-          (wData.winner ? ' | Winner: ' + wData.winner : '');
-      } catch (e) {
-        currentInfo.textContent = 'Could not load current settings.';
+    // ── Boot: fetch target + solutions from API, then start game ──────────────────────
+    Promise.all([
+      fetch('/api/target').then(r => r.json()).catch(() => ({})),
+      fetch('/api/solutions').then(r => r.json()).catch(() => ({})),
+      fetch('/api/winner').then(r => r.json()).catch(() => ({}))
+    ]).then(([tData, sData, wData]) => {
+      if (tData.target) target = parseFloat(tData.target);
+      if (sData.solutions) {
+        const n = parseInt(sData.solutions);
+        const el = document.getElementById('perfectSolutionsEl');
+        const el2 = document.getElementById('rulesSolutionsEl');
+        if (el) el.textContent = n;
+        if (el2) el2.textContent = n;
       }
-    });
+      const winnerEl = document.getElementById('winnerNameEl');
+      if (wData.winner && winnerEl) {
+        winnerEl.textContent = wData.winner;
+        winnerEl.classList.add('has-winner');
+      }
+    }).finally(() => initGame());
   </script>
+  <div id="facecardModal" onclick="this.classList.remove('show')" style="
+    display:none;position:fixed;inset:0;z-index:9999;
+    background:rgba(0,0,0,.82);
+    align-items:center;justify-content:center;
+    padding:24px;cursor:pointer;
+  ">
+    <img src="./facecard.png" alt="BasketBullseye" style="
+      max-width:min(92vw,480px);max-height:90vh;
+      border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.7);
+      display:block;
+    ">
+  </div>
+
+  <style>
+    #facecardModal { display:none; }
+    #facecardModal.show { display:flex; }
+  </style>
+
 </body>
 </html>
