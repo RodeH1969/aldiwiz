@@ -122,6 +122,14 @@
       </div>
     </div>
 
+    <div>
+      <label for="winnerInput">Today's Winner <span style="font-weight:400;color:rgba(255,255,255,.45)">(leave blank to clear)</span></label>
+      <div class="input-row">
+        <span class="input-prefix">🏆</span>
+        <input type="text" id="winnerInput" placeholder="Winner's name…" style="flex:1;border:0;background:transparent;color:#fff;font-size:22px;font-weight:900;padding:14px 10px 14px 0;outline:none;min-width:0;">
+      </div>
+    </div>
+
     <div class="preview">
       <div class="preview-circle"><span id="previewText">$21</span></div>
       <span>This is what all players will see</span>
@@ -164,6 +172,7 @@
     async function saveTarget() {
       const val = parseFloat(input.value);
       const solVal = parseInt(document.getElementById('solutionsInput').value);
+      const winnerVal = document.getElementById('winnerInput').value.trim();
       const password = document.getElementById('passwordInput').value;
       if (!password) { showToast('Enter the admin password.', 'error'); return; }
       if (isNaN(val) || val <= 0) { showToast('Enter a valid dollar amount.', 'error'); return; }
@@ -172,7 +181,7 @@
       saveBtn.textContent = 'Saving…';
 
       try {
-        const [res1, res2] = await Promise.all([
+        const [res1, res2, res3] = await Promise.all([
           fetch('/api/target', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -182,14 +191,20 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ solutions: solVal, password })
+          }),
+          fetch('/api/winner', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ winner: winnerVal || null, password })
           })
         ]);
         const data = await res1.json();
         if (!res1.ok) {
           showToast('❌ ' + (data.error || 'Failed'), 'error');
         } else {
-          showToast('✓ Saved! Target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal), 'success');
-          currentInfo.textContent = 'Current target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal);
+          const winnerMsg = winnerVal ? ' | Winner: ' + winnerVal : ' | Winner cleared';
+          showToast('✓ Saved! Target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal) + winnerMsg, 'success');
+          currentInfo.textContent = 'Current target: ' + fmt(val) + (isNaN(solVal) ? '' : ' | Solutions: ' + solVal) + (winnerVal ? ' | Winner: ' + winnerVal : '');
         }
       } catch (e) {
         showToast('❌ Network error', 'error');
@@ -202,12 +217,14 @@
     // Load current target from server on mount
     window.addEventListener('DOMContentLoaded', async () => {
       try {
-        const [tRes, sRes] = await Promise.all([
+        const [tRes, sRes, wRes] = await Promise.all([
           fetch('/api/target'),
-          fetch('/api/solutions')
+          fetch('/api/solutions'),
+          fetch('/api/winner')
         ]);
         const tData = await tRes.json();
         const sData = await sRes.json().catch(() => ({}));
+        const wData = await wRes.json().catch(() => ({}));
         if (tData.target) {
           input.value = parseFloat(tData.target).toFixed(2);
           updatePreview();
@@ -215,8 +232,12 @@
         if (sData.solutions) {
           document.getElementById('solutionsInput').value = sData.solutions;
         }
+        if (wData.winner) {
+          document.getElementById('winnerInput').value = wData.winner;
+        }
         currentInfo.textContent = 'Current target: ' + fmt(tData.target) +
-          (sData.solutions ? ' | Solutions: ' + sData.solutions : '');
+          (sData.solutions ? ' | Solutions: ' + sData.solutions : '') +
+          (wData.winner ? ' | Winner: ' + wData.winner : '');
       } catch (e) {
         currentInfo.textContent = 'Could not load current settings.';
       }
