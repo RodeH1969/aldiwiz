@@ -599,6 +599,37 @@
     }
     .perfect-solutions-number { font-size:17px; font-weight:900; color:#1565c0; line-height:1; }
     .perfect-solutions-label { font-size:7.5px; font-weight:800; color:#555; text-align:center; line-height:1.2; text-transform:uppercase; letter-spacing:.04em; }
+
+    /* ── Today's Winner circle ── */
+    .winner-circle {
+      width:66px; height:66px; border-radius:50%;
+      background:#fff;
+      border:4px solid #1a5e20;
+      box-shadow:0 6px 16px rgba(0,0,0,.35), 0 0 0 2px rgba(26,94,32,.15);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      flex-shrink:0; gap:2px;
+      padding:4px;
+    }
+    .winner-title {
+      font-size:7px; font-weight:900; color:#1a5e20;
+      text-transform:uppercase; letter-spacing:.04em;
+      text-align:center; line-height:1.2;
+    }
+    .winner-name {
+      font-size:9px; font-weight:900; color:#888;
+      text-align:center; line-height:1.2;
+      max-width:56px; overflow:hidden;
+      text-overflow:ellipsis; white-space:nowrap;
+      font-style:italic;
+    }
+    .winner-name.has-winner {
+      font-size:10px; color:#1a5e20; font-style:normal;
+      animation:winnerPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes winnerPulse {
+      0%,100% { opacity:1; } 50% { opacity:.65; }
+    }
     .billion-card {
       height:66px; width:66px; border-radius:8px; background:#fff;
       border:3px solid #add8e6; box-shadow:0 6px 16px rgba(0,0,0,.35);
@@ -1098,13 +1129,15 @@
           <div class="perfect-solutions-number" id="perfectSolutionsEl">76</div>
           <div class="perfect-solutions-label">perfect solutions today</div>
         </div>
-        <img src="./facecard.png" alt="ALDI21" class="facecard-thumb">
-      </div>
+        <div class="winner-circle" id="winnerCircle">
+          <div class="winner-title">Today's<br>Winner</div>
+          <div class="winner-name" id="winnerNameEl">———</div>
+        </div>
 
       <button class="rules-btn" id="rulesBtn" type="button">Rules</button>
     </header>
 
-    <div class="basket-label">Your Basket (6 max)</div>
+    <div class="basket-label">Build Your Basket</div>
     <section class="basket-row" id="basketRow">
       <div class="basket-slot" data-slot="0"></div>
       <div class="basket-slot" data-slot="1"></div>
@@ -2006,8 +2039,9 @@
     // ── Boot: fetch target + solutions from API, then start game ──────────────────────
     Promise.all([
       fetch('/api/target').then(r => r.json()).catch(() => ({})),
-      fetch('/api/solutions').then(r => r.json()).catch(() => ({}))
-    ]).then(([tData, sData]) => {
+      fetch('/api/solutions').then(r => r.json()).catch(() => ({})),
+      fetch('/api/winner').then(r => r.json()).catch(() => ({}))
+    ]).then(([tData, sData, wData]) => {
       if (tData.target) target = parseFloat(tData.target);
       if (sData.solutions) {
         const n = parseInt(sData.solutions);
@@ -2015,6 +2049,11 @@
         const el2 = document.getElementById('rulesSolutionsEl');
         if (el) el.textContent = n;
         if (el2) el2.textContent = n;
+      }
+      const winnerEl = document.getElementById('winnerNameEl');
+      if (wData.winner && winnerEl) {
+        winnerEl.textContent = wData.winner;
+        winnerEl.classList.add('has-winner');
       }
     }).finally(() => initGame());
   </script>
