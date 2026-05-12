@@ -43,6 +43,13 @@
     }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance:none; }
+    textarea {
+      width:100%; border:0; background:rgba(0,0,0,.38); color:#fff;
+      font-size:13px; font-weight:700; padding:14px; outline:none;
+      border:2px solid rgba(255,255,255,.22); border-radius:14px;
+      resize:vertical; min-height:140px; line-height:1.6; font-family:Arial,sans-serif;
+    }
+    textarea::placeholder { color:rgba(255,255,255,.3); }
     .preview {
       display:flex; align-items:center; justify-content:center; gap:10px;
       padding:14px; background:rgba(0,0,0,.28); border-radius:14px;
@@ -66,6 +73,7 @@
     .toast.success { background:#2e7d32; }
     .toast.error { background:#c62828; }
     .current-info { font-size:13px; color:rgba(255,255,255,.55); text-align:center; font-weight:700; }
+    .section-divider { border:0; border-top:1px solid rgba(255,255,255,.15); margin:0; }
   </style>
 </head>
 <body>
@@ -83,6 +91,8 @@
       </div>
     </div>
 
+    <hr class="section-divider">
+
     <div>
       <label for="targetInput">Today's Target ($)</label>
       <div class="input-row">
@@ -91,17 +101,16 @@
       </div>
     </div>
 
-    <div>
-      <label for="winnerInput">Today's Winner <span>(leave blank to clear)</span></label>
-      <div class="input-row">
-        <span class="input-prefix">🏆</span>
-        <input type="text" id="winnerInput" placeholder="Winner's name…">
-      </div>
-    </div>
-
     <div class="preview">
       <div class="preview-circle"><span id="previewText">$21</span></div>
       <span>This is what all players will see</span>
+    </div>
+
+    <hr class="section-divider">
+
+    <div>
+      <label for="winnersInput">Winners List <span>(one per line — newest at top)</span></label>
+      <textarea id="winnersInput" placeholder="Game #217 Dave $21.00&#10;Game #216 Bob G $23.80&#10;Game #215 Sally $13.78"></textarea>
     </div>
 
     <button class="btn-save" id="saveBtn" onclick="saveAll()">Save</button>
@@ -140,7 +149,7 @@
 
     async function saveAll() {
       const val      = parseFloat(targetInput.value);
-      const winner   = document.getElementById('winnerInput').value.trim();
+      const winners  = document.getElementById('winnersInput').value.trim();
       const password = document.getElementById('passwordInput').value;
 
       if (!password) { showToast('Enter the admin password.', 'error'); return; }
@@ -155,9 +164,9 @@
             method:'POST', headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ target: val, password })
           }),
-          fetch('/api/winner', {
+          fetch('/api/winners', {
             method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ winner: winner || null, password })
+            body: JSON.stringify({ winners, password })
           })
         ]);
 
@@ -165,9 +174,9 @@
         if (!r1.ok) {
           showToast('❌ ' + (d1.error || 'Failed'), 'error');
         } else {
-          const winMsg = winner ? ' | Winner: ' + winner : ' | Winner cleared';
-          showToast('✓ Saved! Target: ' + fmt(val) + winMsg, 'success');
-          currentInfo.textContent = 'Target: ' + fmt(val) + (winner ? ' | Winner: ' + winner : ' | No winner set');
+          const lineCount = winners.split('\n').filter(l => l.trim()).length;
+          showToast('✓ Saved! Target: ' + fmt(val) + ' | ' + lineCount + ' winner' + (lineCount !== 1 ? 's' : ''), 'success');
+          currentInfo.textContent = 'Target: ' + fmt(val) + ' | ' + lineCount + ' winner' + (lineCount !== 1 ? 's' : '') + ' listed';
         }
       } catch(e) {
         showToast('❌ Network error', 'error');
@@ -181,7 +190,7 @@
       try {
         const [tRes, wRes] = await Promise.all([
           fetch('/api/target'),
-          fetch('/api/winner')
+          fetch('/api/winners')
         ]);
         const tData = await tRes.json();
         const wData = await wRes.json().catch(() => ({}));
@@ -190,11 +199,11 @@
           targetInput.value = parseFloat(tData.target).toFixed(2);
           updatePreview();
         }
-        if (wData.winner) {
-          document.getElementById('winnerInput').value = wData.winner;
+        if (wData.winners) {
+          document.getElementById('winnersInput').value = wData.winners;
         }
-        currentInfo.textContent = 'Target: ' + fmt(tData.target) +
-          (wData.winner ? ' | Winner: ' + wData.winner : ' | No winner set');
+        const lineCount = (wData.winners || '').split('\n').filter(l => l.trim()).length;
+        currentInfo.textContent = 'Target: ' + fmt(tData.target) + ' | ' + lineCount + ' winner' + (lineCount !== 1 ? 's' : '') + ' listed';
       } catch(e) {
         currentInfo.textContent = 'Could not load current settings.';
       }

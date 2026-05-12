@@ -55,4 +55,18 @@ app.post('/api/winner', (req, res) => {
   res.json({ ok: true, winner: data.winner });
 });
 
+app.get('/api/winners', (req, res) => {
+  const data = JSON.parse(fs.readFileSync(DATA_FILE));
+  res.json({ winners: data.winners || '' });
+});
+
+app.post('/api/winners', (req, res) => {
+  const { winners, password } = req.body;
+  if (password !== (process.env.ADMIN_PASSWORD || 'aldi21admin')) return res.status(401).json({ error: 'Unauthorized' });
+  const existing = JSON.parse(fs.readFileSync(DATA_FILE));
+  const data = { ...existing, winners: String(winners || '').trim() };
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data));
+  res.json({ ok: true });
+});
+
 app.listen(PORT, () => console.log('ALDIQ on port ' + PORT));
