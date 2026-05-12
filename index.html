@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALDI21 </title>
+  <title>BasketBullseye</title>
   <link rel="icon" href="./favicon.ico" type="image/x-icon">
   <style>
     :root {
@@ -85,9 +85,6 @@
     .facecard-thumb {
       height:66px;
       width:auto;
-      border-radius:8px;
-      border:2px solid rgba(255,255,255,.9);
-      box-shadow:0 6px 16px rgba(0,0,0,.35);
       display:block;
     }
 
@@ -1210,7 +1207,7 @@
     <div class="rules-card" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
       <div class="rules-head">
         <div class="rules-title" id="rulesTitle">RULES</div>
-        <img src="./facecard.png" alt="BasketBullseye" style="height:48px;width:auto;border-radius:6px;border:2px solid rgba(0,0,0,.15);box-shadow:0 4px 10px rgba(0,0,0,.2);">
+        <img src="./facecard.png" alt="BasketBullseye" style="height:48px;width:auto;">
         <button class="rules-close" id="rulesClose" type="button">×</button>
       </div>
      <ol class="rules-list">
@@ -1909,7 +1906,7 @@
         const diffLine = `⚠️ TODAY'S CART: ${difficulty}`;
 
         let lines = [];
-        lines.push(`🛒 ALDI21 — DAILY CART`);
+        lines.push(`🛒 BasketBullseye — DAILY CART`);
 
         if (bust) {
           if (away > 5) {
@@ -1992,7 +1989,7 @@
       shareBtn.addEventListener('click', async () => {
         const text = buildShareText();
         if (navigator.share) {
-          try { await navigator.share({ title: `ALDIQ Game #${gameNumber}`, text }); return; } catch (e) {}
+          try { await navigator.share({ title: `BasketBullseye Game #${gameNumber}`, text }); return; } catch (e) {}
         }
         try {
           await navigator.clipboard.writeText(text);
