@@ -244,6 +244,56 @@
       text-shadow:0 1px 4px rgba(0,0,0,.8);
     }
 
+    /* ── Live Paths pill ── */
+    .live-paths-wrap {
+      width:100%;
+      display:flex;
+      justify-content:center;
+      margin-top:2px;
+    }
+    .live-paths-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:5px 14px 5px 10px;
+      border-radius:999px;
+      background:rgba(0,0,0,.55);
+      border:1.5px solid rgba(255,255,255,.18);
+      font-size:12px;
+      font-weight:900;
+      color:rgba(255,255,255,.72);
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      cursor:default;
+      transition:border-color .4s ease, background .4s ease;
+    }
+    .live-paths-pill.calculating { opacity:.55; }
+    .live-paths-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:#4eff91;
+      box-shadow:0 0 6px #4eff91;
+      flex-shrink:0;
+      transition:background .4s ease, box-shadow .4s ease;
+    }
+    .live-paths-num {
+      font-size:17px;
+      font-weight:900;
+      color:#4eff91;
+      line-height:1;
+      min-width:28px;
+      text-align:center;
+      transition:color .4s ease;
+    }
+    .live-paths-label { color:rgba(255,255,255,.5); font-size:10px; font-weight:800; letter-spacing:.06em; }
+    .live-paths-pill.state-hot  .live-paths-dot { background:#ffe740; box-shadow:0 0 8px #ffe740; }
+    .live-paths-pill.state-hot  .live-paths-num { color:#ffe740; }
+    .live-paths-pill.state-danger .live-paths-dot { background:#ff8c00; box-shadow:0 0 10px #ff8c00; }
+    .live-paths-pill.state-danger .live-paths-num { color:#ff8c00; }
+    .live-paths-pill.state-dead .live-paths-dot { background:#ff2d2d; box-shadow:0 0 12px rgba(255,45,45,.8); animation:pathDeadPulse .7s ease-in-out infinite; }
+    .live-paths-pill.state-dead .live-paths-num { color:#ff2d2d; animation:pathDeadPulse .7s ease-in-out infinite; }
+    .live-paths-pill.state-dead { border-color:rgba(255,45,45,.45); }
+    @keyframes pathDeadPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
     .deal-stage {
       width:100%;
       display:flex;
@@ -1155,6 +1205,14 @@
       </div>
     </div>
 
+    <div class="live-paths-wrap">
+      <div class="live-paths-pill calculating" id="livePathsPill">
+        <div class="live-paths-dot"></div>
+        <span class="live-paths-num" id="livePathsNum">—</span>
+        <span class="live-paths-label">LIVE PATHS</span>
+      </div>
+    </div>
+
     <section class="deal-stage">
       <div class="deck-column">
         <div class="deck-count" id="deckCount">27 left</div>
@@ -1650,6 +1708,70 @@
         }
       }
 
+      // ── Live Paths engine ──────────────────────────────────────────────────
+      const livePathsPill = document.getElementById('livePathsPill');
+      const livePathsNum  = document.getElementById('livePathsNum');
+      let   livePathsTimer = null;
+
+      function build2DDP(prices, maxItems, maxCents) {
+        const dp = Array.from({length: maxItems + 1}, () => new Uint8Array(maxCents + 1));
+        dp[0][0] = 1;
+        for (const p of prices) {
+          for (let k = maxItems - 1; k >= 0; k--)
+            for (let j = maxCents - p; j >= 0; j--)
+              if (dp[k][j]) dp[k + 1][j + p] = 1;
+        }
+        return dp;
+      }
+
+      function computeLivePaths() {
+        // prices of all cards NOT yet in basket (the undealt portion is irrelevant —
+        // viable means achievable from any remaining card, seen or unseen, that hasn't been banked)
+        const bankedPrices = new Set(keptCards.map((_, i) => i)); // using index identity
+        const bankedTotal  = Math.round(keptTotal() * 100);
+        const targetCents  = Math.round(target * 100);
+        const slots        = slotsLeft();
+        const needed       = targetCents - bankedTotal;
+
+        if (needed < 0 || slots === 0) return 0;
+
+        // Truly reachable cards = undealt cards still in deck + cards currently on the flop
+        // (NOT cards already passed/skipped — those are gone even though not banked)
+        const undealt  = shuffledDeck.slice(deckIndex).map(c => Math.round(c.price * 100));
+        const onFlop   = currentFlop.filter(Boolean).map(c => Math.round(c.price * 100));
+        const available = [...undealt, ...onFlop];
+
+        let count = 0;
+        for (let i = 0; i < available.length; i++) {
+          const stillNeed = needed - available[i];
+          if (stillNeed < 0) continue;
+          const slotsAfter = slots - 1;
+          if (stillNeed === 0 && slotsAfter === 0) { count++; continue; }
+          if (slotsAfter === 0) continue;
+          const others = available.filter((_, j) => j !== i);
+          const dp = build2DDP(others, slotsAfter, stillNeed);
+          if (dp[slotsAfter][stillNeed]) count++;
+        }
+        return count;
+      }
+
+      function updateLivePaths() {
+        if (locked) return;
+        livePathsPill.classList.add('calculating');
+        livePathsNum.textContent = '…';
+        clearTimeout(livePathsTimer);
+        livePathsTimer = setTimeout(() => {
+          const n = computeLivePaths();
+          livePathsNum.textContent = n;
+          livePathsPill.classList.remove('calculating');
+          // colour state
+          livePathsPill.classList.remove('state-hot','state-danger','state-dead');
+          if (n === 0)      livePathsPill.classList.add('state-dead');
+          else if (n <= 5)  livePathsPill.classList.add('state-danger');
+          else if (n <= 20) livePathsPill.classList.add('state-hot');
+        }, 40);
+      }
+
       function syncFlopStates() {
         const remaining = currentFlop.filter(Boolean).length;
         flopLabel.textContent = remaining
@@ -1693,6 +1815,7 @@
         updateTexts();
         updateDeckCount();
         syncFlopStates();
+        updateLivePaths();
 
         const total = keptTotal();
 
@@ -2078,6 +2201,7 @@
       updateTexts();
       clearFlop();
       updateLockDrama();
+      updateLivePaths();
     }
 
     // ── Boot: fetch target + solutions from API, then start game ──────────────────────
