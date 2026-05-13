@@ -2152,24 +2152,31 @@
       // ── Winners modal ──
       const winnersModal = document.getElementById('winnersModal');
       const winnersClose = document.getElementById('winnersClose');
+      const HARDCODED_WINNERS = [
+        'Game#217 Woody $23.84',
+        'Game#216 Jess $15.80',
+      ];
+
       document.getElementById('winnersBtn').addEventListener('click', async () => {
         winnersModal.classList.add('show');
         winnersModal.setAttribute('aria-hidden', 'false');
+        const el = document.getElementById('winnersListEl');
+        let apiLines = [];
         try {
           const data = await fetch('/api/winners').then(r => r.json());
-          const el = document.getElementById('winnersListEl');
-          const lines = (data.winners || '').split('\n').map(l => l.trim()).filter(Boolean);
-          if (!lines.length) {
-            el.innerHTML = '<div style="color:#888;font-size:13px;font-style:italic;">No winners yet — be the first!</div>';
-          } else {
-            el.innerHTML = lines.map(line =>
-              `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8f4e8;border-radius:8px;font-size:13px;font-weight:800;color:#18233d;">
-                <span style="color:#c62828;">🏆</span><span>${line}</span>
-              </div>`
-            ).join('');
-          }
-        } catch(e) {
-          document.getElementById('winnersListEl').innerHTML = '<div style="color:#888;font-size:13px;">Could not load winners.</div>';
+          apiLines = (data.winners || '').split('\n').map(l => l.trim()).filter(Boolean);
+        } catch(e) {}
+        // Merge: API lines first (newest), then hardcoded baseline (deduplicated)
+        const seen = new Set(apiLines);
+        const merged = [...apiLines, ...HARDCODED_WINNERS.filter(l => !seen.has(l))];
+        if (!merged.length) {
+          el.innerHTML = '<div style="color:#888;font-size:13px;font-style:italic;">No winners yet — be the first!</div>';
+        } else {
+          el.innerHTML = merged.map(line =>
+            `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#f8f4e8;border-radius:8px;font-size:13px;font-weight:800;color:#18233d;">
+              <span style="color:#c62828;">🏆</span><span>${line}</span>
+            </div>`
+          ).join('');
         }
       });
       winnersClose.addEventListener('click', () => {
