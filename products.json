@@ -420,16 +420,6 @@
     "out": "cards\\oceanroyaleprawns-card.png"
   },
   {
-    "image": "products\\oceanroyalesalmon1kg.jpeg",
-    "name": "Ocean Royale",
-    "line": "SALMON",
-    "size": "1kg",
-    "price": "$27.49",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\oceanroyalesalmon-card.png"
-  },
-  {
     "image": "products\\oceanroyalewhiting1kg.jpeg",
     "name": "Ocean Royale",
     "line": "WHITING",
@@ -458,16 +448,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\quiltontoiletpaper-card.png"
-  },
-  {
-    "image": "products\\readysetcookbutterfliedbeef.jpeg",
-    "name": "Ready Set Cook",
-    "line": "BUTTERFLIED BEEF",
-    "size": "",
-    "price": "$19.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\readysetcookbeef-card.png"
   },
   {
     "image": "products\\readysetcookchickenkebabsteriyaki375g.jpeg",
@@ -520,16 +500,6 @@
     "out": "cards\\remanognocchi-card.png"
   },
   {
-    "image": "products\\remanotomatopastasauce500g.jpeg",
-    "name": "Remano",
-    "line": "TOMATO PASTA SAUCE",
-    "size": "500g",
-    "price": "$1.69",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\remanosauce-card.png"
-  },
-  {
     "image": "products\\shapesoriginalsbarbecue250g.jpeg",
     "name": "Shapes Originals",
     "line": "BARBECUE",
@@ -538,26 +508,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\shapesbarbecue-card.png"
-  },
-  {
-    "image": "products\\simpleecarbaonarasauce125g.jpeg",
-    "name": "Simplee",
-    "line": "CARBONARA SAUCE",
-    "size": "125g",
-    "price": "$1.69",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\simpleecarbonara-card.png"
-  },
-  {
-    "image": "products\\simpleemacaroni&cheese130g.jpeg",
-    "name": "Simplee",
-    "line": "MACARONI & CHEESE",
-    "size": "130g",
-    "price": "$1.69",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\simpleemac-card.png"
   },
   {
     "image": "products\\speciallyselectedquincepaste100g.jpeg",
@@ -588,16 +538,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\werthers-card.png"
-  },
-  {
-    "image": "products\\thefishmongersmokedsalmon200g.jpeg",
-    "name": "The Fishmonger",
-    "line": "SMOKED SALMON",
-    "size": "200g",
-    "price": "$9.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\fishmonger-card.png"
   },
   {
     "image": "products\\tricareantibacterialsoap250ml.jpeg",
@@ -650,26 +590,6 @@
     "out": "cards\\activenergyAAbatteries-card.png"
   },
   {
-    "image": "products\\almatlaudrypowder4kg.jpeg",
-    "name": "Almat",
-    "line": "LAUNDRY POWDER",
-    "size": "4kg",
-    "price": "$4.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\almatlaudrypowder-card.png"
-  },
-  {
-    "image": "products\\almatlaundryliuid4l.jpeg",
-    "name": "Almat",
-    "line": "LAUNDRY LIQUID",
-    "size": "4L",
-    "price": "$9.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\almatlaundryliuid-card.png"
-  },
-  {
     "image": "products\\ancosoftfabricsoftener2l.jpeg",
     "name": "Anco Soft",
     "line": "FABRIC SOFTENER",
@@ -688,16 +608,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\bebetogummies-card.png"
-  },
-  {
-    "image": "products\\blackstonesweetchilliandsourcreamchips175g.jpeg",
-    "name": "Blackstone",
-    "line": "SWEET CHILLI & SOUR CREAM CHIPS",
-    "size": "175g",
-    "price": "$2.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\blackstonesweetchilli-card.png"
   },
   {
     "image": "products\\colwayworcestshiresauce250ml.jpeg",
@@ -960,16 +870,6 @@
     "out": "cards\\trimatlaundrypowder-card.png"
   },
   {
-    "image": "products\\trimatdavancedlaundryliquid4l.jpeg",
-    "name": "Trimat",
-    "line": "ADVANCED LAUNDRY LIQUID",
-    "size": "4L",
-    "price": "$10.49",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\trimatlaundyliquid-card.png"
-  },
-  {
     "image": "products\\whittakerschocolatepods125g.jpeg",
     "name": "Whittaker's",
     "line": "CHOCOLATE PODS",
@@ -978,5 +878,105 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\whittakerschocpods-card.png"
+  },
+  {
+    "image": "products\\kelloggsspecialk300g.png",
+    "name": "Kellogg's",
+    "line": "SPECIAL K ORIGINAL",
+    "size": "300g",
+    "price": "$5.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\kelloggsspecialk300g.png"
+  },
+  {
+    "image": "products\\streetsblueribbon2l.png",
+    "name": "Streets",
+    "line": "BLUE RIBBON VANILLA",
+    "size": "2L",
+    "price": "$6.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\streetsblueribbon2l.png"
+  },
+  {
+    "image": "products\\dolmiocarbonara490g.png",
+    "name": "Dolmio",
+    "line": "CREAMY CARBONARA SAUCE",
+    "size": "490g",
+    "price": "$4.59",
+    "special": false,
+    "supermarket": "Woolworths",
+    "out": "cards\\dolmiocarbonara490g.png"
+  },
+  {
+    "image": "products\\dolmiotomatobasil500g.png",
+    "name": "Dolmio",
+    "line": "TOMATO & BASIL SAUCE",
+    "size": "500g",
+    "price": "$2.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\dolmiotomatobasil500g.png"
+  },
+  {
+    "image": "products\\maltesers140g.png",
+    "name": "Maltesers",
+    "line": "CHOCOLATE",
+    "size": "140g",
+    "price": "$3.49",
+    "special": true,
+    "supermarket": "Coles",
+    "out": "cards\\maltesers140g.png"
+  },
+  {
+    "image": "products\\cadburydairymilk315g.png",
+    "name": "Cadbury",
+    "line": "DAIRY MILK",
+    "size": "315g",
+    "price": "$8.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\cadburydairymilk315g.png"
+  },
+  {
+    "image": "products\\colestastyshreddedcheddar700g.png",
+    "name": "Coles",
+    "line": "TASTY SHREDDED CHEDDAR",
+    "size": "700g",
+    "price": "$13.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\colestastyshreddedcheddar700g.png"
+  },
+  {
+    "image": "products\\colesfreerangeeggs12pk.png",
+    "name": "Coles",
+    "line": "FREE RANGE EGGS",
+    "size": "12 pack",
+    "price": "$6.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\colesfreerangeeggs12pk.png"
+  },
+  {
+    "image": "products\\kelloggsnutrigrain290g.png",
+    "name": "Kellogg's",
+    "line": "NUTRI-GRAIN",
+    "size": "290g",
+    "price": "$3.49",
+    "special": true,
+    "supermarket": "Woolworths",
+    "out": "cards\\kelloggsnutrigrain290g.png"
+  },
+  {
+    "image": "products\\sanitariumweetbixbites500g.png",
+    "name": "Sanitarium",
+    "line": "WEET-BIX BITES WILD BERRY",
+    "size": "500g",
+    "price": "$6.49",
+    "special": false,
+    "supermarket": "Woolworths",
+    "out": "cards\\sanitariumweetbixbites500g.png"
   }
 ]
