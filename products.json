@@ -340,26 +340,6 @@
     "out": "cards\\imperialgrain-card.png"
   },
   {
-    "image": "products\\internationalcuisinepizzasnacks400g.jpeg",
-    "name": "International Cuisine",
-    "line": "PIZZA SNACKS",
-    "size": "400g",
-    "price": "$5.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\intlcuisinepizzasnacks-card.png"
-  },
-  {
-    "image": "products\\ironbarkporkmince500g.jpeg",
-    "name": "Ironbark",
-    "line": "PORK MINCE",
-    "size": "500g",
-    "price": "$4.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\ironbarkporkmince-card.png"
-  },
-  {
     "image": "products\\jindurrastation5starbeefmince500g.jpeg",
     "name": "Jindurra Station",
     "line": "5 STAR BEEF MINCE",
@@ -530,16 +510,6 @@
     "out": "cards\\sprinterspopcorn-card.png"
   },
   {
-    "image": "products\\storckwerthersoriginalcreamcandies42g.jpeg",
-    "name": "Storck",
-    "line": "WERTHER'S ORIGINAL CREAM CANDIES",
-    "size": "42g",
-    "price": "$2.49",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\werthers-card.png"
-  },
-  {
     "image": "products\\tricareantibacterialsoap250ml.jpeg",
     "name": "Tricare",
     "line": "ANTIBACTERIAL SOAP",
@@ -650,16 +620,6 @@
     "out": "cards\\eltorajalapenos-card.png"
   },
   {
-    "image": "products\\greenactionmultipurposecleaner600ml.jpeg",
-    "name": "Green Action",
-    "line": "MULTIPURPOSE CLEANER",
-    "size": "600ml",
-    "price": "$2.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\greenactioncleaner-card.png"
-  },
-  {
     "image": "products\\haribotwinsnakes280g.jpeg",
     "name": "Haribo",
     "line": "TWIN SNAKES",
@@ -738,46 +698,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\powerforcebathroomwipes-card.png"
-  },
-  {
-    "image": "products\\powerforcecremecleanserlemon500ml.jpeg",
-    "name": "Powerforce",
-    "line": "CREME CLEANSER LEMON",
-    "size": "500ml",
-    "price": "$2.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\powerforcecremecleanser-card.png"
-  },
-  {
-    "image": "products\\powerforcedishwasherpowder1kg.jpeg",
-    "name": "Powerforce",
-    "line": "DISHWASHER POWDER",
-    "size": "1kg",
-    "price": "$3.69",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\powerforcedishwasherpowder-card.png"
-  },
-  {
-    "image": "products\\powerforceheavydutyspongescourer3pack.jpeg",
-    "name": "Powerforce",
-    "line": "HEAVY DUTY SPONGE SCOURER",
-    "size": "3 pack",
-    "price": "$1.49",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\powerforceheavydutyscourer-card.png"
-  },
-  {
-    "image": "products\\powerforcemeshspongescourer5pack.jpeg",
-    "name": "Powerforce",
-    "line": "MESH SPONGE SCOURER",
-    "size": "5 pack",
-    "price": "$2.49",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\powerforcemeshscourer-card.png"
   },
   {
     "image": "products\\powerforcetoiletrimblocks2x50g.jpeg",
@@ -978,5 +898,85 @@
     "special": false,
     "supermarket": "Woolworths",
     "out": "cards\\sanitariumweetbixbites500g.png"
+  },
+  {
+    "image": "products\\mccainsuperfries900g.png",
+    "name": "McCain",
+    "line": "SUPERFRIES STRAIGHT CUT",
+    "size": "900g",
+    "price": "$4.29",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\mccainsuperfries900g.png"
+  },
+  {
+    "image": "products\\leggospesto190g.png",
+    "name": "Leggo's",
+    "line": "SUNDRIED TOMATO PESTO",
+    "size": "190g",
+    "price": "$5.29",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\leggospesto190g.png"
+  },
+  {
+    "image": "products\\nannasfrozenapplesnackpies4pack.png",
+    "name": "Nanna's",
+    "line": "FROZEN APPLE SNACK PIES",
+    "size": "4 pack",
+    "price": "$6.29",
+    "special": false,
+    "supermarket": "Woolworths",
+    "out": "cards\\nannasfrozenapplesnackpies4pack.png"
+  },
+  {
+    "image": "products\\edgemens5bladekitplus2pack.png",
+    "name": "Edge",
+    "line": "MENS 5 BLADE KIT PLUS",
+    "size": "2 pack",
+    "price": "$7.29",
+    "special": false,
+    "supermarket": "Woolworths",
+    "out": "cards\\edgemens5bladekitplus2pack.png"
+  },
+  {
+    "image": "products\\cadburyoldgoldfruitandnut170g.png",
+    "name": "Cadbury",
+    "line": "OLD GOLD FRUIT & NUT",
+    "size": "170g",
+    "price": "$8.29",
+    "special": false,
+    "supermarket": "Woolworths",
+    "out": "cards\\cadburyoldgoldfruitandnut170g.png"
+  },
+  {
+    "image": "products\\colesfinestbeefragufettucine400g.png",
+    "name": "Coles Finest",
+    "line": "BEEF RAGU FETTUCINE",
+    "size": "400g",
+    "price": "$11.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\colesfinestbeefragufettucine400g.png"
+  },
+  {
+    "image": "products\\remedykombucha750ml.png",
+    "name": "Remedy",
+    "line": "KOMBUCHA RASPBERRY LEMONADE",
+    "size": "750ml",
+    "price": "$7.49",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\remedykombucha750ml.png"
+  },
+  {
+    "image": "products\\marsfrozendessertbars5pack.png",
+    "name": "Mars",
+    "line": "FROZEN DESSERT BARS",
+    "size": "5 pack",
+    "price": "$9.49",
+    "special": false,
+    "supermarket": "Woolworths",
+    "out": "cards\\marsfrozendessertbars5pack.png"
   }
 ]
