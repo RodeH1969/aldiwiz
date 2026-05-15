@@ -200,26 +200,6 @@
     "out": "cards\\emporiumgranapadano-card.png"
   },
   {
-    "image": "products\\emporiumhalloumi225g.jpeg",
-    "name": "Emporium",
-    "line": "HALLOUMI",
-    "size": "225g",
-    "price": "$4.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\halloumi-card.png"
-  },
-  {
-    "image": "products\\emporiumselectionbluecheese200g.jpeg",
-    "name": "Emporium",
-    "line": "SELECTION BLUE CHEESE",
-    "size": "200g",
-    "price": "$5.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\emporiumblue-card.png"
-  },
-  {
     "image": "products\\farmdalefullcreammilk2l.jpeg",
     "name": "Farmdale",
     "line": "FULL CREAM MILK",
@@ -558,16 +538,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\activenergyAAbatteries-card.png"
-  },
-  {
-    "image": "products\\ancosoftfabricsoftener2l.jpeg",
-    "name": "Anco Soft",
-    "line": "FABRIC SOFTENER",
-    "size": "2L",
-    "price": "$2.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\ancosoftfabricsoftener-card.png"
   },
   {
     "image": "products\\bebetoloveheartgummies400g.jpeg",
@@ -978,5 +948,35 @@
     "special": false,
     "supermarket": "Woolworths",
     "out": "cards\\marsfrozendessertbars5pack.png"
+  },
+  {
+    "image": "products\\mutticherrytomatoes400g.png",
+    "name": "Mutti",
+    "line": "CHERRY TOMATOES",
+    "size": "400g",
+    "price": "$2.79",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\mutticherrytomatoes400g.png"
+  },
+  {
+    "image": "products\\sagourmetcreamychickensoup430g.png",
+    "name": "SA Gourmet Food Co",
+    "line": "CREAMY CHICKEN & SWEET CORN SOUP",
+    "size": "430g",
+    "price": "$2.79",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\sagourmetcreamychickensoup430g.png"
+  },
+  {
+    "image": "products\\birdseyegoldencrunchChips900g.png",
+    "name": "Birds Eye",
+    "line": "GOLDEN CRUNCH THIN & CRISPY CHIPS",
+    "size": "900g",
+    "price": "$4.69",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\birdseyegoldencrunchChips900g.png"
   }
 ]
