@@ -280,16 +280,6 @@
     "out": "cards\\hillcrestchocorice-card.png"
   },
   {
-    "image": "products\\hillcrestchocpeanutbars210g.jpeg",
-    "name": "Hillcrest",
-    "line": "CHOC PEANUT BARS",
-    "size": "210g",
-    "price": "$2.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\hillcrestpeanutbars-card.png"
-  },
-  {
     "image": "products\\hillcresthoneynutcornflakes670g.jpeg",
     "name": "Hillcrest",
     "line": "HONEY NUT CORNFLAKES",
@@ -338,26 +328,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\julius-card.png"
-  },
-  {
-    "image": "products\\knoppersmilkwafers200g.jpeg",
-    "name": "Knoppers",
-    "line": "MILK WAFERS",
-    "size": "200g",
-    "price": "$4.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\knoppers-card.png"
-  },
-  {
-    "image": "products\\niveamenblackandwhitedeoderant200ml.jpeg",
-    "name": "Nivea Men",
-    "line": "BLACK & WHITE DEODORANT",
-    "size": "200ml",
-    "price": "$4.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\niveamendeodorant-card.png"
   },
   {
     "image": "products\\nongshinramyun480g.jpeg",
@@ -710,26 +680,6 @@
     "out": "cards\\sweetsensationsnougat-card.png"
   },
   {
-    "image": "products\\sweetvinebluberries13g.jpeg",
-    "name": "Sweet Vine",
-    "line": "BLUEBERRIES",
-    "size": "130g",
-    "price": "$3.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\sweetvineblueberries-card.png"
-  },
-  {
-    "image": "products\\sweetvinedriedappleslices200g.jpeg",
-    "name": "Sweet Vine",
-    "line": "DRIED APPLE SLICES",
-    "size": "200g",
-    "price": "$3.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\sweetvineappleslices-card.png"
-  },
-  {
     "image": "products\\sweetvinesultanas240g.jpeg",
     "name": "Sweet Vine",
     "line": "SULTANAS",
@@ -738,16 +688,6 @@
     "special": false,
     "supermarket": "Aldi",
     "out": "cards\\sweetvinesultanas-card.png"
-  },
-  {
-    "image": "products\\tandildishwashingliquid950ml.jpeg",
-    "name": "Tandil",
-    "line": "DISHWASHING LIQUID",
-    "size": "950ml",
-    "price": "$2.99",
-    "special": false,
-    "supermarket": "Aldi",
-    "out": "cards\\tandildishwashingliquid-card.png"
   },
   {
     "image": "products\\trimatadvancedlaundrypowder2kg.jpeg",
@@ -978,5 +918,65 @@
     "special": false,
     "supermarket": "Coles",
     "out": "cards\\birdseyegoldencrunchChips900g.png"
+  },
+  {
+    "image": "products\\tridentsriracha480ml.png",
+    "name": "Trident",
+    "line": "SRIRACHA SAUCE",
+    "size": "480ml",
+    "price": "$4.39",
+    "special": true,
+    "supermarket": "Coles",
+    "out": "cards\\tridentsriracha480ml.png"
+  },
+  {
+    "image": "products\\nestlemilosnackbars10pack.png",
+    "name": "Nestle",
+    "line": "MILO SNACK BARS ORIGINAL",
+    "size": "10 pack",
+    "price": "$6.79",
+    "special": true,
+    "supermarket": "Woolworths",
+    "out": "cards\\nestlemilosnackbars10pack.png"
+  },
+  {
+    "image": "products\\oceanspraycranberrylight1.5l.png",
+    "name": "Ocean Spray",
+    "line": "CRANBERRY LIGHT",
+    "size": "1.5L",
+    "price": "$6.39",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\oceanspraycranberrylight1.5l.png"
+  },
+  {
+    "image": "products\\twiningsenglishbreakfasttea100pack.png",
+    "name": "Twinings",
+    "line": "ENGLISH BREAKFAST TEA BAGS",
+    "size": "100 pack",
+    "price": "$6.79",
+    "special": true,
+    "supermarket": "Coles",
+    "out": "cards\\twiningsenglishbreakfasttea100pack.png"
+  },
+  {
+    "image": "products\\coleswater12x600ml.png",
+    "name": "Coles",
+    "line": "SPRING WATER",
+    "size": "12x600ml",
+    "price": "$5.39",
+    "special": false,
+    "supermarket": "Coles",
+    "out": "cards\\coleswater12x600ml.png"
+  },
+  {
+    "image": "products\\campbellsrealstockchicken1l.png",
+    "name": "Campbell's",
+    "line": "REAL STOCK CHICKEN",
+    "size": "1L",
+    "price": "$2.19",
+    "special": true,
+    "supermarket": "Coles",
+    "out": "cards\\campbellsrealstockchicken1l.png"
   }
 ]
